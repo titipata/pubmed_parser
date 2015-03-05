@@ -6,7 +6,6 @@ Simple parser for Pubmed open source dataset
 
 - [Titipat Achakulvisut](http://titipata.github.io)
 - [Daniel E. Acuna](http://scienceofscience.org/about), Rehabilitation Institute of Chicago and Northwestern University
-- [Konrad Kording](http://klab.smpp.northwestern.edu/wiki/index.php5/Main_Page), Northwestern University
 
 ##Usage
 
