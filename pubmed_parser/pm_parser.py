@@ -29,7 +29,14 @@ def extract_pubmed_xml(xmlpath, min_doc_len=0, min_abstract_len=0, max_abstract_
     Given single xml path, extract information from xml file
     and return a list
     """
-    tree = etree.parse(xmlpath)
+    try:
+        tree = etree.parse(xmlpath)
+    except:
+        try:
+            tree = etree.fromstring(xmlpath)
+        except:
+            raise Exception("It was not able to read a path, a file-like object, or a string as an XML")
+
     len_doc = len(etree.tostring(tree).split())
     if len_doc >= min_doc_len:
         article_name = os.path.split(xmlpath)[-1]
