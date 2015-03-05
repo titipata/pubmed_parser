@@ -1,6 +1,7 @@
 #Parser for Pubmed Open-Source XML data
 
-Simple parser for Pubmed open source dataset
+Python simple parser for PubMed open source data. 
+People use 
 
 ##Members
 
@@ -9,7 +10,25 @@ Simple parser for Pubmed open source dataset
 
 ##Usage
 
-Usage will be added soon
+We create a simple parser where you can give xml path 
+to function called `extract_pubmed_xml` and it will return 
+list of `[article_name, topic, abstract, journal_title, pubmed_id, pmc, pub_id, all_aff, aff_dict, pub_year]`, 
+for example:
+
+```python
+path_all_xml = list_xmlpath('/<path_to>/pubmed_data/') # this will list all xml path under directory
+pubmed_list = extract_pubmed_xml(path_all_xml[0])
+```
+
+You can also pass list of xml path to `create_pubmed_df` and it will return pandas DataFrame 
+including information from all the path in the given list
+
+```python
+from pubmed_parser import *
+n = 10000
+path_all_xml = list_xmlpath('/<path_to>/pubmed_data/') # this will list all xml path under directory
+pubmed_df = create_pubmed_df(path_all_xml[0:n])
+```
 
 ##Dependencies
 

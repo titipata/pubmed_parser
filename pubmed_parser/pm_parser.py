@@ -1,8 +1,9 @@
 import os
-import numpy as np
 import pandas as pd
 from lxml import etree
 from itertools import chain
+from functools import partial
+from operator import is_not
 
 
 def list_xmlpath(path_init):
@@ -17,6 +18,7 @@ def list_xmlpath(path_init):
 def stringify_children(node):
     """
     Filters and removes possible Nones in texts and tails
+    ref: http://stackoverflow.com/questions/4624062/get-all-text-inside-a-tag-in-lxml
     """
     parts = ([node.text] +
              list(chain(*([c.text, c.tail] for c in node.getchildren()))) +
@@ -27,7 +29,7 @@ def stringify_children(node):
 def extract_pubmed_xml(xmlpath, min_doc_len=0, min_abstract_len=0, max_abstract_len=10000):
     """
     Given single xml path, extract information from xml file
-    and return a list
+    and return as a list
     """
     try:
         tree = etree.parse(xmlpath)
@@ -71,7 +73,7 @@ def extract_pubmed_xml(xmlpath, min_doc_len=0, min_abstract_len=0, max_abstract_
         except:
             pub_year = ''
 
-        # discard if abstract length is to short or too long
+        # discard if abstract length is to short or too long by returning None
         len_abstract = len(abstract.split())
         if len_abstract > max_abstract_len or len_abstract < min_abstract_len:
             return None
@@ -102,3 +104,31 @@ def extract_pubmed_xml(xmlpath, min_doc_len=0, min_abstract_len=0, max_abstract_
 
         list_out = [article_name, topic, abstract, journal_title, pmid, pmc, pub_id, all_aff, aff_dict, pub_year]
         return list_out
+
+
+def create_pubmed_df(path_list, remove_abs=True):
+    """
+    Given list of path, return DataFrame
+    """
+    pm_docs = []
+    for path_tmp in path_list:
+        pm_docs.append(extract_pubmed_xml(path_tmp))
+    pm_docs = filter(partial(is_not, None), pm_docs) # remove None
+    # turn to pandas DataFrame
+    pm_docs_df = pd.DataFrame(pm_docs, columns=['article_name', 'title', 'abstract',
+                                                'journal_title', 'pmid', 'pmc',
+                                                'pub_id', 'all_aff', 'aff_dict',
+                                                'pub_year'])
+    if remove_abs:
+        pm_docs_df = pm_docs_df[pm_docs_df.abstract <> ''].reset_index().drop('index', axis=1)
+    return pm_docs_df
+
+
+def chunks(l, n):
+    """
+    Yield successive n-sized chunks from l
+    Suppose we want to chunk all path list into smaller chunk
+    example: chunks(path_list, 10000)
+    """
+    for i in xrange(0, len(l), n):
+        yield l[i:i+n]
