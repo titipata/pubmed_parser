@@ -1,12 +1,12 @@
 #Parser for Pubmed Open-Access Subset XML Dataset
 
-Python parser for PubMed open-access subset.
+Python parser for [PubMed open-access subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/) (download section is at the end of the page)
 
 
-##Usage
+##About
 
-We create a simple parser for PubMed open-access dataset where you can give 
-an XML path or string to the function called `pare_pubmed_xml` that will return
+We create a simple parser for PubMed open-access subset where you can give 
+an XML path or string to the function called `parse_pubmed_xml` that will return
 a dictionary with the following keys:
 
  - `full_title`: Article's title 
@@ -20,23 +20,22 @@ a dictionary with the following keys:
  - `affiliation_list`: Affiliation dictionary `{'aff_key_1' : 'Affiliation1', ...}`
  - `publication_year`: Publication year
 
-Example Usage:
+##Example Usage:
 
 ```python
 import pubmed_parser as pp
-path_all_xml = pp.list_xmlpath('/<path_to>/pubmed_data/') # list all xml path under directory
+path_all_xml = pp.list_xmlpath('/<path_to_pubmed_sub_dir>') # list all xml path under directory
 pubmed_list = pp.parse_pubmed_xml(path_all_xml[0]) # dictionary output
 ```
 
 You can also pass list of xml path to `create_pubmed_df` and it will return pandas DataFrame
 including information from all the path in the given list (no more than 10k Pubmed path are recommended if you 
-don't do it in parallel)
+don't do it in parallel). It takes about 0.4 days to parse all PubMed subset.
 
 ```python
 import pubmed_parser as pp
-n = 10000
-path_all_xml = pp.list_xmlpath('/<path_to>/pubmed_data/')
-pubmed_df = pp.create_pubmed_df(path_all_xml[0:n]) # return DataFrame
+path_all_xml = pp.list_xmlpath('/<path_to_pubmed_sub_dir>') # list all xml path under directory
+pubmed_df = pp.create_pubmed_df(path_all_xml) # return DataFrame
 ```
 
 
