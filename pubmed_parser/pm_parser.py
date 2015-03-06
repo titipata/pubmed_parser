@@ -8,7 +8,6 @@ from lxml.etree import tostring
 
 __all__ = [
     'list_xmlpath',
-    'stringify_children',
     'parse_pubmed_xml',
     'create_pubmed_df',
     'pretty_print_xml',
@@ -33,6 +32,18 @@ def stringify_children(node):
              list(chain(*([c.text, c.tail] for c in node.getchildren()))) +
              [node.tail])
     return ''.join(filter(None, parts))
+
+
+def stringify_affiliation(node):
+    """
+    Filters and removes possible Nones in texts and tails
+    ref: http://stackoverflow.com/questions/4624062/get-all-text-inside-a-tag-in-lxml
+    """
+    parts = ([node.text] +
+             list(chain(*([c.text if c.tag != 'label' else '', c.tail] for c in node.getchildren()))) +
+             [node.tail])
+    return ''.join(filter(None, parts))
+
 
 
 def parse_pubmed_xml(xmlpath):
@@ -61,7 +72,10 @@ def parse_pubmed_xml(xmlpath):
     try:
         journal_title = tree.xpath('//journal-title-group/journal-title')[0].text
     except:
-        journal_title = ''
+        try:
+            journal_title = tree.xpath('/article/front/journal-meta/journal-title/text()')[0]
+        except:
+            journal_title = ''
     try:
         pmid = tree.xpath('//article-meta/article-id[@pub-id-type="pmid"]')[0].text
     except:
@@ -78,6 +92,10 @@ def parse_pubmed_xml(xmlpath):
         pub_year = tree.xpath('//pub-date/year/text()')[0]
     except:
         pub_year = ''
+    try:
+        subjects = ','.join(tree.xpath('//article-categories//subj-group//text()'))
+    except:
+        subjects = ''
 
     # create affiliation dictionary
     aff_id = tree.xpath('//aff/@id')
@@ -87,7 +105,7 @@ def parse_pubmed_xml(xmlpath):
     aff_name = tree.xpath('//aff')
     aff_name_list = []
     for node in aff_name:
-        aff_name_list.append(stringify_children(node))
+        aff_name_list.append(stringify_affiliation(node))
     aff_dict = dict(zip(aff_id, map(lambda x: x.strip().replace('\n', ' '), aff_name_list)))  # create dictionary
 
     tree_author = tree.xpath('//contrib-group/contrib[@contrib-type="author"]')
@@ -111,7 +129,8 @@ def parse_pubmed_xml(xmlpath):
                 'publisher_id': pub_id,
                 'author_list': all_aff,
                 'affiliation_list': aff_dict,
-                'publication_year': pub_year}
+                'publication_year': pub_year,
+                'subjects': subjects}
     return list_out
 
 
@@ -127,10 +146,23 @@ def create_pubmed_df(path_list, remove_abs=True):
     pm_docs_df = pd.DataFrame(pm_docs)
     if remove_abs:
         pm_docs_df = pm_docs_df[pm_docs_df.abstract != ''].reset_index().drop('index', axis=1)
+
+    # reorder columns
+    pm_docs_df = pm_docs_df[['full_title',
+                             'abstract',
+                             'journal_title',
+                             'pmid',
+                             'pmc',
+                             'publisher_id',
+                             'author_list',
+                             'affiliation_list',
+                             'publication_year',
+                             'subjects']]
     return pm_docs_df
 
+
 def pretty_print_xml(xmlpath):
-    """Given tree or node, print a pretty xml version"""
+    """Given a XML path, file-like, or string, print a pretty xml version of it"""
     try:
         tree = etree.parse(xmlpath)
     except:
