@@ -1,28 +1,42 @@
-#Parser for Pubmed Open-Source XML data
+#Parser for Pubmed Open-Access Subset XML Dataset
 
-Python parser for PubMed open source data.
+Python parser for PubMed open-access subset.
 
 
 ##Usage
 
-We create a simple parser where you can give xml path
-to function called `extract_pubmed_xml` and it will return
-list of `[article_name, topic, abstract, journal_title, pubmed_id, pmc, pub_id, all_aff, aff_dict, pub_year]`,
-for example:
+We create a simple parser for PubMed open-access dataset where you can give 
+an XML path or string to the function called `pare_pubmed_xml` that will return
+a dictionary with the following keys:
+
+ - `full_title`: Article's title 
+ - `abstract`: Abstract
+ - `journal_title`: Journal name or journal title
+ - `pmid`: Pumed ID
+ - `pmc`: Pumed Central ID
+ - `publisher_id`: Publisher ID
+ - `author_list`: list of authors and affiliation keys as `[['Last name 1', 'First Name 2', ['aff_key_1', 'aff_key_2', ...]],
+['Last name 2', 'First Name 2', ['aff_key_1', ...]], ...]`
+ - `affiliation_list`: Affiliation dictionary `{'aff_key_1' : 'Affiliation1', ...}`
+ - `publication_year`: Publication year
+
+Example Usage:
 
 ```python
-path_all_xml = list_xmlpath('/<path_to>/pubmed_data/') # list all xml path under directory
-pubmed_list = extract_pubmed_xml(path_all_xml[0])
+import pubmed_parser as pp
+path_all_xml = pp.list_xmlpath('/<path_to>/pubmed_data/') # list all xml path under directory
+pubmed_list = pp.parse_pubmed_xml(path_all_xml[0]) # dictionary output
 ```
 
 You can also pass list of xml path to `create_pubmed_df` and it will return pandas DataFrame
-including information from all the path in the given list
+including information from all the path in the given list (no more than 10k Pubmed path are recommended if you 
+don't do it in parallel)
 
 ```python
-from pubmed_parser import *
+import pubmed_parser as pp
 n = 10000
-path_all_xml = list_xmlpath('/<path_to>/pubmed_data/')
-pubmed_df = create_pubmed_df(path_all_xml[0:n]) # return DataFrame
+path_all_xml = pp.list_xmlpath('/<path_to>/pubmed_data/')
+pubmed_df = pp.create_pubmed_df(path_all_xml[0:n]) # return DataFrame
 ```
 
 

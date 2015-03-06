@@ -4,6 +4,15 @@ from lxml import etree
 from itertools import chain
 from functools import partial
 from operator import is_not
+from lxml.etree import tostring
+
+__all__ = [
+    'list_xmlpath',
+    'stringify_children',
+    'parse_pubmed_xml',
+    'create_pubmed_df',
+    'pretty_print_xml',
+]
 
 
 def list_xmlpath(path_init):
@@ -26,7 +35,7 @@ def stringify_children(node):
     return ''.join(filter(None, parts))
 
 
-def extract_pubmed_xml(xmlpath, min_doc_len=0, min_abstract_len=0, max_abstract_len=10000):
+def parse_pubmed_xml(xmlpath):
     """
     Given single xml path, extract information from xml file
     and return as a list
@@ -39,71 +48,71 @@ def extract_pubmed_xml(xmlpath, min_doc_len=0, min_abstract_len=0, max_abstract_
         except:
             raise Exception("It was not able to read a path, a file-like object, or a string as an XML")
 
-    len_doc = len(etree.tostring(tree).split())
-    if len_doc >= min_doc_len:
-        article_name = os.path.split(xmlpath)[-1]
-        try:
-            title = ' '.join(tree.xpath('//title-group/article-title/text()')).replace('\n', ' ')
-            sub_title = ' '.join(tree.xpath('//title-group/subtitle/text()')).replace('\n', ' ').replace('\t', ' ')
-            topic = title + ' ' + sub_title
-        except:
-            topic = ''
-        try:
-            abstract = ' '.join(tree.xpath('//abstract//text()'))
-        except:
-            abstract = ''
-        try:
-            journal_title = tree.xpath('//journal-title-group/journal-title')[0].text
-        except:
-            journal_title = ''
-        try:
-            pmid = tree.xpath('//article-meta/article-id[@pub-id-type="pmid"]')[0].text
-        except:
-            pmid = ''
-        try:
-            pmc = tree.xpath('//article-meta/article-id[@pub-id-type="pmc"]')[0].text
-        except:
-            pmc = ''
-        try:
-            pub_id = tree.xpath('//article-meta/article-id[@pub-id-type="publisher-id"]')[0].text
-        except:
-            pub_id = ''
-        try:
-            pub_year = tree.xpath('//pub-date/year/text()')[0]
-        except:
-            pub_year = ''
+    try:
+        title = ' '.join(tree.xpath('//title-group/article-title/text()')).replace('\n', ' ')
+        sub_title = ' '.join(tree.xpath('//title-group/subtitle/text()')).replace('\n', ' ').replace('\t', ' ')
+        full_title = title + ' ' + sub_title
+    except:
+        full_title = ''
+    try:
+        abstract = ' '.join(tree.xpath('//abstract//text()'))
+    except:
+        abstract = ''
+    try:
+        journal_title = tree.xpath('//journal-title-group/journal-title')[0].text
+    except:
+        journal_title = ''
+    try:
+        pmid = tree.xpath('//article-meta/article-id[@pub-id-type="pmid"]')[0].text
+    except:
+        pmid = ''
+    try:
+        pmc = tree.xpath('//article-meta/article-id[@pub-id-type="pmc"]')[0].text
+    except:
+        pmc = ''
+    try:
+        pub_id = tree.xpath('//article-meta/article-id[@pub-id-type="publisher-id"]')[0].text
+    except:
+        pub_id = ''
+    try:
+        pub_year = tree.xpath('//pub-date/year/text()')[0]
+    except:
+        pub_year = ''
 
-        # discard if abstract length is to short or too long by returning None
-        len_abstract = len(abstract.split())
-        if len_abstract > max_abstract_len or len_abstract < min_abstract_len:
-            return None
+    # create affiliation dictionary
+    aff_id = tree.xpath('//aff/@id')
+    if len(aff_id) == 0:
+        aff_id = ['']  # replace id with empty list
 
-        # create affiliation dictionary
-        aff_id = tree.xpath('//aff/@id')
-        if len(aff_id) == 0:
-            aff_id = ['']  # replace id with empty list
+    aff_name = tree.xpath('//aff')
+    aff_name_list = []
+    for node in aff_name:
+        aff_name_list.append(stringify_children(node))
+    aff_dict = dict(zip(aff_id, map(lambda x: x.strip().replace('\n', ' '), aff_name_list)))  # create dictionary
 
-        aff_name = tree.xpath('//aff')
-        aff_name_list = []
-        for node in aff_name:
-            aff_name_list.append(stringify_children(node))
-        aff_dict = dict(zip(aff_id, map(lambda x: x.strip().replace('\n', ' '), aff_name_list)))  # create dictionary
+    tree_author = tree.xpath('//contrib-group/contrib[@contrib-type="author"]')
+    all_aff = []
+    for el in tree_author:
+        el0 = el.findall('xref[@ref-type="aff"]')
+        try:
+            rid_list = [tmp.attrib['rid'] for tmp in el0]
+        except:
+            rid_list = ''
+        try:
+            all_aff.append([el.find('name/surname').text, el.find('name/given-names').text, rid_list])
+        except:
+            all_aff.append(['', '', rid_list])
 
-        tree_author = tree.xpath('//contrib-group/contrib[@contrib-type="author"]')
-        all_aff = []
-        for el in tree_author:
-            el0 = el.findall('xref[@ref-type="aff"]')
-            try:
-                rid_list = [tmp.attrib['rid'] for tmp in el0]
-            except:
-                rid_list = ''
-            try:
-                all_aff.append([el.find('name/surname').text, el.find('name/given-names').text, rid_list])
-            except:
-                all_aff.append(['', '', rid_list])
-
-        list_out = [article_name, topic, abstract, journal_title, pmid, pmc, pub_id, all_aff, aff_dict, pub_year]
-        return list_out
+    list_out = {'full_title': full_title.strip(),
+                'abstract': abstract,
+                'journal_title': journal_title,
+                'pmid': pmid,
+                'pmc': pmc,
+                'publisher_id': pub_id,
+                'author_list': all_aff,
+                'affiliation_list': aff_dict,
+                'publication_year': pub_year}
+    return list_out
 
 
 def create_pubmed_df(path_list, remove_abs=True):
@@ -112,16 +121,25 @@ def create_pubmed_df(path_list, remove_abs=True):
     """
     pm_docs = []
     for path_tmp in path_list:
-        pm_docs.append(extract_pubmed_xml(path_tmp))
-    pm_docs = filter(partial(is_not, None), pm_docs) # remove None
+        pm_docs.append(parse_pubmed_xml(path_tmp))
+    pm_docs = filter(partial(is_not, None), pm_docs)  # remove None
     # turn to pandas DataFrame
-    pm_docs_df = pd.DataFrame(pm_docs, columns=['article_name', 'title', 'abstract',
-                                                'journal_title', 'pmid', 'pmc',
-                                                'pub_id', 'all_aff', 'aff_dict',
-                                                'pub_year'])
+    pm_docs_df = pd.DataFrame(pm_docs)
     if remove_abs:
-        pm_docs_df = pm_docs_df[pm_docs_df.abstract <> ''].reset_index().drop('index', axis=1)
+        pm_docs_df = pm_docs_df[pm_docs_df.abstract != ''].reset_index().drop('index', axis=1)
     return pm_docs_df
+
+def pretty_print_xml(xmlpath):
+    """Given tree or node, print a pretty xml version"""
+    try:
+        tree = etree.parse(xmlpath)
+    except:
+        try:
+            tree = etree.fromstring(xmlpath)
+        except:
+            raise Exception("It was not able to read a path, a file-like object, or a string as an XML")
+
+    print tostring(tree, pretty_print=True)
 
 
 def chunks(l, n):
