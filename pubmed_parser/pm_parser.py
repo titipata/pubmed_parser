@@ -134,30 +134,53 @@ def parse_pubmed_xml(xmlpath):
     return list_out
 
 
-def create_pubmed_df(path_list, remove_abs=True):
+def create_pubmed_df(path_list, remove_abs=False, path_xml=False):
     """
-    Given list of path, return DataFrame
+    Given list of xml paths, return parsed DataFrame
+
+    path_list: list of xml paths
+    remove_abs: if true, remove row of dataframe if parsed xml contains no abstract
+    path_xml: if true, concat path to xml file when constructing DataFrame
     """
     pm_docs = []
-    for path_tmp in path_list:
-        pm_docs.append(parse_pubmed_xml(path_tmp))
+    for path in path_list:
+        pm_dict = parse_pubmed_xml(path)
+        if path_xml:
+            pm_dict['path_to_file'] = path
+        pm_docs.append(pm_dict)
+
     pm_docs = filter(partial(is_not, None), pm_docs)  # remove None
-    # turn to pandas DataFrame
-    pm_docs_df = pd.DataFrame(pm_docs)
+    pm_docs_df = pd.DataFrame(pm_docs) # turn to pandas DataFrame
+
+    # remove empty abstract
     if remove_abs:
         pm_docs_df = pm_docs_df[pm_docs_df.abstract != ''].reset_index().drop('index', axis=1)
 
     # reorder columns
-    pm_docs_df = pm_docs_df[['full_title',
-                             'abstract',
-                             'journal_title',
-                             'pmid',
-                             'pmc',
-                             'publisher_id',
-                             'author_list',
-                             'affiliation_list',
-                             'publication_year',
-                             'subjects']]
+    if path_xml:
+        pm_docs_df = pm_docs_df[['full_title',
+                                 'abstract',
+                                 'journal_title',
+                                 'pmid',
+                                 'pmc',
+                                 'publisher_id',
+                                 'author_list',
+                                 'affiliation_list',
+                                 'publication_year',
+                                 'subjects',
+                                 'path_to_file']]
+    else:
+        pm_docs_df = pm_docs_df[['full_title',
+                                 'abstract',
+                                 'journal_title',
+                                 'pmid',
+                                 'pmc',
+                                 'publisher_id',
+                                 'author_list',
+                                 'affiliation_list',
+                                 'publication_year',
+                                 'subjects']]
+
     return pm_docs_df
 
 
