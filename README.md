@@ -19,6 +19,7 @@ a dictionary with the following keys:
 ['Last name 2', 'First Name 2', ['aff_key_1', ...]], ...]`
  - `affiliation_list`: Affiliation dictionary `{'aff_key_1' : 'Affiliation1', ...}`
  - `publication_year`: Publication year
+ - `subjects`: List of subjects listed in the article. Sometimes, it only contains what type of article it is, such as research article, review, proceedings, etc.
 
 ##Example Usage:
 
@@ -65,6 +66,13 @@ pubmed_df = pp.create_pubmed_df(path_all_xml) # return DataFrame
 - [pandas](https://github.com/pydata/pandas)
 
 
+##Cite
+
+If you use this package, please cite it like this
+
+<code>Titipat Achakulvisut, Daniel E. Acuna (2015) "Pubmed Parser" [http://github.com/titipata/pubmed_parser](http://github.com/titipata/pubmed_parser)</code>
+
 ##License
 
 (c) 2015 Titipat Achakulvisut, Daniel E. Acuna
+
