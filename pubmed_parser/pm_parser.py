@@ -40,9 +40,9 @@ def stringify_affiliation(node):
     ref: http://stackoverflow.com/questions/4624062/get-all-text-inside-a-tag-in-lxml
     """
     parts = ([node.text] +
-             list(chain(*([c.text if c.tag != 'label' else '', c.tail] for c in node.getchildren()))) +
+             list(chain(*([c.text if (c.tag != 'label' and c.tag !='sup') else '', c.tail] for c in node.getchildren()))) +
              [node.tail])
-    return ''.join(filter(None, parts))
+    return ' '.join(filter(None, parts))
 
 
 
