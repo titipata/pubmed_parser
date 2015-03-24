@@ -98,11 +98,11 @@ def parse_pubmed_xml(xmlpath):
         subjects = ''
 
     # create affiliation dictionary
-    aff_id = tree.xpath('//aff/@id')
+    aff_id = tree.xpath('//aff[@id]/@id')
     if len(aff_id) == 0:
         aff_id = ['']  # replace id with empty list
 
-    aff_name = tree.xpath('//aff')
+    aff_name = tree.xpath('//aff[@id]')
     aff_name_list = []
     for node in aff_name:
         aff_name_list.append(stringify_affiliation(node))
