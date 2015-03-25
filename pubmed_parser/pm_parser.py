@@ -5,6 +5,7 @@ from itertools import chain
 from functools import partial
 from operator import is_not
 from lxml.etree import tostring
+from compiler.ast import flatten
 
 __all__ = [
     'list_xmlpath',
@@ -44,6 +45,28 @@ def stringify_affiliation(node):
              [node.tail])
     return ' '.join(filter(None, parts))
 
+
+def recur_children(node):
+    """
+    Recursive through node to when it has multiple children
+    """
+    if len(node.getchildren()) == 0:
+        parts = ([node.text or ''] + [node.tail or '']) if (node.tag != 'label' and node.tag !='sup') else ([node.tail or ''])
+        return parts
+    else:
+        parts = ([node.text or ''] +
+                 [recur_children(c) for c in node.getchildren()] +
+                 [node.tail or ''])
+        return parts
+
+
+def stringify_affiliation_rec(node):
+    """
+    Flatten and join list to string
+    ref: http://stackoverflow.com/questions/2158395/flatten-an-irregular-list-of-lists-in-python
+    """
+    parts = recur_children(node)
+    return ''.join(flatten(parts)).strip()
 
 
 def parse_pubmed_xml(xmlpath):
@@ -105,7 +128,7 @@ def parse_pubmed_xml(xmlpath):
     aff_name = tree.xpath('//aff[@id]')
     aff_name_list = []
     for node in aff_name:
-        aff_name_list.append(stringify_affiliation(node))
+        aff_name_list.append(stringify_affiliation_rec(node))
     aff_dict = dict(zip(aff_id, map(lambda x: x.strip().replace('\n', ' '), aff_name_list)))  # create dictionary
 
     tree_author = tree.xpath('//contrib-group/contrib[@contrib-type="author"]')
