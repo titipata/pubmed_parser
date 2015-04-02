@@ -66,7 +66,7 @@ def stringify_affiliation_rec(node):
     ref: http://stackoverflow.com/questions/2158395/flatten-an-irregular-list-of-lists-in-python
     """
     parts = recur_children(node)
-    return ''.join(flatten(parts)).strip()
+    return ' '.join(flatten(parts)).strip()
 
 
 def parse_pubmed_xml(xmlpath):
