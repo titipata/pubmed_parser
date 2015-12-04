@@ -8,20 +8,20 @@ from lxml.etree import tostring
 from compiler.ast import flatten
 
 __all__ = [
-    'list_xmlpath',
+    'list_xml_path',
     'parse_pubmed_xml',
-    'create_pubmed_df',
+    'parse_pubmed_xml_to_df',
     'pretty_print_xml',
 ]
 
 
-def list_xmlpath(path_init):
+def list_xml_path(path_dir):
     """
     List full xml path under given directory
     """
-    fullpath = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(path_init)) for f in fn]
-    xmlpath_list = [folder for folder in fullpath if os.path.splitext(folder)[-1] == ('.nxml' or '.xml')]
-    return xmlpath_list
+    fullpath = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(path_dir)) for f in fn]
+    path_list = [folder for folder in fullpath if os.path.splitext(folder)[-1] == ('.nxml' or '.xml')]
+    return path_list
 
 
 def stringify_children(node):
@@ -69,16 +69,36 @@ def stringify_affiliation_rec(node):
     return ' '.join(flatten(parts)).strip()
 
 
-def parse_pubmed_xml(xmlpath):
+def zip_author(author):
+    """
+    Give a list of author and its affiliation keys
+    in this following format
+    [first_name, last_name, [key1, key2]]
+    return [[first_name, last_name, key1], [first_name, last_name, key2]] instead
+    """
+    author_zipped = list(zip([[author[0], author[1]]]*len(author[-1]), author[-1]))
+    return map(lambda x: x[0] + [x[-1]], author_zipped)
+
+
+def flatten_zip_author(author_list):
+    """
+    Apply zip_author to author_list and flatten it
+    """
+    author_zipped_list = map(zip_author, author_list)
+    return list(chain.from_iterable(author_zipped_list))
+
+
+
+def parse_pubmed_xml(path):
     """
     Given single xml path, extract information from xml file
     and return as a list
     """
     try:
-        tree = etree.parse(xmlpath)
+        tree = etree.parse(path)
     except:
         try:
-            tree = etree.fromstring(xmlpath)
+            tree = etree.fromstring(path)
         except:
             raise Exception("It was not able to read a path, a file-like object, or a string as an XML")
 
@@ -129,10 +149,11 @@ def parse_pubmed_xml(xmlpath):
     aff_name_list = []
     for node in aff_name:
         aff_name_list.append(stringify_affiliation_rec(node))
-    aff_dict = dict(zip(aff_id, map(lambda x: x.strip().replace('\n', ' '), aff_name_list)))  # create dictionary
+    affiliation_list = map(list, zip(aff_id, map(lambda x: x.strip().replace('\n', ' '), aff_name_list)))  # create dictionary
 
     tree_author = tree.xpath('//contrib-group/contrib[@contrib-type="author"]')
-    all_aff = []
+
+    author_list = []
     for el in tree_author:
         el0 = el.findall('xref[@ref-type="aff"]')
         try:
@@ -140,9 +161,10 @@ def parse_pubmed_xml(xmlpath):
         except:
             rid_list = ''
         try:
-            all_aff.append([el.find('name/surname').text, el.find('name/given-names').text, rid_list])
+            author_list.append([el.find('name/surname').text, el.find('name/given-names').text, rid_list])
         except:
-            all_aff.append(['', '', rid_list])
+            author_list.append(['', '', rid_list])
+    author_list = flatten_zip_author(author_list)
 
     list_out = {'full_title': full_title.strip(),
                 'abstract': abstract,
@@ -150,70 +172,62 @@ def parse_pubmed_xml(xmlpath):
                 'pmid': pmid,
                 'pmc': pmc,
                 'publisher_id': pub_id,
-                'author_list': all_aff,
-                'affiliation_list': aff_dict,
+                'author_list': author_list,
+                'affiliation_list': affiliation_list,
                 'publication_year': pub_year,
                 'subjects': subjects}
     return list_out
 
 
-def create_pubmed_df(path_list, remove_abs=False, path_xml=False):
+def parse_pubmed_xml_to_df(paths, remove_abstract=False, include_path=False):
     """
     Given list of xml paths, return parsed DataFrame
 
     path_list: list of xml paths
-    remove_abs: if true, remove row of dataframe if parsed xml contains no abstract
+    remove_abs: if true, remove row of dataframe if parsed xml contains empty abstract
     path_xml: if true, concat path to xml file when constructing DataFrame
     """
     pm_docs = []
-    for path in path_list:
-        pm_dict = parse_pubmed_xml(path)
-        if path_xml:
-            pm_dict['path_to_file'] = path
-        pm_docs.append(pm_dict)
+    if not isinstance(paths, list):
+        pm_dict = parse_pubmed_xml(paths) # in case providing single path
+        pm_docs = [pm_dict]
+    else:
+        for path in paths:
+            pm_dict = parse_pubmed_xml(path)
+            if include_path:
+                pm_dict['path_to_file'] = path
+            pm_docs.append(pm_dict)
 
     pm_docs = filter(partial(is_not, None), pm_docs)  # remove None
     pm_docs_df = pd.DataFrame(pm_docs) # turn to pandas DataFrame
 
     # remove empty abstract
-    if remove_abs:
+    if remove_abstract:
         pm_docs_df = pm_docs_df[pm_docs_df.abstract != ''].reset_index().drop('index', axis=1)
 
     # reorder columns
-    if path_xml:
-        pm_docs_df = pm_docs_df[['full_title',
-                                 'abstract',
-                                 'journal_title',
-                                 'pmid',
-                                 'pmc',
-                                 'publisher_id',
-                                 'author_list',
-                                 'affiliation_list',
-                                 'publication_year',
-                                 'subjects',
-                                 'path_to_file']]
+    column_name = ['full_title', 'abstract',
+                   'journal_title', 'pmid',
+                   'pmc', 'publisher_id',
+                   'author_list', 'affiliation_list',
+                   'publication_year', 'subjects']
+    if include_path:
+        pm_docs_df = pm_docs_df[column_name + ['path_to_file']]
     else:
-        pm_docs_df = pm_docs_df[['full_title',
-                                 'abstract',
-                                 'journal_title',
-                                 'pmid',
-                                 'pmc',
-                                 'publisher_id',
-                                 'author_list',
-                                 'affiliation_list',
-                                 'publication_year',
-                                 'subjects']]
+        pm_docs_df = pm_docs_df[column_name]
 
     return pm_docs_df
 
 
-def pretty_print_xml(xmlpath):
-    """Given a XML path, file-like, or string, print a pretty xml version of it"""
+def pretty_print_xml(path):
+    """
+    Given a XML path, file-like, or string, print a pretty xml version of it
+    """
     try:
-        tree = etree.parse(xmlpath)
+        tree = etree.parse(path)
     except:
         try:
-            tree = etree.fromstring(xmlpath)
+            tree = etree.fromstring(path)
         except:
             raise Exception("It was not able to read a path, a file-like object, or a string as an XML")
 
