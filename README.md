@@ -18,6 +18,7 @@ a dictionary with following information from xml file:
  - `pmc`: Pubmed Central ID
  - `publisher_id`: publisher ID
  - `author_list`: list of authors with affiliation keys in following format
+ 
  ```python
  [['last_name_1', 'first_name_1', 'aff_key_1'],
   ['last_name_1', 'first_name_1', 'aff_key_2'],
@@ -28,6 +29,7 @@ a dictionary with following information from xml file:
  [['aff_key_1' : 'affiliation_1'],
   ['aff_key_2' : 'affiliation_2'], ...]
  ```
+ 
  - `publication_year`: publication year
  - `subjects`: list of subjects listed in the article. Sometimes, it only contains what type of article it is, such as research article, review, proceedings, etc.
 
