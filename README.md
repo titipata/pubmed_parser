@@ -2,7 +2,7 @@
 
 [![Join the chat at https://gitter.im/titipata/pubmed_parser](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/titipata/pubmed_parser?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Python parser for [PubMed open-access subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/) (download section is at the end of the page)
+Python parser for [PubMed open-access subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/) (download section of XML subset is at the end of the page named e.g. `articles.A-B.tar.gz` )
 
 
 ## About
@@ -18,7 +18,7 @@ a dictionary with following information from xml file:
  - `pmc`: Pubmed Central ID
  - `publisher_id`: publisher ID
  - `author_list`: list of authors with affiliation keys in following format
- 
+
  ```python
  [['last_name_1', 'first_name_1', 'aff_key_1'],
   ['last_name_1', 'first_name_1', 'aff_key_2'],
@@ -29,11 +29,12 @@ a dictionary with following information from xml file:
  [['aff_key_1' : 'affiliation_1'],
   ['aff_key_2' : 'affiliation_2'], ...]
  ```
- 
+
  - `publication_year`: publication year
  - `subjects`: list of subjects listed in the article. Sometimes, it only contains what type of article it is, such as research article, review, proceedings, etc.
 
-## Example Usage:
+
+## Example Usage
 
 ```python
 import pubmed_parser as pp
@@ -64,6 +65,21 @@ You can also pass list or single xml path to function `parse_pubmed_xml_to_df` w
 import pubmed_parser as pp
 path_xml = pp.list_xml_path('data') # list all xml paths under given directory
 pubmed_df = pp.parse_pubmed_xml_to_df(path_xml, include_path=True) # return DataFrame
+```
+
+
+## Example Usage for PySpark
+
+This script take about 3.1 mins on EC2 `r3.8xlarge` (with 32 cores) using PySpark on full Pubmed OA subset.
+
+```python
+import pandas as pd
+import pubmed_parser as pp
+path_all = pp.list_xml_path('/path/to/folder/')
+path_rdd = sc.parallelize(path_all, numSlices=10000)
+pubmed_oa_all = path_rdd.map(lambda p: pp.parse_pubmed_xml(p)).collect() # load to memory
+# path_rdd.map(lambda p: pp.parse_pubmed_xml(p)).saveAsPickleFile('/mnt/daniel/pubmed_oa.pickle') # or to save to pickle
+pubmed_oa_df = pd.DataFrame(pubmed_oa_all) # transform to pandas DataFrame
 ```
 
 
