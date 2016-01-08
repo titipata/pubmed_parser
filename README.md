@@ -2,14 +2,14 @@
 
 [![Join the chat at https://gitter.im/titipata/pubmed_parser](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/titipata/pubmed_parser?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Python parser for [PubMed open-access subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/) (download section of XML subset is at the end of the page named e.g. `articles.A-B.tar.gz` )
+Python parser for [PubMed open-access subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/) (the download section of XML subset is at the end of the page, files are named like this `articles.A-B.tar.gz` )
 
 
 ## About
 
-We create a simple parser for PubMed Open-Access subset where you can give
+We created a simple parser for PubMed Open Access Subset where you can give
 an XML path or string to the function called `parse_pubmed_xml` which will return
-a dictionary with following information from xml file:
+a dictionary with the following information:
 
  - `full_title`: article's title
  - `abstract`: abstract
@@ -59,7 +59,7 @@ print(pubmed_dict)
  'subjects': 'Research Article'}
 ```
 
-You can also pass list or single xml path to function `parse_pubmed_xml_to_df` which will return parsed information in DataFrame format of all the path in the given list. Providing less than 10k xml paths are recommended if you do not parse in parallel since it can crash the memory. It takes about 0.4 days to parse all PubMed Open Access subset, which has around a million files.
+You can also pass a list of XML paths to the function `parse_pubmed_xml_to_df` which will return the parsed information in DataFrame format of all the XMLs in the given list. Providing less than 10k XML paths are recommended if you do not parse in parallel since it can crash the memory. It takes about 0.4 days to parse all PubMed Open Access subset, which has around a million files.
 
 ```python
 import pubmed_parser as pp
@@ -70,7 +70,7 @@ pubmed_df = pp.parse_pubmed_xml_to_df(path_xml, include_path=True) # return Data
 
 ## Example Usage for PySpark
 
-This script take about 3.1 mins on EC2 `r3.8xlarge` (with 32 cores) using PySpark on full Pubmed OA subset.
+This script takes about 3.1 mins on EC2 `r3.8xlarge` (with 32 cores) using PySpark on full Pubmed OA subset.
 
 ```python
 import pandas as pd
