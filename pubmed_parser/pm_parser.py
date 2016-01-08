@@ -17,7 +17,7 @@ __all__ = [
 
 def list_xml_path(path_dir):
     """
-    List full xml path under given directory
+    List full xml path under given directory `path_dir`
     """
     fullpath = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(path_dir)) for f in fn]
     path_list = [folder for folder in fullpath if os.path.splitext(folder)[-1] == ('.nxml' or '.xml')]
@@ -88,11 +88,10 @@ def flatten_zip_author(author_list):
     return list(chain.from_iterable(author_zipped_list))
 
 
-
-def parse_pubmed_xml(path):
+def parse_pubmed_xml(path, include_path=False):
     """
     Given single xml path, extract information from xml file
-    and return as a list
+    and return parsed xml file in dictionary format.
     """
     try:
         tree = etree.parse(path)
@@ -166,7 +165,7 @@ def parse_pubmed_xml(path):
             author_list.append(['', '', rid_list])
     author_list = flatten_zip_author(author_list)
 
-    list_out = {'full_title': full_title.strip(),
+    dict_out = {'full_title': full_title.strip(),
                 'abstract': abstract,
                 'journal_title': journal_title,
                 'pmid': pmid,
@@ -176,10 +175,12 @@ def parse_pubmed_xml(path):
                 'affiliation_list': affiliation_list,
                 'publication_year': pub_year,
                 'subjects': subjects}
-    return list_out
+    if include_path:
+        dict_out['path_to_file'] = path
+    return dict_out
 
 
-def parse_pubmed_xml_to_df(paths, remove_abstract=False, include_path=False):
+def parse_pubmed_xml_to_df(paths, include_path=False, remove_abstract=False):
     """
     Given list of xml paths, return parsed DataFrame
 
@@ -189,13 +190,11 @@ def parse_pubmed_xml_to_df(paths, remove_abstract=False, include_path=False):
     """
     pm_docs = []
     if not isinstance(paths, list):
-        pm_dict = parse_pubmed_xml(paths) # in case providing single path
-        pm_docs = [pm_dict]
+        pm_docs = [parse_pubmed_xml(paths, include_path=include_path)] # in case providing single path
     else:
+        # else for list of paths
         for path in paths:
-            pm_dict = parse_pubmed_xml(path)
-            if include_path:
-                pm_dict['path_to_file'] = path
+            pm_dict = parse_pubmed_xml(path, include_path=include_path)
             pm_docs.append(pm_dict)
 
     pm_docs = filter(partial(is_not, None), pm_docs)  # remove None
@@ -204,17 +203,6 @@ def parse_pubmed_xml_to_df(paths, remove_abstract=False, include_path=False):
     # remove empty abstract
     if remove_abstract:
         pm_docs_df = pm_docs_df[pm_docs_df.abstract != ''].reset_index().drop('index', axis=1)
-
-    # reorder columns
-    column_name = ['full_title', 'abstract',
-                   'journal_title', 'pmid',
-                   'pmc', 'publisher_id',
-                   'author_list', 'affiliation_list',
-                   'publication_year', 'subjects']
-    if include_path:
-        pm_docs_df = pm_docs_df[column_name + ['path_to_file']]
-    else:
-        pm_docs_df = pm_docs_df[column_name]
 
     return pm_docs_df
 
