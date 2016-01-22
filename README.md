@@ -36,6 +36,15 @@ a dictionary with the following information:
 
 ## Example Usage
 
+First, add the package to python environment by modifying `.bash_profile` or export using command line,
+
+```bash
+export PYTHONPATH='/PATH/TO/pubmed_parser:$PYTHONPATH'
+export PYTHONPATH
+```
+
+Example code is shown below,
+
 ```python
 import pubmed_parser as pp
 path_xml = pp.list_xml_path('data') # list all xml paths under directory
