@@ -98,8 +98,9 @@ def parse_pubmed_xml(path, include_path=False):
     except:
         try:
             tree = etree.fromstring(path)
-        except:
-            raise Exception("It was not able to read a path, a file-like object, or a string as an XML")
+        except Exception as e:
+            print("Error: it was not able to read a path, a file-like object, or a string as an XML")
+            raise
 
     try:
         title = ' '.join(tree.xpath('//title-group/article-title/text()')).replace('\n', ' ')
