@@ -1,15 +1,19 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
+from setuptools import setup
 
-from distutils.core import setup
+descr = '''Parser for Pubmed Open-Access Subset XML Dataset'''
 
-setup(
-    name='pubmed_parser',
-    version='0.1.dev',
-    description='Python parser for PubMed open source data',
-    url='https://github.com/titipata/pubmed_parser',
-    author='Titipat Achakulvisut',
-    author_email='titipata@u.northwestern.edu',
-    license='(c) 2015 Titipat Achakulvisut, Daniel E. Acuna',
-    keywords='pubmed parser',
-    install_requires=['pandas', 'lxml'],
-)
+if __name__ == "__main__":
+    setup(
+        name='pubmed_parser',
+        version='0.1.dev',
+        description='Python parser for PubMed open source data',
+        long_description=open('README.md').read(),
+        url='https://github.com/titipata/pubmed_parser',
+        author='Titipat Achakulvisut',
+        author_email='titipata@u.northwestern.edu',
+        license='(c) 2015 Titipat Achakulvisut, Daniel E. Acuna',
+        keywords='pubmed parser',
+        install_requires=['pandas', 'lxml'],
+        packages=['pubmed_parser'],
+    )

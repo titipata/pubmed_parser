@@ -34,14 +34,23 @@ a dictionary with the following information:
  - `subjects`: list of subjects listed in the article. Sometimes, it only contains what type of article it is, such as research article, review, proceedings, etc.
 
 
-## Example Usage
+## Install package
 
-First, add the package to python environment by modifying `.bash_profile` or export using command line,
+You can either install package using `setup.py` by
+running
+
+```bash
+$ python setup.py develop install
+```
+
+or add the package to python environment by  modifying `.bash_profile` i.e.
 
 ```bash
 export PYTHONPATH='/PATH/TO/pubmed_parser:$PYTHONPATH'
 export PYTHONPATH
 ```
+
+## Example Usage
 
 Example code is shown below,
 
@@ -77,9 +86,9 @@ pubmed_df = pp.parse_pubmed_xml_to_df(path_xml, include_path=True) # return Data
 ```
 
 
-## Example Usage for PySpark
+## Example Usage with PySpark
 
-This script takes about 3.1 mins on EC2 `r3.8xlarge` (with 32 cores) using PySpark on full Pubmed OA subset.
+This script takes about 3.1 mins to parse all Pubmed Open-Access subset using PySpark on Amazon EC2 `r3.8xlarge` (with 32 cores).
 
 ```python
 import pandas as pd
