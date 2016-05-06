@@ -220,7 +220,7 @@ def pretty_print_xml(path):
         except:
             raise Exception("It was not able to read a path, a file-like object, or a string as an XML")
 
-    print tostring(tree, pretty_print=True)
+    print(tostring(tree, pretty_print=True))
 
 
 def chunks(l, n):
