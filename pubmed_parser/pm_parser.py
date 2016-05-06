@@ -1,12 +1,12 @@
 import os
 import pandas as pd
+import collections
 from lxml import etree
 from itertools import chain
 from functools import partial
 from operator import is_not
 from lxml.etree import tostring
 from six import string_types
-from itertools import chain
 
 __all__ = [
     'list_xml_path',
@@ -14,6 +14,15 @@ __all__ = [
     'parse_pubmed_xml_to_df',
     'pretty_print_xml',
 ]
+
+
+def flatten(l):
+    for el in l:
+        if isinstance(el, collections.Iterable) and not isinstance(el, string_types):
+            for sub in flatten(el):
+                yield sub
+        else:
+            yield el
 
 
 def list_xml_path(path_dir):
@@ -67,7 +76,7 @@ def stringify_affiliation_rec(node):
     ref: http://stackoverflow.com/questions/2158395/flatten-an-irregular-list-of-lists-in-python
     """
     parts = recur_children(node)
-    parts_flatten = list(chain(*parts))
+    parts_flatten = list(flatten(parts))
     return ' '.join(parts_flatten).strip()
 
 
