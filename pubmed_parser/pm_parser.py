@@ -5,7 +5,8 @@ from itertools import chain
 from functools import partial
 from operator import is_not
 from lxml.etree import tostring
-from compiler.ast import flatten
+from six import string_types
+from itertools import chain
 
 __all__ = [
     'list_xml_path',
@@ -66,7 +67,8 @@ def stringify_affiliation_rec(node):
     ref: http://stackoverflow.com/questions/2158395/flatten-an-irregular-list-of-lists-in-python
     """
     parts = recur_children(node)
-    return ' '.join(flatten(parts)).strip()
+    parts_flatten = list(chain(*parts))
+    return ' '.join(parts_flatten).strip()
 
 
 def zip_author(author):
@@ -190,7 +192,7 @@ def parse_pubmed_xml_to_df(paths, include_path=False, remove_abstract=False):
     path_xml: if true, concat path to xml file when constructing DataFrame
     """
     pm_docs = []
-    if not isinstance(paths, list):
+    if isinstance(paths, string_types):
         pm_docs = [parse_pubmed_xml(paths, include_path=include_path)] # in case providing single path
     else:
         # else for list of paths
