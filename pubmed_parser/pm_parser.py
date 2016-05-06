@@ -79,7 +79,7 @@ def zip_author(author):
     return [[first_name, last_name, key1], [first_name, last_name, key2]] instead
     """
     author_zipped = list(zip([[author[0], author[1]]]*len(author[-1]), author[-1]))
-    return map(lambda x: x[0] + [x[-1]], author_zipped)
+    return list(map(lambda x: x[0] + [x[-1]], author_zipped))
 
 
 def flatten_zip_author(author_list):
@@ -151,7 +151,8 @@ def parse_pubmed_xml(path, include_path=False):
     aff_name_list = []
     for node in aff_name:
         aff_name_list.append(stringify_affiliation_rec(node))
-    affiliation_list = map(list, zip(aff_id, map(lambda x: x.strip().replace('\n', ' '), aff_name_list)))  # create dictionary
+    aff_name_list = list(map(lambda x: x.strip().replace('\n', ' '), aff_name_list))
+    affiliation_list = [list((a, n)) for (a, n) in zip(aff_id, aff_name_list)]
 
     tree_author = tree.xpath('//contrib-group/contrib[@contrib-type="author"]')
 
@@ -187,9 +188,17 @@ def parse_pubmed_xml_to_df(paths, include_path=False, remove_abstract=False):
     """
     Given list of xml paths, return parsed DataFrame
 
-    path_list: list of xml paths
-    remove_abs: if true, remove row of dataframe if parsed xml contains empty abstract
-    path_xml: if true, concat path to xml file when constructing DataFrame
+    Parameters
+    ----------
+    path_list: list, list of xml paths
+    remove_abstract: boolean, if true, remove row of dataframe if parsed xml
+        contains empty abstract
+    include_path: boolean, if true, concat path to xml file when
+        constructing dataFrame
+
+    Return
+    ------
+    pm_docs_df: dataframe, dataframe of all parsed xml files
     """
     pm_docs = []
     if isinstance(paths, string_types):
