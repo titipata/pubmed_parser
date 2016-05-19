@@ -278,14 +278,14 @@ def parse_paragraph(tree, dict_refs):
         try:
             pm_ids = list()
             for r in par_refs:
-                r_ref = filter(lambda ref: ref['ref_id'] == r, dict_refs)
+                r_ref = list(filter(lambda ref: ref['ref_id'] == r, dict_refs))
                 if r_ref[0]['pmid'] != '':
                     pm_ids.append(r_ref[0]['pmid'])
         except:
-            pm_ids = ''
+            pm_ids = list()
 
         dict_par = {'pmc': pmc, 'pmid': pmid, 'text': text,
-                    'references': par_refs, 'ref_pm_ids': pm_ids,
+                    'references': par_refs, 'ref_pmids': pm_ids,
                     'section': section}
         dict_pars.append(dict_par)
     return dict_pars
