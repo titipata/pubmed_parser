@@ -1,28 +1,30 @@
 import os
 import pandas as pd
-import collections
 from lxml import etree
-from itertools import chain
 from functools import partial
 from operator import is_not
 from lxml.etree import tostring
-from six import string_types
+from .utils import *
 
 __all__ = [
     'list_xml_path',
     'parse_pubmed_xml',
+    'parse_pubmed_paragraph',
+    'parse_pubmed_references',
     'parse_pubmed_xml_to_df',
     'pretty_print_xml',
 ]
 
-
-def flatten(l):
-    for el in l:
-        if isinstance(el, collections.Iterable) and not isinstance(el, string_types):
-            for sub in flatten(el):
-                yield sub
-        else:
-            yield el
+def read_xml(path):
+    try:
+        tree = etree.parse(path)
+    except:
+        try:
+            tree = etree.fromstring(path)
+        except Exception as e:
+            print("Error: it was not able to read a path, a file-like object, or a string as an XML")
+            raise
+    return tree
 
 
 def list_xml_path(path_dir):
@@ -32,52 +34,6 @@ def list_xml_path(path_dir):
     fullpath = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(path_dir)) for f in fn]
     path_list = [folder for folder in fullpath if os.path.splitext(folder)[-1] == ('.nxml' or '.xml')]
     return path_list
-
-
-def stringify_children(node):
-    """
-    Filters and removes possible Nones in texts and tails
-    ref: http://stackoverflow.com/questions/4624062/get-all-text-inside-a-tag-in-lxml
-    """
-    parts = ([node.text] +
-             list(chain(*([c.text, c.tail] for c in node.getchildren()))) +
-             [node.tail])
-    return ''.join(filter(None, parts))
-
-
-def stringify_affiliation(node):
-    """
-    Filters and removes possible Nones in texts and tails
-    ref: http://stackoverflow.com/questions/4624062/get-all-text-inside-a-tag-in-lxml
-    """
-    parts = ([node.text] +
-             list(chain(*([c.text if (c.tag != 'label' and c.tag !='sup') else '', c.tail] for c in node.getchildren()))) +
-             [node.tail])
-    return ' '.join(filter(None, parts))
-
-
-def recur_children(node):
-    """
-    Recursive through node to when it has multiple children
-    """
-    if len(node.getchildren()) == 0:
-        parts = ([node.text or ''] + [node.tail or '']) if (node.tag != 'label' and node.tag !='sup') else ([node.tail or ''])
-        return parts
-    else:
-        parts = ([node.text or ''] +
-                 [recur_children(c) for c in node.getchildren()] +
-                 [node.tail or ''])
-        return parts
-
-
-def stringify_affiliation_rec(node):
-    """
-    Flatten and join list to string
-    ref: http://stackoverflow.com/questions/2158395/flatten-an-irregular-list-of-lists-in-python
-    """
-    parts = recur_children(node)
-    parts_flatten = list(flatten(parts))
-    return ' '.join(parts_flatten).strip()
 
 
 def zip_author(author):
@@ -97,6 +53,18 @@ def flatten_zip_author(author_list):
     """
     author_zipped_list = map(zip_author, author_list)
     return list(chain.from_iterable(author_zipped_list))
+
+
+def pretty_print_xml(path, save_path=None):
+    """
+    Given a XML path, file-like, or string, print a pretty xml version of it
+    """
+    tree = read_xml(path)
+
+    if save_path:
+        tree.write(save_path, pretty_print=True) # save prerry print to xml file
+
+    print(tostring(tree, pretty_print=True))
 
 
 def parse_pubmed_xml(path, include_path=False):
@@ -157,7 +125,7 @@ def parse_pubmed_xml(path, include_path=False):
         aff_id = ['']  # replace id with empty list
 
     aff_name = tree.xpath('//aff[@id]')
-    aff_name_list = []
+    aff_name_list = list()
     for node in aff_name:
         aff_name_list.append(stringify_affiliation_rec(node))
     aff_name_list = list(map(lambda x: x.strip().replace('\n', ' '), aff_name_list))
@@ -165,7 +133,7 @@ def parse_pubmed_xml(path, include_path=False):
 
     tree_author = tree.xpath('//contrib-group/contrib[@contrib-type="author"]')
 
-    author_list = []
+    author_list = list()
     for el in tree_author:
         el0 = el.findall('xref[@ref-type="aff"]')
         try:
@@ -209,7 +177,7 @@ def parse_pubmed_xml_to_df(paths, include_path=False, remove_abstract=False):
     ------
     pm_docs_df: dataframe, dataframe of all parsed xml files
     """
-    pm_docs = []
+    pm_docs = list()
     if isinstance(paths, string_types):
         pm_docs = [parse_pubmed_xml(paths, include_path=include_path)] # in case providing single path
     else:
@@ -228,26 +196,107 @@ def parse_pubmed_xml_to_df(paths, include_path=False, remove_abstract=False):
     return pm_docs_df
 
 
-def pretty_print_xml(path):
+def parse_references(tree):
     """
-    Given a XML path, file-like, or string, print a pretty xml version of it
+    Give a tree as an input,
+    parse it to dictionary if ref-id and
+    """
+    references = tree.xpath('//ref-list/ref[@id]')
+    dict_refs = list()
+    for r in references:
+        ref_id = r.attrib['id']
+        for rc in r:
+            if 'publication-type' in rc.attrib.keys():
+                if rc.attrib.values() is not None:
+                    journal_type = rc.attrib.values()[0]
+                else:
+                    journal_type = ''
+                names = list()
+                for n in rc.findall('name'):
+                    name = join([t.text for t in n.getchildren()][::-1])
+                    names.append(name)
+                try:
+                    article_title = rc.findall('article-title')[0].text
+                except:
+                    article_title = ''
+                try:
+                    journal = rc.findall('source')[0].text
+                except:
+                    journal = ''
+                try:
+                    pmid = rc.findall('pub-id[@pub-id-type="pmid"]')[0].text
+                except:
+                    pmid = ''
+                dict_ref = {'ref_id': ref_id, 'name': names, 'article_title': article_title,
+                            'journal': journal, 'journal_type': journal_type, 'pmid': pmid}
+                dict_refs.append(dict_ref)
+    return dict_refs
+
+
+def parse_pubmed_references(path):
+    tree = read_xml(path)
+    dict_refs = parse_references(tree)
+    return dict_refs
+
+
+def parse_paragraph(tree, dict_refs):
+    """
+    Give tree and reference dictionary
+    return dictionary of paragraph
     """
     try:
-        tree = etree.parse(path)
+        pmid = tree.xpath('//article-meta/article-id[@pub-id-type="pmid"]')[0].text
     except:
+        pmid = ''
+    try:
+        pmc = tree.xpath('//article-meta/article-id[@pub-id-type="pmc"]')[0].text
+    except:
+        pmc = ''
+
+    paragraphs = tree.xpath('//body//p')
+    dict_pars = list()
+    for p in paragraphs:
         try:
-            tree = etree.fromstring(path)
+            text = join(p.xpath('text()')) # text of the paragraph
         except:
-            raise Exception("It was not able to read a path, a file-like object, or a string as an XML")
+            text = ''
+        try:
+            section = p.xpath('../title/text()')[0]
+        except:
+            section = ''
 
-    print(tostring(tree, pretty_print=True))
+        # find the reference codes used in the paragraphs, can be compared with bibliogrpahy
+        try:
+            par_bib_refs = p.findall('.//xref[@ref-type="bibr"]')
+            par_refs = list()
+            for r in par_bib_refs:
+                par_refs.append(r.xpath('@rid')[0])
+        except:
+            par_refs = ''
+
+        # search bibliography for PubMed ID's of referenced articles
+        try:
+            pm_ids = list()
+            for r in par_refs:
+                r_ref = filter(lambda ref: ref['ref_id'] == r, dict_refs)
+                if r_ref[0]['pmid'] != '':
+                    pm_ids.append(r_ref[0]['pmid'])
+        except:
+            pm_ids = ''
+
+        dict_par = {'pmc': pmc, 'pmid': pmid, 'text': text,
+                    'references': par_refs, 'ref_pm_ids': pm_ids,
+                    'section': section}
+        dict_pars.append(dict_par)
+    return dict_pars
 
 
-def chunks(l, n):
+def parse_pubmed_paragraph(path, include_path=False):
     """
-    Yield successive n-sized chunks from l
-    Suppose we want to chunk all path list into smaller chunk
-    example: chunks(path_list, 10000)
+    Given single xml path, extract information from xml file
+    and return parsed xml file in dictionary format.
     """
-    for i in xrange(0, len(l), n):
-        yield l[i:i+n]
+    tree = read_xml(path)
+    dict_refs = parse_references(tree)
+    dict_pars = parse_paragraph(tree, dict_refs)
+    return dict_pars
