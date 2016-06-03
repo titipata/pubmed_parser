@@ -155,4 +155,4 @@ If you use this package, please cite it like this
 
 ## License
 
-(c) 2015 Titipat Achakulvisut, Daniel E. Acuna
+MIT License Copyright (c) 2015 Titipat Achakulvisut, Daniel E. Acuna
