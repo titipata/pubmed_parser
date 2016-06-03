@@ -181,8 +181,17 @@ def parse_pubmed_xml_to_df(paths, include_path=False, remove_abstract=False):
 def parse_references(tree):
     """
     Give a tree as an input,
-    parse it to dictionary if ref-id and
+    parse it to dictionary if ref-id and cited PMID
     """
+    try:
+        pmid = tree.xpath('//article-meta/article-id[@pub-id-type="pmid"]')[0].text
+    except:
+        pmid = ''
+    try:
+        pmc = tree.xpath('//article-meta/article-id[@pub-id-type="pmc"]')[0].text
+    except:
+        pmc = ''
+
     references = tree.xpath('//ref-list/ref[@id]')
     dict_refs = list()
     for r in references:
@@ -206,16 +215,21 @@ def parse_references(tree):
                 except:
                     journal = ''
                 try:
-                    pmid = rc.findall('pub-id[@pub-id-type="pmid"]')[0].text
+                    pmid_cited = rc.findall('pub-id[@pub-id-type="pmid"]')[0].text
                 except:
-                    pmid = ''
+                    pmid_cited = ''
                 dict_ref = {'ref_id': ref_id, 'name': names, 'article_title': article_title,
-                            'journal': journal, 'journal_type': journal_type, 'pmid': pmid}
+                            'journal': journal, 'journal_type': journal_type, 'pmid': pmid,
+                            'pmc': pmc, 'pmid_cited': pmid_cited}
                 dict_refs.append(dict_ref)
     return dict_refs
 
 
 def parse_pubmed_references(path):
+    """
+    Given path to xml file, parse all references
+    from that PMID
+    """
     tree = read_xml(path)
     dict_refs = parse_references(tree)
     return dict_refs
