@@ -15,17 +15,6 @@ __all__ = [
     'pretty_print_xml',
 ]
 
-def read_xml(path):
-    try:
-        tree = etree.parse(path)
-    except:
-        try:
-            tree = etree.fromstring(path)
-        except Exception as e:
-            print("Error: it was not able to read a path, a file-like object, or a string as an XML")
-            raise
-    return tree
-
 
 def list_xml_path(path_dir):
     """
@@ -72,14 +61,7 @@ def parse_pubmed_xml(path, include_path=False):
     Given single xml path, extract information from xml file
     and return parsed xml file in dictionary format.
     """
-    try:
-        tree = etree.parse(path)
-    except:
-        try:
-            tree = etree.fromstring(path)
-        except Exception as e:
-            print("Error: it was not able to read a path, a file-like object, or a string as an XML")
-            raise
+    tree = read_xml(path)
 
     try:
         title = ' '.join(tree.xpath('//title-group/article-title/text()')).replace('\n', ' ')
