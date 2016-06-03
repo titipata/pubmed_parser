@@ -2,10 +2,15 @@
 
 [![Join the chat at https://gitter.im/titipata/pubmed_parser](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/titipata/pubmed_parser?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Python parser for [PubMed open-access subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/) (the download section of XML subset is at the end of the page, files are named like this `articles.A-B.tar.gz` )
+Python parser for [PubMed open-access subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
+(the download section of XML subset is at the end of the page, files are named like
+  this `articles.A-B.tar.gz` ) and [MEDLINE XML](ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/)
+  file.
 
 
 ## About
+
+#### Parse Pubmed OA XML information
 
 We created a simple parser for PubMed Open Access Subset where you can give
 an XML path or string to the function called `parse_pubmed_xml` which will return
@@ -32,6 +37,34 @@ a dictionary with the following information:
 
  - `publication_year`: publication year
  - `subjects`: list of subjects listed in the article. Sometimes, it only contains what type of article it is, such as research article, review, proceedings, etc.
+
+
+#### Parse Pubmed OA citations
+
+We have `parse_pubmed_references` where we can give path of Pubmed Open Access subset
+and it will return list of dictionary that that particular PMID cites. Each dictionary
+has keys as following
+
+- `article_title`: article title
+- `journal`: journal name
+- `journal_type`: type of journal
+- `pmid`: Pubmed ID
+- `pmc`: Pubmed Central ID
+- `pmid_cited`: Pubmed ID of cited article
+
+
+#### Parse Medline XML
+
+Medline has different format of XML file. You can use function `parse_medline_xml`
+in order to parse XML file downloaded from this [site](ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/).
+It will return list of dictionary where each element contains:
+
+- `title`: title of the article
+- `abstract`: abstract of the article
+- `affiliation`: first affiliation from the article
+- `authors`: string of authors each separated by `;`
+- `mesh_terms`: list of MESH terms related to the article each separated by `;`
+- `year`: Publication year
 
 
 ## Install package
