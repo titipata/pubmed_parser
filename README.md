@@ -1,6 +1,7 @@
-# Parser for Pubmed Open-Access Subset XML Dataset
+# Parser for Pubmed Open-Access Subset XML Dataset and MEDLINE XML
 
 [![Join the chat at https://gitter.im/titipata/pubmed_parser](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/titipata/pubmed_parser?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/titipata/pubmed_parser/blob/master/LICENSE)
 
 Python parser for [PubMed open-access subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
 (the download section of XML subset is at the end of the page, files are named like
