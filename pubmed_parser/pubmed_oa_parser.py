@@ -219,9 +219,14 @@ def parse_references(tree):
                     pmid_cited = rc.findall('pub-id[@pub-id-type="pmid"]')[0].text
                 except:
                     pmid_cited = ''
-                dict_ref = {'ref_id': ref_id, 'name': names, 'article_title': article_title,
-                            'journal': journal, 'journal_type': journal_type, 'pmid': pmid,
-                            'pmc': pmc, 'pmid_cited': pmid_cited}
+                dict_ref = {'ref_id': ref_id,
+                            'name': names,
+                            'article_title': article_title,
+                            'journal': journal,
+                            'journal_type': journal_type,
+                            'pmid': pmid,
+                            'pmc': pmc,
+                            'pmid_cited': pmid_cited}
                 dict_refs.append(dict_ref)
     return dict_refs
 
