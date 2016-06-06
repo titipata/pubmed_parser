@@ -9,7 +9,7 @@ Python parser for [PubMed open-access subset](http://www.ncbi.nlm.nih.gov/pmc/to
   file.
 
 
-## About
+## Parser available
 
 #### Parse Pubmed OA XML information
 
@@ -39,12 +39,16 @@ a dictionary with the following information:
  - `publication_year`: publication year
  - `subjects`: list of subjects listed in the article. Sometimes, it only contains what type of article it is, such as research article, review, proceedings, etc.
 
+```python
+import pubmed_parser as pp
+dict_out = pp.parse_pubmed_xml(path)
+```
 
 #### Parse Pubmed OA citations
 
-We have `parse_pubmed_references` where we can give path of Pubmed Open Access subset
-and it will return list of dictionary that that particular PMID cites. Each dictionary
-has keys as following
+We have `parse_pubmed_references` where you can give path to Pubmed Open Access XML
+subset file and it will return list of dictionary that that particular PMID cites.
+Each dictionary has keys as following
 
 - `article_title`: article title
 - `journal`: journal name
@@ -52,6 +56,10 @@ has keys as following
 - `pmid`: Pubmed ID
 - `pmc`: Pubmed Central ID
 - `pmid_cited`: Pubmed ID of cited article
+
+```python
+dicts_out = pp.parse_pubmed_references(path) # list of dictionary
+```
 
 
 #### Parse Medline XML
@@ -67,11 +75,19 @@ return list of dictionary where each element contains:
 - `mesh_terms`: list of MESH terms related to the article each separated by `;`
 - `year`: Publication year
 
+```python
+dicts_out = pp.parse_medline_xml(path) # list of dictionary
+```
+
 
 #### Parse Medline XML from eutils
 
 You can use Pubmed parser to parse XML file from [eutils website](http://www.ncbi.nlm.nih.gov/books/NBK25501/)
 using `parse_xml_web`. For this function, you can provide single `pmid` as an input.
+
+```python
+dict_out = pp.parse_xml_web(pmid, save_xml=False)
+```
 
 
 ## Install package
