@@ -70,19 +70,19 @@ return list of dictionary where each element contains:
 
 ## Install package
 
-You can either install package using `setup.py` by
-running
+
+Install all dependencies
+
+```bash
+$ pip install -r requirements.txt
+```
+
+Then you can install package using `setup.py` by running
 
 ```bash
 $ python setup.py develop install
 ```
 
-or add the package to python environment by  modifying `.bash_profile` i.e.
-
-```bash
-export PYTHONPATH='/PATH/TO/pubmed_parser:$PYTHONPATH'
-export PYTHONPATH
-```
 
 ## Example Usage
 
@@ -145,6 +145,7 @@ pubmed_oa_df = pd.DataFrame(pubmed_oa_all) # transform to pandas DataFrame
 
 - [lxml](http://lxml.de/)
 - [pandas](https://github.com/pydata/pandas)
+- [unidecode](https://pypi.python.org/pypi/Unidecode)
 
 
 ## Citation
