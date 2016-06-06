@@ -35,6 +35,11 @@ def get_author_string(tree):
     return '; '.join(authors_text)
 
 
+def get_year_string(tree):
+    year = ''.join(tree.xpath('//pubmeddata//history//pubmedpubdate[@pubstatus="medline"]/year/text()'))
+    return year
+
+
 def get_abstract_string(tree):
     abstract = unidecode(stringify_children(tree.xpath('//abstract')[0]))
     return abstract

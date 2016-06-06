@@ -68,8 +68,13 @@ return list of dictionary where each element contains:
 - `year`: Publication year
 
 
-## Install package
+#### Parse Medline XML from eutils
 
+You can use Pubmed parser to parse XML file from [eutils website](http://www.ncbi.nlm.nih.gov/books/NBK25501/)
+using `parse_xml_web`. For this function, you can provide single `pmid` as an input.
+
+
+## Install package
 
 Install all dependencies
 
@@ -84,7 +89,7 @@ $ python setup.py develop install
 ```
 
 
-## Example Usage
+## Example Usage for Pubmed OA
 
 Example code is shown below,
 
