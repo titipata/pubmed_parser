@@ -58,7 +58,7 @@ Each dictionary has keys as following
 - `pmid_cited`: Pubmed ID of cited article
 
 ```python
-dicts_out = pp.parse_pubmed_references(path) # list of dictionary
+dicts_out = pp.parse_pubmed_references(path) # return list of dictionary
 ```
 
 #### Parse Pubmed OA captions
@@ -74,6 +74,9 @@ images. The function will return list of dictionary which has following keys
 - `fig_label`: label of the figure
 - `graphic_ref`: reference to graphic file name provided from Pubmed OA
 
+```python
+dicts_out = pp.parse_pubmed_caption(path) # return list of dictionary
+```
 
 #### Parse Medline XML
 
@@ -81,6 +84,7 @@ Medline has different format of XML file. You can use function `parse_medline_xm
 in order to parse XML file from full MEDLINE data. The license can be requested from this  [site](https://www.nlm.nih.gov/bsd/licensee/medpmmenu.html). The function will
 return list of dictionary where each element contains:
 
+- `pmid`: Pubmed ID
 - `title`: title of the article
 - `abstract`: abstract of the article
 - `affiliation`: first affiliation from the article

@@ -85,9 +85,14 @@ def parse_article_info(medline):
     pmid = parse_pmid(medline)
     mesh_terms = parse_mesh_terms(medline)
 
-    return {'title': title, 'abstract': abstract, 'journal': journal_name,
-            'author': authors_info, 'affiliation': affiliations_info, 'year': year,
-            'pmid': pmid, 'mesh_terms': mesh_terms}
+    return {'title': title,
+            'abstract': abstract,
+            'journal': journal_name,
+            'author': authors_info,
+            'affiliation': affiliations_info,
+            'year': year,
+            'pmid': pmid,
+            'mesh_terms': mesh_terms}
 
 
 def parse_medline_xml(path):
