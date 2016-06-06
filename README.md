@@ -61,6 +61,19 @@ Each dictionary has keys as following
 dicts_out = pp.parse_pubmed_references(path) # list of dictionary
 ```
 
+#### Parse Pubmed OA captions
+
+The function `parse_pubmed_caption` can parse image captions from given path
+to XML file. It will return reference index that you can refer back to actual
+images. The function will return list of dictionary which has following keys
+
+- `pmc`:Pubmed ID
+- `pmid`: Pubmed Central ID
+- `fig_caption`: string of caption
+- `fig_id`: reference id for figure (use to refer in XML article)
+- `fig_label`: label of the figure
+- `graphic_ref`: reference to graphic file name provided from Pubmed OA
+
 
 #### Parse Medline XML
 

@@ -11,6 +11,7 @@ __all__ = [
     'parse_pubmed_xml',
     'parse_pubmed_paragraph',
     'parse_pubmed_references',
+    'parse_pubmed_caption',
     'parse_pubmed_xml_to_df',
     'pretty_print_xml',
 ]
@@ -296,3 +297,42 @@ def parse_pubmed_paragraph(path, include_path=False):
     dict_refs = parse_references(tree)
     dict_pars = parse_paragraph(tree, dict_refs)
     return dict_pars
+
+
+def parse_pubmed_caption(path):
+    """
+    Given single xml path, extract figure caption and
+    reference id back to that figure
+    """
+    tree = read_xml(path)
+
+    try:
+        pmid = tree.xpath('//article-meta/article-id[@pub-id-type="pmid"]')[0].text
+    except:
+        pmid = ''
+    try:
+        pmc = tree.xpath('//article-meta/article-id[@pub-id-type="pmc"]')[0].text
+    except:
+        pmc = ''
+
+    figs = tree.findall('//fig')
+    dict_captions = list()
+    if figs is not None:
+        for fig in figs:
+            fig_id = fig.attrib['id']
+            fig_label = stringify_children(fig.find('label'))
+            fig_captions = fig.find('caption').getchildren()
+            caption = join([stringify_children(c) for c in fig_captions])
+            graphic = fig.find('graphic')
+            if graphic is not None:
+                graphic_ref = graphic.attrib.values()[0]
+            dict_caption = {'pmid': pmid,
+                            'pmc': pmc,
+                            'fig_caption': caption,
+                            'fig_id': fig_id,
+                            'fig_label': fig_label,
+                            'graphic_ref': graphic_ref}
+            dict_captions.append(dict_caption)
+    if not dict_captions:
+        dict_captions = None
+    return dict_captions
