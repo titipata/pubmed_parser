@@ -9,4 +9,4 @@ from .pubmed_oa_parser import list_xml_path, parse_pubmed_xml, \
                        parse_pubmed_caption, \
                        parse_pubmed_xml_to_df, pretty_print_xml
 from .medline_parser import parse_medline_xml
-from .pubmed_web_parser import parse_xml_web
+from .pubmed_web_parser import parse_xml_web, parse_citation_web

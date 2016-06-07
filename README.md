@@ -96,7 +96,6 @@ return list of dictionary where each element contains:
 dicts_out = pp.parse_medline_xml(path) # list of dictionary
 ```
 
-
 #### Parse Medline XML from eutils
 
 You can use Pubmed parser to parse XML file from [eutils website](http://www.ncbi.nlm.nih.gov/books/NBK25501/)
@@ -104,6 +103,19 @@ using `parse_xml_web`. For this function, you can provide single `pmid` as an in
 
 ```python
 dict_out = pp.parse_xml_web(pmid, save_xml=False)
+```
+
+#### Parse Medline XML citations
+
+Function `parse_citation_web` allows you to parse citations from given Pubmed
+central ID. This will return a dictionary which contains these following keys
+
+- `n_citations`: number of citations for given PMC
+- `pmc`: Pubmed Central ID
+- `pmc_cited`: List of cited Pubmed Central ID
+
+```python
+dict_out = pp.parse_citation_web(pmc)
 ```
 
 
