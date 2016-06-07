@@ -204,9 +204,14 @@ def parse_references(tree):
                 else:
                     journal_type = ''
                 names = list()
-                for n in rc.findall('name'):
-                    name = join([t.text for t in n.getchildren()][::-1])
-                    names.append(name)
+                if rc.find('name') is not None:
+                    for n in rc.findall('name'):
+                        name = join([t.text for t in n.getchildren()][::-1])
+                        names.append(name)
+                elif rc.find('person-group') is not None:
+                    for n in rc.find('person-group'):
+                        name = join(n.xpath('given-names/text()') + n.xpath('surname/text()'))
+                        names.append(name)
                 try:
                     article_title = rc.findall('article-title')[0].text
                 except:
@@ -220,7 +225,7 @@ def parse_references(tree):
                 except:
                     pmid_cited = ''
                 dict_ref = {'ref_id': ref_id,
-                            'name': names,
+                            'name': '; '.join(names),
                             'article_title': article_title,
                             'journal': journal,
                             'journal_type': journal_type,

@@ -17,6 +17,9 @@ def read_xml(path):
 
 
 def join(l):
+    """
+    Join list with single space
+    """
     return ' '.join(l)
 
 
