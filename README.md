@@ -4,8 +4,8 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/titipata/pubmed_parser/blob/master/LICENSE)
 
 Python parser for [PubMed open-access subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
-(the download section of XML subset is at the end of the page, files are named like
-  this `articles.A-B.tar.gz` ) and [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/medpmmenu.html/)
+(the download section of XML subset is at the end of the page, files are named like this
+  `articles.A-B.tar.gz` ) and [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/)
   file.
 
 
@@ -81,7 +81,7 @@ dicts_out = pp.parse_pubmed_caption(path) # return list of dictionary
 #### Parse Medline XML
 
 Medline has different format of XML file. You can use function `parse_medline_xml`
-in order to parse XML file from full MEDLINE data. The license can be requested from this  [site](https://www.nlm.nih.gov/bsd/licensee/medpmmenu.html). The function will
+in order to parse XML file from full MEDLINE data. The license can be requested from this  [site](https://www.nlm.nih.gov/bsd/licensee/). The function will
 return list of dictionary where each element contains:
 
 - `pmid`: Pubmed ID
