@@ -99,7 +99,15 @@ dicts_out = pp.parse_medline_xml(path) # list of dictionary
 #### Parse Medline XML from eutils
 
 You can use Pubmed parser to parse XML file from [eutils website](http://www.ncbi.nlm.nih.gov/books/NBK25501/)
-using `parse_xml_web`. For this function, you can provide single `pmid` as an input.
+using `parse_xml_web`. For this function, you can provide single `pmid` as an input and
+it will return dictionary with following keys
+
+- `title`: title
+- `abstract`: abstract
+- `journal`: journal
+- `affiliation`: affiliation of first author
+- `authors`: string of authors' name, separated by `;`
+- `year`: Publication year
 
 ```python
 dict_out = pp.parse_xml_web(pmid, save_xml=False)
