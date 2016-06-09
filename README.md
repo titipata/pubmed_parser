@@ -90,6 +90,7 @@ return list of dictionary where each element contains:
 - `affiliation`: first affiliation from the article
 - `authors`: string of authors each separated by `;`
 - `mesh_terms`: list of MESH terms related to the article each separated by `;`
+- `keywords`: list of keywords each separated by `;`
 - `year`: Publication year
 
 ```python

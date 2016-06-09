@@ -29,6 +29,21 @@ def parse_mesh_terms(medline):
     return mesh_terms
 
 
+def parse_keywords(medline):
+    """
+    Parse keywords from article, separated by ;
+    """
+    keyword_list = medline.find('KeywordList')
+    keywords = list()
+    if keyword_list is not None:
+        for k in keyword_list.findall('Keyword'):
+            keywords.append(k.text)
+        keywords = '; '.join(keywords)
+    else:
+        keywords = ''
+    return keywords
+
+
 def parse_article_info(medline):
     """
     Parse article nodes from Medline dataset
@@ -84,6 +99,7 @@ def parse_article_info(medline):
 
     pmid = parse_pmid(medline)
     mesh_terms = parse_mesh_terms(medline)
+    keywords = parse_keywords(medline)
 
     return {'title': title,
             'abstract': abstract,
@@ -92,7 +108,8 @@ def parse_article_info(medline):
             'affiliation': affiliations_info,
             'year': year,
             'pmid': pmid,
-            'mesh_terms': mesh_terms}
+            'mesh_terms': mesh_terms,
+            'keywords': keywords}
 
 
 def parse_medline_xml(path):
