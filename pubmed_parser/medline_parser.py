@@ -109,7 +109,8 @@ def parse_article_info(medline):
             'year': year,
             'pmid': pmid,
             'mesh_terms': mesh_terms,
-            'keywords': keywords}
+            'keywords': keywords,
+            'delete': False}
 
 
 def parse_medline_xml(path):
@@ -120,4 +121,20 @@ def parse_medline_xml(path):
     tree = read_xml(path)
     medline_citations = tree.xpath('//MedlineCitationSet/MedlineCitation')
     dict_out = list(map(parse_article_info, medline_citations))
+    delete_citations = tree.xpath('//DeleteCitation/PMID')
+    dict_delete = \
+        [
+            {'title': None,
+             'abstract': None,
+             'journal': None,
+             'author': None,
+             'affiliation': None,
+             'year': None,
+             'pmid': p.text,
+             'mesh_terms': None,
+             'keywords': None,
+             'delete': True
+             } for p in delete_citations
+            ]
+    dict_out.extend(dict_delete)
     return dict_out
