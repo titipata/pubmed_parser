@@ -1,8 +1,9 @@
 from .utils import *
-
+from itertools import chain
 
 __all__ = [
-    'parse_medline_xml'
+    'parse_medline_xml',
+    'parse_medline_grantid'
 ]
 
 def parse_pmid(medline):
@@ -42,6 +43,47 @@ def parse_keywords(medline):
     else:
         keywords = ''
     return keywords
+
+
+def parse_grant_id(medline):
+    """
+    Parse Grant ID and related information given MEDLINE tree
+    """
+    article = medline.find('Article')
+    pmid = parse_pmid(medline)
+
+    grants = article.find('GrantList')
+    grants_dict = list()
+    if grants is not None:
+        grants_list = grants.getchildren()
+        for grant in grants_list:
+            grant_country = grant.find('Country')
+            if grant_country is not None:
+                country = grant_country.text
+            else:
+                country = ''
+            grant_agency = grant.find('Agency')
+            if grant_agency is not None:
+                agency = grant_agency.text
+            else:
+                agency = ''
+            grant_acronym = grant.find('Acronym')
+            if grant_acronym is not None:
+                acronym = grant_acronym.text
+            else:
+                acronym = ''
+            grant_id = grant.find('GrantID')
+            if grant_id is not None:
+                gid = grant_id.text
+            else:
+                gid = ''
+            dict_ = {'pmid': pmid,
+                     'grant_id': gid,
+                     'grant_acronym': acronym,
+                     'country': country,
+                     'agency': agency}
+            grants_dict.append(dict_)
+    return grants_dict
 
 
 def parse_article_info(medline):
@@ -115,7 +157,7 @@ def parse_article_info(medline):
 
 def parse_medline_xml(path):
     """
-    Parse xml file from Medline xml format
+    Parse XML file from Medline XML format
     available at ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/
     """
     tree = read_xml(path)
@@ -138,3 +180,14 @@ def parse_medline_xml(path):
             ]
     dict_out.extend(dict_delete)
     return dict_out
+
+
+def parse_medline_grantid(path):
+    """
+    Parse grant id from Medline XML file
+    """
+    tree = read_xml(path)
+    medline_citations = tree.xpath('//MedlineCitationSet/MedlineCitation')
+    grant_id_list = list(map(parse_grant_id, medline_citations))
+    grant_id_list = list(chain(*grant_id_list)) # flatten list
+    return grant_id_list

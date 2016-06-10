@@ -97,6 +97,20 @@ return list of dictionary where each element contains:
 dicts_out = pp.parse_medline_xml(path) # list of dictionary
 ```
 
+#### Parse Medline Grant ID
+
+Use `parse_medline_grantid` in order to parse MEDLINE grant ID from XML file.
+This will return list of dictionary which contains following keys
+
+- `pmid`: Pubmed ID
+- `grant_id`: Grant ID
+- `grant_acronym`: Acronym of grant
+- `country`: Country where grant funding from
+- `agency`: Grant agency
+
+If no Grant ID in the file, it will return `None`
+
+
 #### Parse Medline XML from eutils
 
 You can use Pubmed parser to parse XML file from [eutils website](http://www.ncbi.nlm.nih.gov/books/NBK25501/)
