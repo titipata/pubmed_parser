@@ -45,6 +45,21 @@ def parse_keywords(medline):
     return keywords
 
 
+def parse_other_id(medline):
+    """
+    Parse OtherID from article, each separated by ;
+    """
+    other_id = list()
+    oids = medline.findall('OtherID')
+    if oids is not None:
+        for oid in oids:
+            other_id.append(oid.text)
+        other_id = '; '.join(other_id)
+    else:
+        other_id = ''
+    return other_id
+
+
 def parse_grant_id(medline):
     """
     Parse Grant ID and related information given MEDLINE tree
@@ -142,6 +157,7 @@ def parse_article_info(medline):
     pmid = parse_pmid(medline)
     mesh_terms = parse_mesh_terms(medline)
     keywords = parse_keywords(medline)
+    other_id = parse_other_id(medline)
 
     return {'title': title,
             'abstract': abstract,
@@ -150,6 +166,7 @@ def parse_article_info(medline):
             'affiliation': affiliations_info,
             'year': year,
             'pmid': pmid,
+            'other_id': other_id,
             'mesh_terms': mesh_terms,
             'keywords': keywords,
             'delete': False}
