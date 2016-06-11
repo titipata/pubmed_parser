@@ -65,7 +65,7 @@ def parse_pubmed_xml(path, include_path=False):
     tree = read_xml(path)
 
     try:
-        title = ' '.join(tree.xpath('//title-group/article-title/text()')).replace('\n', ' ')
+        title = ' '.join([x for x in tree.xpath('//title-group/article-title')[0].itertext()]).replace('\n', ' ')
         sub_title = ' '.join(tree.xpath('//title-group/subtitle/text()')).replace('\n', ' ').replace('\t', ' ')
         full_title = title + ' ' + sub_title
     except:
