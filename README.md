@@ -3,7 +3,7 @@
 [![Join the chat at https://gitter.im/titipata/pubmed_parser](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/titipata/pubmed_parser?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/titipata/pubmed_parser/blob/master/LICENSE)
 
-Python parser for [PubMed open-access subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
+Python parser for [PubMed open-access (OA) subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
 (the download section of XML subset is at the end of the page, files are named like this
   `articles.A-B.tar.gz` ) and [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/)
   file.
@@ -53,22 +53,22 @@ Each dictionary has keys as following
 - `article_title`: article title
 - `journal`: journal name
 - `journal_type`: type of journal
-- `pmid`: Pubmed ID
-- `pmc`: Pubmed Central ID
+- `pmid`: Pubmed ID of the article
+- `pmc`: Pubmed Central ID of the article
 - `pmid_cited`: Pubmed ID of cited article
 
 ```python
 dicts_out = pp.parse_pubmed_references(path) # return list of dictionary
 ```
 
-#### Parse Pubmed OA captions
+#### Parse Pubmed OA images and captions
 
 The function `parse_pubmed_caption` can parse image captions from given path
 to XML file. It will return reference index that you can refer back to actual
 images. The function will return list of dictionary which has following keys
 
-- `pmc`:Pubmed ID
-- `pmid`: Pubmed Central ID
+- `pmid`: Pubmed ID
+- `pmc`: Pubmed Central ID
 - `fig_caption`: string of caption
 - `fig_id`: reference id for figure (use to refer in XML article)
 - `fig_label`: label of the figure
@@ -77,6 +77,20 @@ images. The function will return list of dictionary which has following keys
 ```python
 dicts_out = pp.parse_pubmed_caption(path) # return list of dictionary
 ```
+
+#### Parse Pubmed Paragraph
+
+For someone who might be interested in parsing reference PMID in each text section.
+We have parser that parse text of section and PMID that particular section cites.
+You can use `parse_pubmed_paragraph` to parse text and reference PMID. This will
+return list of dictionary where each has following keys
+
+- `pmid`: Pubmed ID
+- `pmc`: Pubmed Central ID
+- `text`: full text of the paragraph
+- `references_pmids`: list of reference PMID
+- `references_code`: list of reference code within that paragraph
+- `section`: section of paragraph (e.g. Background, Discussion, Appendix)
 
 #### Parse Medline XML
 
@@ -94,7 +108,7 @@ return list of dictionary where each element contains:
 - `year`: Publication year
 
 ```python
-dicts_out = pp.parse_medline_xml(path) # list of dictionary
+dicts_out = pp.parse_medline_xml(path) # return list of dictionary
 ```
 
 #### Parse Medline Grant ID

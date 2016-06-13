@@ -249,7 +249,8 @@ def parse_pubmed_references(path):
 def parse_paragraph(tree, dict_refs):
     """
     Give tree and reference dictionary
-    return dictionary of paragraph
+    return dictionary of referenced paragraph, section that it belongs to,
+    and its cited PMID
     """
     try:
         pmid = tree.xpath('//article-meta/article-id[@pub-id-type="pmid"]')[0].text
@@ -291,14 +292,17 @@ def parse_paragraph(tree, dict_refs):
         except:
             pm_ids = list()
 
-        dict_par = {'pmc': pmc, 'pmid': pmid, 'text': text,
-                    'references': par_refs, 'ref_pmids': pm_ids,
-                    'section': section}
+        dict_par = {'pmc': pmc,
+                    'pmid': pmid,
+                    'references_code': par_refs,
+                    'references_pmids': pm_ids,
+                    'section': section,
+                    'text': text}
         dict_pars.append(dict_par)
     return dict_pars
 
 
-def parse_pubmed_paragraph(path, include_path=False):
+def parse_pubmed_paragraph(path):
     """
     Given single xml path, extract information from xml file
     and return parsed xml file in dictionary format.
