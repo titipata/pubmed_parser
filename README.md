@@ -50,12 +50,12 @@ We have `parse_pubmed_references` where you can give path to Pubmed Open Access 
 subset file and it will return list of dictionary that that particular PMID cites.
 Each dictionary has keys as following
 
-- `article_title`: article title
+- `article_title`: article title of cited article
 - `journal`: journal name
 - `journal_type`: type of journal
 - `pmid`: Pubmed ID of the article
 - `pmc`: Pubmed Central ID of the article
-- `pmid_cited`: Pubmed ID of cited article
+- `pmid_cited`: Pubmed ID of article that given article cites
 
 ```python
 dicts_out = pp.parse_pubmed_references(path) # return list of dictionary
@@ -149,7 +149,7 @@ central ID. This will return a dictionary which contains these following keys
 
 - `n_citations`: number of citations for given PMC
 - `pmc`: Pubmed Central ID
-- `pmc_cited`: List of cited Pubmed Central ID
+- `pmc_cited`: List of Pubmed Central ID that cite given article
 
 ```python
 dict_out = pp.parse_citation_web(pmc)
@@ -240,7 +240,7 @@ pubmed_oa_df = pd.DataFrame(pubmed_oa_all) # transform to pandas DataFrame
 
 If you use this package, please cite it like this
 
-<code>Titipat Achakulvisut, Daniel E. Acuna (2015) "Pubmed Parser" [http://github.com/titipata/pubmed_parser](http://github.com/titipata/pubmed_parser)</code>
+> Titipat Achakulvisut, Daniel E. Acuna (2015) "_Pubmed Parser_" [http://github.com/titipata/pubmed_parser](http://github.com/titipata/pubmed_parser)
 
 
 ## Acknowledgement
