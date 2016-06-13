@@ -212,6 +212,7 @@ pubmed_oa_df = pd.DataFrame(pubmed_oa_all) # transform to pandas DataFrame
 
 - [Titipat Achakulvisut](http://titipata.github.io), Northwestern University
 - [Daniel E. Acuna](http://scienceofscience.org/about), Rehabilitation Institute of Chicago and Northwestern University
+- [David Brandfonbrener](https://github.com/davidbrandfonbrener), Yale University
 
 
 ## Dependencies
@@ -226,6 +227,12 @@ pubmed_oa_df = pd.DataFrame(pubmed_oa_all) # transform to pandas DataFrame
 If you use this package, please cite it like this
 
 <code>Titipat Achakulvisut, Daniel E. Acuna (2015) "Pubmed Parser" [http://github.com/titipata/pubmed_parser](http://github.com/titipata/pubmed_parser)</code>
+
+
+## Acknowledgement
+
+Package is developed at [Konrad Kording's Lab](http://kordinglab.com/) at Northwestern University
+
 
 ## License
 
