@@ -9,7 +9,7 @@ Python parser for [PubMed open-access (OA) subset](http://www.ncbi.nlm.nih.gov/p
   file.
 
 
-## Parser available
+## Parsers available
 
 #### Parse Pubmed OA XML information
 
@@ -19,25 +19,25 @@ a dictionary with the following information:
 
  - `full_title`: article's title
  - `abstract`: abstract
- - `journal_title`: Journal name or journal title
+ - `journal_title`: Journal name
  - `pmid`: Pubmed ID
  - `pmc`: Pubmed Central ID
  - `publisher_id`: publisher ID
- - `author_list`: list of authors with affiliation keys in following format
+ - `author_list`: list of authors with affiliation keys in the following format
 
  ```python
  [['last_name_1', 'first_name_1', 'aff_key_1'],
   ['last_name_1', 'first_name_1', 'aff_key_2'],
   ['last_name_2', 'first_name_2', 'aff_key_1'], ...]
  ```
- - `affiliation_list`: list of affiliation keys and affiliation string in following format
+ - `affiliation_list`: list of affiliation keys and affiliation strings in the following format
  ```python
  [['aff_key_1' : 'affiliation_1'],
   ['aff_key_2' : 'affiliation_2'], ...]
  ```
 
  - `publication_year`: publication year
- - `subjects`: list of subjects listed in the article. Sometimes, it only contains what type of article it is, such as research article, review, proceedings, etc.
+ - `subjects`: list of subjects listed in the article. Sometimes, it only contains type of article, such as research article, review, proceedings, etc.
 
 ```python
 import pubmed_parser as pp
@@ -46,11 +46,11 @@ dict_out = pp.parse_pubmed_xml(path)
 
 #### Parse Pubmed OA citations
 
-We have `parse_pubmed_references` where you can give path to Pubmed Open Access XML
-subset file and it will return list of dictionary that that particular PMID cites.
-Each dictionary has keys as following
+The function `parse_pubmed_references` will process a Pubmed Open Access XML
+file and return a list of the PMID it cites.
+Each dictionary has keys as follows
 
-- `article_title`: article title of cited article
+- `article_title`: title of cited article
 - `journal`: journal name
 - `journal_type`: type of journal
 - `pmid`: Pubmed ID of the article
@@ -72,7 +72,7 @@ images. The function will return list of dictionary which has following keys
 - `fig_caption`: string of caption
 - `fig_id`: reference id for figure (use to refer in XML article)
 - `fig_label`: label of the figure
-- `graphic_ref`: reference to graphic file name provided from Pubmed OA
+- `graphic_ref`: reference to image file name provided from Pubmed OA
 
 ```python
 dicts_out = pp.parse_pubmed_caption(path) # return list of dictionary
@@ -80,31 +80,31 @@ dicts_out = pp.parse_pubmed_caption(path) # return list of dictionary
 
 #### Parse Pubmed Paragraph
 
-For someone who might be interested in parsing reference PMID in each text section.
-We have parser that parse text of section and PMID that particular section cites.
-You can use `parse_pubmed_paragraph` to parse text and reference PMID. This will
-return list of dictionary where each has following keys
+For someone who might be interested in parsing the text surrounding
+a citation, `pubmed_parser` also provides that functionality.
+You can use `parse_pubmed_paragraph` to parse text and reference PMIDs.
+This function will return a list of dictionaries, where each entry will have
 
 - `pmid`: Pubmed ID
 - `pmc`: Pubmed Central ID
 - `text`: full text of the paragraph
-- `references_pmids`: list of reference PMID
+- `references_pmids`: list of reference PMIDs
 - `references_code`: list of reference code within that paragraph
 - `section`: section of paragraph (e.g. Background, Discussion, Appendix)
 
-#### Parse Medline XML
+#### Parse Medline NML XML
 
-Medline has different format of XML file. You can use function `parse_medline_xml`
-in order to parse XML file from full MEDLINE data. The license can be requested from this  [site](https://www.nlm.nih.gov/bsd/licensee/). The function will
-return list of dictionary where each element contains:
+Medline NML XML has a different XML format than PubMed open access'.
+You can use the function `parse_medline_xml` to parse that format.
+This function will return list of dictionaries, where each element contains:
 
 - `pmid`: Pubmed ID
 - `title`: title of the article
 - `abstract`: abstract of the article
-- `affiliation`: first affiliation from the article
-- `authors`: string of authors each separated by `;`
-- `mesh_terms`: list of MESH terms related to the article each separated by `;`
-- `keywords`: list of keywords each separated by `;`
+- `affiliation`: corresponding author's affiliation
+- `authors`: authors, each separated by `;`
+- `mesh_terms`: list of MeSH terms, each separated by `;`
+- `keywords`: list of keywords, each separated by `;`
 - `year`: Publication year
 
 ```python
@@ -113,8 +113,8 @@ dicts_out = pp.parse_medline_xml(path) # return list of dictionary
 
 #### Parse Medline Grant ID
 
-Use `parse_medline_grantid` in order to parse MEDLINE grant ID from XML file.
-This will return list of dictionary which contains following keys
+Use `parse_medline_grantid` in order to parse MEDLINE grant IDs from XML file.
+This will return a list of dictionaries, each containing
 
 - `pmid`: Pubmed ID
 - `grant_id`: Grant ID
@@ -122,20 +122,20 @@ This will return list of dictionary which contains following keys
 - `country`: Country where grant funding from
 - `agency`: Grant agency
 
-If no Grant ID in the file, it will return `None`
+If no Grant ID is found, it will return `None`
 
 
 #### Parse Medline XML from eutils
 
-You can use Pubmed parser to parse XML file from [eutils website](http://www.ncbi.nlm.nih.gov/books/NBK25501/)
-using `parse_xml_web`. For this function, you can provide single `pmid` as an input and
-it will return dictionary with following keys
+You can use PubMed parser to parse XML file from [E-Utilities](http://www.ncbi.nlm.nih.gov/books/NBK25501/)
+using `parse_xml_web`. For this function, you can provide a single `pmid` as an input and
+get a dictionary with following keys
 
 - `title`: title
 - `abstract`: abstract
 - `journal`: journal
 - `affiliation`: affiliation of first author
-- `authors`: string of authors' name, separated by `;`
+- `authors`: string of authors, separated by `;`
 - `year`: Publication year
 
 ```python
@@ -144,12 +144,12 @@ dict_out = pp.parse_xml_web(pmid, save_xml=False)
 
 #### Parse Medline XML citations
 
-Function `parse_citation_web` allows you to parse citations from given Pubmed
-central ID. This will return a dictionary which contains these following keys
+The function `parse_citation_web` allows you to get the citations to a given
+PubMed Central ID. This will return a dictionary which contains the following keys
 
-- `n_citations`: number of citations for given PMC
+- `n_citations`: number of citations
 - `pmc`: Pubmed Central ID
-- `pmc_cited`: List of Pubmed Central ID that cite given article
+- `pmc_cited`: List of Pubmed Central IDs that cite the article
 
 ```python
 dict_out = pp.parse_citation_web(pmc)
@@ -164,7 +164,7 @@ Install all dependencies
 $ pip install -r requirements.txt
 ```
 
-Then you can install package using `setup.py` by running
+Then you can install the package as follows
 
 ```bash
 $ python setup.py develop install
@@ -173,7 +173,7 @@ $ python setup.py develop install
 
 ## Example Usage for Pubmed OA
 
-Example code is shown below,
+An example usage is shown below:
 
 ```python
 import pubmed_parser as pp
@@ -198,7 +198,10 @@ print(pubmed_dict)
  'subjects': 'Research Article'}
 ```
 
-You can also pass a list of XML paths to the function `parse_pubmed_xml_to_df` which will return the parsed information in DataFrame format of all the XMLs in the given list. Providing less than 10k XML paths are recommended if you do not parse in parallel since it can crash the memory. It takes about 0.4 days to parse all PubMed Open Access subset, which has around a million files.
+You can also pass a list of XML paths to the function `parse_pubmed_xml_to_df`.
+This will return the parsed information in DataFrame format.
+Providing less than 10k XML paths is recommended, otherwise you may run out of
+memory. It takes about 1/2 day to parse all PubMed Open Access subset (around one million files).
 
 ```python
 import pubmed_parser as pp
@@ -209,7 +212,7 @@ pubmed_df = pp.parse_pubmed_xml_to_df(path_xml, include_path=True) # return Data
 
 ## Example Usage with PySpark
 
-This script takes about 3.1 mins to parse all Pubmed Open-Access subset using PySpark on Amazon EC2 `r3.8xlarge` (with 32 cores).
+This script takes about 3.1 mins to parse all Pubmed Open Access subset using PySpark on Amazon EC2 `r3.8xlarge` (with 32 cores).
 
 ```python
 import pandas as pd
@@ -245,9 +248,9 @@ If you use this package, please cite it like this
 
 ## Acknowledgement
 
-Package is developed at [Konrad Kording's Lab](http://kordinglab.com/) at Northwestern University
+Package is developed in [Konrad Kording's Lab](http://kordinglab.com/) at Northwestern University
 
 
 ## License
 
-MIT License Copyright (c) 2015 Titipat Achakulvisut, Daniel E. Acuna
+MIT License Copyright (c) 2015, 2016 Titipat Achakulvisut, Daniel E. Acuna
