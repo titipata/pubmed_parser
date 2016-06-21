@@ -7,8 +7,17 @@ __all__ = [
 ]
 
 def parse_pmid(medline):
-    """
-    Parse PMID from article
+    """Parse PMID from article
+
+    Parameters
+    ----------
+    medline: Element
+        The lxml node pointing to a medline document
+
+    Returns
+    -------
+    pmid: str
+        String version of the PubMed ID
     """
     if medline.find('PMID') is not None:
         pmid = medline.find('PMID').text
@@ -18,8 +27,18 @@ def parse_pmid(medline):
 
 
 def parse_mesh_terms(medline):
-    """
-    Parse MESH terms from article
+    """Parse MESH terms from article
+    
+    Parameters
+    ----------
+    medline: Element
+        The lxml node pointing to a medline document
+
+    Returns
+    -------
+    mesh_terms: str
+        String of semi-colon spearated MeSH (Medical Subject Headings)
+        terms contained in the document.
     """
     if medline.find('MeshHeadingList') is not None:
         mesh = medline.find('MeshHeadingList')
@@ -31,8 +50,17 @@ def parse_mesh_terms(medline):
 
 
 def parse_keywords(medline):
-    """
-    Parse keywords from article, separated by ;
+    """Parse keywords from article, separated by ;
+
+    Parameters
+    ----------
+    medline: Element
+        The lxml node pointing to a medline document
+
+    Returns
+    -------
+    keywords: str
+        String of concatenated keywords.
     """
     keyword_list = medline.find('KeywordList')
     keywords = list()
@@ -46,8 +74,17 @@ def parse_keywords(medline):
 
 
 def parse_other_id(medline):
-    """
-    Parse OtherID from article, each separated by ;
+    """Parse OtherID from article, each separated by ;
+
+    Parameters
+    ----------
+    medline: Element
+        The lxml node pointing to a medline document
+
+    Returns
+    -------
+    other_id: str
+        String of semi-colon separated Other IDs found in the document
     """
     other_id = list()
     oids = medline.findall('OtherID')
@@ -61,14 +98,25 @@ def parse_other_id(medline):
 
 
 def parse_grant_id(medline):
-    """
-    Parse Grant ID and related information given MEDLINE tree
+    """Parse Grant ID and related information given MEDLINE tree
+
+    Parameters
+    ----------
+    medline: Element
+        The lxml node pointing to a medline document
+
+    Returns
+    -------
+    grant_list: list
+        List of grants acknowledged in the publications. Each
+        entry in the dictionary contains the PubMed ID,
+        grant ID, grant acronym, country, and agency.
     """
     article = medline.find('Article')
     pmid = parse_pmid(medline)
 
     grants = article.find('GrantList')
-    grants_dict = list()
+    grant_list = list()
     if grants is not None:
         grants_list = grants.getchildren()
         for grant in grants_list:
@@ -97,13 +145,26 @@ def parse_grant_id(medline):
                      'grant_acronym': acronym,
                      'country': country,
                      'agency': agency}
-            grants_dict.append(dict_)
-    return grants_dict
+            grant_list.append(dict_)
+    return grant_list
 
 
 def parse_article_info(medline):
-    """
-    Parse article nodes from Medline dataset
+    """Parse article nodes from Medline dataset
+
+    Parameters
+    ----------
+    medline: Element
+        The lxml node pointing to a medline document
+
+    Returns
+    -------
+    article: dict
+        Dictionary containing information about the article, including
+        `title`, `abstract`, `journal`, `author`, `affiliation`, `year`,
+        `pmid`, `other_id`, `mesh_terms`, and `keywords`. The field
+        `delete` is always `False` because this function parses
+        articles that by definition are not deleted.
     """
     article = medline.find('Article')
 
@@ -173,13 +234,24 @@ def parse_article_info(medline):
 
 
 def parse_medline_xml(path):
-    """
-    Parse XML file from Medline XML format
-    available at ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/
+    """Parse XML file from Medline XML format available at
+    ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/
+
+    Parameters
+    ----------
+    path: str
+        The path
+
+    Returns
+    -------
+    article_list: list
+        Dictionary containing information about articles in NLM format (see
+        `parse_article_info`). Articles that have been deleted will be
+        added with no information other than the field `delete` being `True`
     """
     tree = read_xml(path)
     medline_citations = tree.xpath('//MedlineCitationSet/MedlineCitation')
-    dict_out = list(map(parse_article_info, medline_citations))
+    article_list = list(map(parse_article_info, medline_citations))
     delete_citations = tree.xpath('//DeleteCitation/PMID')
     dict_delete = \
         [
@@ -195,13 +267,23 @@ def parse_medline_xml(path):
              'delete': True
              } for p in delete_citations
             ]
-    dict_out.extend(dict_delete)
-    return dict_out
+    article_list.extend(dict_delete)
+    return article_list
 
 
 def parse_medline_grantid(path):
-    """
-    Parse grant id from Medline XML file
+    """Parse grant id from Medline XML file
+
+    Parameters
+    ----------
+    path: str
+        The path to the XML with the information
+
+    Returns
+    -------
+    grant_id_list: list
+        LIst of dictionaries for all files in `path`. Each dictionary
+        will have the information returned by `parse_grant_id`
     """
     tree = read_xml(path)
     medline_citations = tree.xpath('//MedlineCitationSet/MedlineCitation')
