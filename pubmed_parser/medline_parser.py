@@ -262,6 +262,7 @@ def parse_medline_xml(path):
              'affiliation': None,
              'year': None,
              'pmid': p.text,
+             'other_id': None,
              'mesh_terms': None,
              'keywords': None,
              'delete': True
