@@ -134,7 +134,7 @@ def parse_pubmed_xml(path, include_path=False):
                                 author.find('name/given-names').text,
                                 ref_id_list])
         except:
-            author_list.append(['', '', rid_list])
+            author_list.append(['', '', ref_id_list])
     author_list = flatten_zip_author(author_list)
 
     dict_out = {'full_title': full_title.strip(),
