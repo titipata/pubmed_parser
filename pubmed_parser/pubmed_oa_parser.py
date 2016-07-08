@@ -64,11 +64,14 @@ def parse_pubmed_xml(path, include_path=False):
     """
     tree = read_xml(path)
 
-    try:
-        title = ' '.join([x for x in tree.xpath('//title-group/article-title')[0].itertext()]).replace('\n', ' ')
-        sub_title = ' '.join(tree.xpath('//title-group/subtitle/text()')).replace('\n', ' ').replace('\t', ' ')
-        full_title = title + ' ' + sub_title
-    except:
+    tree_title = tree.find('//title-group/article-title')
+    if tree_title is not None:
+        title = [t for t in tree_title.itertext()]
+        sub_title = tree.xpath('//title-group/subtitle/text()')
+        title.extend(sub_title)
+        title = [t.replace('\n', ' ').replace('\t', ' ') for t in title]
+        full_title = ' '.join(title)
+    else:
         full_title = ''
     try:
         abstract = ' '.join(tree.xpath('//abstract//text()'))
@@ -79,6 +82,7 @@ def parse_pubmed_xml(path, include_path=False):
     except:
         try:
             journal_title = tree.xpath('/article/front/journal-meta/journal-title/text()')[0]
+            journal_title = str(journal_title)
         except:
             journal_title = ''
     try:
@@ -94,37 +98,41 @@ def parse_pubmed_xml(path, include_path=False):
     except:
         pub_id = ''
     try:
-        pub_year = tree.xpath('//pub-date/year/text()')[0]
+        pub_year = str(tree.xpath('//pub-date/year/text()')[0])
     except:
         pub_year = ''
     try:
-        subjects = ','.join(tree.xpath('//article-categories//subj-group//text()'))
+        subjects = str(','.join(tree.xpath('//article-categories//subj-group//text()')))
     except:
         subjects = ''
 
     # create affiliation dictionary
-    aff_id = tree.xpath('//aff[@id]/@id')
-    if len(aff_id) == 0:
-        aff_id = ['']  # replace id with empty list
+    affil_id = tree.xpath('//aff[@id]/@id')
+    if len(affil_id) > 0:
+        affil_id = list(map(str, affil_id))
+    else:
+        affil_id = ['']  # replace id with empty list
 
-    aff_name = tree.xpath('//aff[@id]')
-    aff_name_list = list()
-    for node in aff_name:
-        aff_name_list.append(stringify_affiliation_rec(node))
-    aff_name_list = list(map(lambda x: x.strip().replace('\n', ' '), aff_name_list))
-    affiliation_list = [list((a, n)) for (a, n) in zip(aff_id, aff_name_list)]
+    affil_name = tree.xpath('//aff[@id]')
+    affil_name_list = list()
+    for e in affil_name:
+        name = stringify_affiliation_rec(e)
+        name = name.strip().replace('\n', ' ')
+        affil_name_list.append(name)
+    affiliation_list = [[idx, name] for idx, name in zip(affil_id, affil_name_list)]
 
     tree_author = tree.xpath('//contrib-group/contrib[@contrib-type="author"]')
-
     author_list = list()
-    for el in tree_author:
-        el0 = el.findall('xref[@ref-type="aff"]')
+    for author in tree_author:
+        author_aff = author.findall('xref[@ref-type="aff"]')
         try:
-            rid_list = [tmp.attrib['rid'] for tmp in el0]
+            ref_id_list = [str(a.attrib['rid']) for a in author_aff]
         except:
-            rid_list = ''
+            ref_id_list = ''
         try:
-            author_list.append([el.find('name/surname').text, el.find('name/given-names').text, rid_list])
+            author_list.append([author.find('name/surname').text,
+                                author.find('name/given-names').text,
+                                ref_id_list])
         except:
             author_list.append(['', '', rid_list])
     author_list = flatten_zip_author(author_list)
