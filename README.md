@@ -11,6 +11,8 @@ Python parser for [PubMed open-access (OA) subset](http://www.ncbi.nlm.nih.gov/p
 
 ## Parsers available
 
+**note** path can be path to compressed or uncompressed xml file
+
 #### Parse Pubmed OA XML information
 
 We created a simple parser for PubMed Open Access Subset where you can give
@@ -32,8 +34,8 @@ a dictionary with the following information:
  ```
  - `affiliation_list`: list of affiliation keys and affiliation strings in the following format
  ```python
- [['aff_key_1' : 'affiliation_1'],
-  ['aff_key_2' : 'affiliation_2'], ...]
+ [['aff_key_1', 'affiliation_1'],
+  ['aff_key_2', 'affiliation_2'], ...]
  ```
 
  - `publication_year`: publication year
@@ -78,10 +80,10 @@ images. The function will return list of dictionary which has following keys
 dicts_out = pp.parse_pubmed_caption(path) # return list of dictionary
 ```
 
-#### Parse Pubmed Paragraph
+#### Parse Pubmed OA Paragraph
 
 For someone who might be interested in parsing the text surrounding
-a citation, `pubmed_parser` also provides that functionality.
+a citation, the library also provides that functionality.
 You can use `parse_pubmed_paragraph` to parse text and reference PMIDs.
 This function will return a list of dictionaries, where each entry will have
 
@@ -94,7 +96,7 @@ This function will return a list of dictionaries, where each entry will have
 
 #### Parse Medline NML XML
 
-Medline NML XML has a different XML format than PubMed open access'.
+Medline NML XML has a different XML format than PubMed Open Access.
 You can use the function `parse_medline_xml` to parse that format.
 This function will return list of dictionaries, where each element contains:
 
