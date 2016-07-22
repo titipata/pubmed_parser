@@ -91,19 +91,21 @@ def parse_pubmed_xml(path, include_path=False):
     pmc_node = article_meta.find('article-id[@pub-id-type="pmc"]')
     pub_id_node = article_meta.find('article-id[@pub-id-type="publisher-id"]')
     doi_node = article_meta.find('article-id[@pub-id-type="doi"]')
+    pub_year_node = tree.find('//pub-date/year')
+    subjects_node = tree.findall('//article-categories//subj-group/subject')
 
     pmid = pmid_node.text if pmid_node is not None else ''
     pmc = pmc_node.text if pmc_node is not None else ''
     pub_id = pub_id_node.text if pub_id_node is not None else ''
     doi = doi_node.text if doi_node is not None else ''
+    pub_year = pub_year_node.text if pub_year_node is not None else ''
 
-    try:
-        pub_year = str(tree.xpath('//pub-date/year/text()')[0])
-    except:
-        pub_year = ''
-    try:
-        subjects = str(','.join(tree.xpath('//article-categories//subj-group//text()')))
-    except:
+    subjects = list()
+    if subjects_node is not None:
+        for s in subjects_node:
+            subjects.append(s.text)
+        subjects = '; '.join(subjects)
+    else:
         subjects = ''
 
     # create affiliation dictionary

@@ -41,7 +41,8 @@ a dictionary with the following information:
  ```
 
  - `publication_year`: publication year
- - `subjects`: list of subjects listed in the article. Sometimes, it only contains type of article, such as research article, review, proceedings, etc.
+ - `subjects`: list of subjects listed in the article separated by semicolon.
+ Sometimes, it only contains type of article, such as research article, review, proceedings, etc.
 
 ```python
 import pubmed_parser as pp
