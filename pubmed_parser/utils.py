@@ -5,6 +5,9 @@ from six import string_types
 
 
 def read_xml(path):
+    """
+    Parse tree from given XML path
+    """
     try:
         tree = etree.parse(path)
     except:

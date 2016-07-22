@@ -130,7 +130,7 @@ This will return a list of dictionaries, each containing
 If no Grant ID is found, it will return `None`
 
 
-#### Parse Medline XML from eutils
+#### Parse Medline XML from eutils website
 
 You can use PubMed parser to parse XML file from [E-Utilities](http://www.ncbi.nlm.nih.gov/books/NBK25501/)
 using `parse_xml_web`. For this function, you can provide a single `pmid` as an input and
@@ -147,7 +147,7 @@ get a dictionary with following keys
 dict_out = pp.parse_xml_web(pmid, save_xml=False)
 ```
 
-#### Parse Medline XML citations
+#### Parse Medline XML citations from website
 
 The function `parse_citation_web` allows you to get the citations to a given
 PubMed Central ID. This will return a dictionary which contains the following keys
