@@ -57,6 +57,29 @@ def pretty_print_xml(path, save_path=None):
     print(tostring(tree, pretty_print=True))
 
 
+def parse_article_meta(tree):
+    """
+    Parse PMID, PMC and DOI from given article tree
+    """
+    article_meta = tree.find('//article-meta')
+    pmid_node = article_meta.find('article-id[@pub-id-type="pmid"]')
+    pmc_node = article_meta.find('article-id[@pub-id-type="pmc"]')
+    pub_id_node = article_meta.find('article-id[@pub-id-type="publisher-id"]')
+    doi_node = article_meta.find('article-id[@pub-id-type="doi"]')
+
+    pmid = pmid_node.text if pmid_node is not None else ''
+    pmc = pmc_node.text if pmc_node is not None else ''
+    pub_id = pub_id_node.text if pub_id_node is not None else ''
+    doi = doi_node.text if doi_node is not None else ''
+
+    dict_article_meta = {'pmid': pmid,
+                         'pmc': pmc,
+                         'doi': doi,
+                         'publisher_id': pub_id}
+
+    return dict_article_meta
+
+
 def parse_pubmed_xml(path, include_path=False):
     """
     Given single xml path, extract information from xml file
@@ -73,33 +96,23 @@ def parse_pubmed_xml(path, include_path=False):
         full_title = ' '.join(title)
     else:
         full_title = ''
+        
     try:
         abstract = ' '.join(tree.xpath('//abstract//text()'))
     except:
         abstract = ''
-    try:
-        journal_title = tree.xpath('//journal-title-group/journal-title')[0].text
-    except:
-        try:
-            journal_title = tree.xpath('/article/front/journal-meta/journal-title/text()')[0]
-            journal_title = str(journal_title)
-        except:
-            journal_title = ''
 
-    article_meta = tree.find('//article-meta')
-    pmid_node = article_meta.find('article-id[@pub-id-type="pmid"]')
-    pmc_node = article_meta.find('article-id[@pub-id-type="pmc"]')
-    pub_id_node = article_meta.find('article-id[@pub-id-type="publisher-id"]')
-    doi_node = article_meta.find('article-id[@pub-id-type="doi"]')
+    journal_node = tree.findall('//journal-title')
+    if journal_node is not None:
+        journal = ' '.join([j.text for j in journal_node])
+    else:
+        journal = ''
+
+    dict_article_meta = parse_article_meta(tree)
     pub_year_node = tree.find('//pub-date/year')
-    subjects_node = tree.findall('//article-categories//subj-group/subject')
-
-    pmid = pmid_node.text if pmid_node is not None else ''
-    pmc = pmc_node.text if pmc_node is not None else ''
-    pub_id = pub_id_node.text if pub_id_node is not None else ''
-    doi = doi_node.text if doi_node is not None else ''
     pub_year = pub_year_node.text if pub_year_node is not None else ''
 
+    subjects_node = tree.findall('//article-categories//subj-group/subject')
     subjects = list()
     if subjects_node is not None:
         for s in subjects_node:
@@ -141,11 +154,11 @@ def parse_pubmed_xml(path, include_path=False):
 
     dict_out = {'full_title': full_title.strip(),
                 'abstract': abstract,
-                'journal_title': journal_title,
-                'pmid': pmid,
-                'pmc': pmc,
-                'doi': doi,
-                'publisher_id': pub_id,
+                'journal': journal,
+                'pmid': dict_article_meta['pmid'],
+                'pmc': dict_article_meta['pmc'],
+                'doi': dict_article_meta['doi'],
+                'publisher_id': dict_article_meta['publisher_id'],
                 'author_list': author_list,
                 'affiliation_list': affiliation_list,
                 'publication_year': pub_year,
@@ -195,14 +208,9 @@ def parse_references(tree):
     Give a tree as an input,
     parse it to dictionary if ref-id and cited PMID
     """
-    try:
-        pmid = tree.xpath('//article-meta/article-id[@pub-id-type="pmid"]')[0].text
-    except:
-        pmid = ''
-    try:
-        pmc = tree.xpath('//article-meta/article-id[@pub-id-type="pmc"]')[0].text
-    except:
-        pmc = ''
+    dict_article_meta = parse_article_meta(tree)
+    pmid = dict_article_meta['pmid']
+    pmc = dict_article_meta['pmc']
 
     references = tree.xpath('//ref-list/ref[@id]')
     dict_refs = list()
@@ -263,14 +271,9 @@ def parse_paragraph(tree, dict_refs):
     return dictionary of referenced paragraph, section that it belongs to,
     and its cited PMID
     """
-    try:
-        pmid = tree.xpath('//article-meta/article-id[@pub-id-type="pmid"]')[0].text
-    except:
-        pmid = ''
-    try:
-        pmc = tree.xpath('//article-meta/article-id[@pub-id-type="pmc"]')[0].text
-    except:
-        pmc = ''
+    dict_article_meta = parse_article_meta(tree)
+    pmid = dict_article_meta['pmid']
+    pmc = dict_article_meta['pmc']
 
     paragraphs = tree.xpath('//body//p')
     dict_pars = list()
@@ -331,14 +334,9 @@ def parse_pubmed_caption(path):
     """
     tree = read_xml(path)
 
-    try:
-        pmid = tree.xpath('//article-meta/article-id[@pub-id-type="pmid"]')[0].text
-    except:
-        pmid = ''
-    try:
-        pmc = tree.xpath('//article-meta/article-id[@pub-id-type="pmc"]')[0].text
-    except:
-        pmc = ''
+    dict_article_meta = parse_article_meta(tree)
+    pmid = dict_article_meta['pmid']
+    pmc = dict_article_meta['pmc']
 
     figs = tree.findall('//fig')
     dict_captions = list()

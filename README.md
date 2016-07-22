@@ -11,7 +11,7 @@ Python parser for [PubMed open-access (OA) subset](http://www.ncbi.nlm.nih.gov/p
 
 ## Parsers available
 
-**note** path can be path to compressed or uncompressed xml file. we provide example
+**note** path can be path to compressed or uncompressed xml file. We provide example
 file in `data` folder
 
 #### Parse Pubmed OA XML information
@@ -22,7 +22,7 @@ a dictionary with the following information:
 
  - `full_title`: article's title
  - `abstract`: abstract
- - `journal_title`: Journal name
+ - `journal`: Journal name
  - `pmid`: Pubmed ID
  - `pmc`: Pubmed Central ID
  - `doi`: DOI of the article
@@ -195,7 +195,7 @@ print(pubmed_dict)
    ['Dennehy', 'John J', 'I2'],
    ['Wang', 'Ing-Nang', 'I1']],
  'full_title': u'Factors influencing lysis time stochasticity in bacteriophage \u03bb',
- 'journal_title': 'BMC Microbiology',
+ 'journal': 'BMC Microbiology',
  'pmc': '3166277',
  'pmid': '21810267',
  'publication_year': '2011',
