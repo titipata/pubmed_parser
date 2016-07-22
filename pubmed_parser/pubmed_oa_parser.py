@@ -85,18 +85,18 @@ def parse_pubmed_xml(path, include_path=False):
             journal_title = str(journal_title)
         except:
             journal_title = ''
-    try:
-        pmid = tree.xpath('//article-meta/article-id[@pub-id-type="pmid"]')[0].text
-    except:
-        pmid = ''
-    try:
-        pmc = tree.xpath('//article-meta/article-id[@pub-id-type="pmc"]')[0].text
-    except:
-        pmc = ''
-    try:
-        pub_id = tree.xpath('//article-meta/article-id[@pub-id-type="publisher-id"]')[0].text
-    except:
-        pub_id = ''
+
+    article_meta = tree.find('//article-meta')
+    pmid_node = article_meta.find('article-id[@pub-id-type="pmid"]')
+    pmc_node = article_meta.find('article-id[@pub-id-type="pmc"]')
+    pub_id_node = article_meta.find('article-id[@pub-id-type="publisher-id"]')
+    doi_node = article_meta.find('article-id[@pub-id-type="doi"]')
+
+    pmid = pmid_node.text if pmid_node is not None else ''
+    pmc = pmc_node.text if pmc_node is not None else ''
+    pub_id = pub_id_node.text if pub_id_node is not None else ''
+    doi = doi_node.text if doi_node is not None else ''
+
     try:
         pub_year = str(tree.xpath('//pub-date/year/text()')[0])
     except:
@@ -142,6 +142,7 @@ def parse_pubmed_xml(path, include_path=False):
                 'journal_title': journal_title,
                 'pmid': pmid,
                 'pmc': pmc,
+                'doi': doi,
                 'publisher_id': pub_id,
                 'author_list': author_list,
                 'affiliation_list': affiliation_list,

@@ -11,7 +11,8 @@ Python parser for [PubMed open-access (OA) subset](http://www.ncbi.nlm.nih.gov/p
 
 ## Parsers available
 
-**note** path can be path to compressed or uncompressed xml file
+**note** path can be path to compressed or uncompressed xml file. we provide example
+file in `data` folder
 
 #### Parse Pubmed OA XML information
 
@@ -24,6 +25,7 @@ a dictionary with the following information:
  - `journal_title`: Journal name
  - `pmid`: Pubmed ID
  - `pmc`: Pubmed Central ID
+ - `doi`: DOI of the article
  - `publisher_id`: publisher ID
  - `author_list`: list of authors with affiliation keys in the following format
 
@@ -110,7 +112,7 @@ This function will return list of dictionaries, where each element contains:
 - `year`: Publication year
 
 ```python
-dicts_out = pp.parse_medline_xml(path) # return list of dictionary
+dicts_out = pp.parse_medline_xml('data/medline16n0902.xml.gz') # return list of dictionary
 ```
 
 #### Parse Medline Grant ID
