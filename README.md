@@ -1,4 +1,4 @@
-# Parser for Pubmed Open-Access Subset XML Dataset and MEDLINE XML
+# Parser for Pubmed Open-Access XML Subset and MEDLINE XML Dataset
 
 [![Join the chat at https://gitter.im/titipata/pubmed_parser](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/titipata/pubmed_parser?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/titipata/pubmed_parser/blob/master/LICENSE)
@@ -12,7 +12,7 @@ Python parser for [PubMed open-access (OA) subset](http://www.ncbi.nlm.nih.gov/p
 ## Parsers available
 
 **note** path can be path to compressed or uncompressed xml file. We provide example
-file in `data` folder
+file in [`data`]('data/') folder
 
 #### Parse Pubmed OA XML information
 
