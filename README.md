@@ -104,6 +104,7 @@ You can use the function `parse_medline_xml` to parse that format.
 This function will return list of dictionaries, where each element contains:
 
 - `pmid`: Pubmed ID
+- `pmc`: Pubmed Central ID
 - `title`: title of the article
 - `abstract`: abstract of the article
 - `affiliation`: corresponding author's affiliation

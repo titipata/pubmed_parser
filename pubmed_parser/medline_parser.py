@@ -28,7 +28,7 @@ def parse_pmid(medline):
 
 def parse_mesh_terms(medline):
     """Parse MESH terms from article
-    
+
     Parameters
     ----------
     medline: Element
@@ -86,15 +86,20 @@ def parse_other_id(medline):
     other_id: str
         String of semi-colon separated Other IDs found in the document
     """
+    pmc = ''
     other_id = list()
     oids = medline.findall('OtherID')
     if oids is not None:
         for oid in oids:
-            other_id.append(oid.text)
+            if 'PMC' in oid.text:
+                pmc = oid.text
+            else:
+                other_id.append(oid.text)
         other_id = '; '.join(other_id)
     else:
         other_id = ''
-    return other_id
+    return {'pmc': pmc,
+            'other_id': other_id}
 
 
 def parse_grant_id(medline):
@@ -218,19 +223,20 @@ def parse_article_info(medline):
     pmid = parse_pmid(medline)
     mesh_terms = parse_mesh_terms(medline)
     keywords = parse_keywords(medline)
-    other_id = parse_other_id(medline)
+    other_id_dict = parse_other_id(medline)
 
-    return {'title': title,
-            'abstract': abstract,
-            'journal': journal_name,
-            'author': authors_info,
-            'affiliation': affiliations_info,
-            'year': year,
-            'pmid': pmid,
-            'other_id': other_id,
-            'mesh_terms': mesh_terms,
-            'keywords': keywords,
-            'delete': False}
+    dict_out = {'title': title,
+                'abstract': abstract,
+                'journal': journal_name,
+                'author': authors_info,
+                'affiliation': affiliations_info,
+                'year': year,
+                'pmid': pmid,
+                'mesh_terms': mesh_terms,
+                'keywords': keywords,
+                'delete': False}
+    dict_out.update(other_id_dict)
+    return dict_out
 
 
 def parse_medline_xml(path):
