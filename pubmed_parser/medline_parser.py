@@ -1,5 +1,5 @@
 from itertools import chain
-from .utils import *
+from .utils import read_xml, stringify_children
 
 __all__ = [
     'parse_medline_xml',

@@ -186,7 +186,7 @@ def parse_references(tree):
                         names.append(name)
                 elif rc.find('person-group') is not None:
                     for n in rc.find('person-group'):
-                        name = join(n.xpath('given-names/text()') + n.xpath('surname/text()'))
+                        name = ' '.join(n.xpath('given-names/text()') + n.xpath('surname/text()'))
                         names.append(name)
                 try:
                     article_title = rc.findall('article-title')[0].text

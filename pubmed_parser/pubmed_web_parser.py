@@ -4,7 +4,6 @@ import time
 from lxml import etree
 from lxml import html
 from unidecode import unidecode
-from .utils import *
 
 __all__ = [
     'parse_xml_web',
