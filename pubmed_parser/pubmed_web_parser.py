@@ -182,7 +182,9 @@ def parse_outgoing_citation_web(doc_id, id_type='PMC'):
     tree = etree.parse(link)
     pmid_cited_all = tree.xpath('/eLinkResult/LinkSet/LinkSetDb/Link/Id/text()')
     n_citations = len(pmid_cited_all)
-
+    if not n_citations: # If there are no citations, likely a bad doc_id
+        # A warning should be raised here, at very least.
+        pass
     dict_out = {'n_citations': n_citations,
                 'doc_id': doc_id,
                 'id_type': id_type,
