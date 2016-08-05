@@ -14,6 +14,6 @@ if __name__ == "__main__":
         author_email='titipata@u.northwestern.edu',
         license='(c) 2015 Titipat Achakulvisut, Daniel E. Acuna',
         keywords='pubmed parser',
-        install_requires=['pandas', 'lxml', 'unidecode', 'nltk'],
+        install_requires=['lxml', 'unidecode'],
         packages=['pubmed_parser'],
     )
