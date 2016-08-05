@@ -8,7 +8,8 @@ from .utils import *
 
 __all__ = [
     'parse_xml_web',
-    'parse_citation_web'
+    'parse_citation_web',
+    'parse_outgoing_citation_web'
 ]
 
 
@@ -156,4 +157,35 @@ def parse_citation_web(pmc):
     dict_out = {'n_citations': n_citations,
                 'pmc': pmc,
                 'pmc_cited': pmc_cited_all}
+    return dict_out
+
+def parse_outgoing_citation_web(doc_id, id_type='PMC'):
+    """
+    Load citations from NCBI eutils API for a given document,
+    return a dictionary containing:
+        n_citations: number of citations for that article
+        doc_id: the document ID number
+        id_type: the type of document ID provided (PMCID or PMID)
+        pmid_cited: list of papers cited by the document as PMIDs
+    """
+    doc_id = str(doc_id)
+    if id_type is 'PMC':
+        db = 'pmc'
+        linkname = 'pmc_refs_pubmed'
+    elif id_type is 'PMID':
+        db = 'pubmed'
+        linkname = 'pubmed_pubmed_refs'
+    else:
+        raise ValueError('Unsupported id_type `%s`' % id_type)
+    link = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=%s&linkname=%s&id=%s' % (db, linkname, doc_id)
+
+    tree = etree.parse(link)
+    pmid_cited_all = tree.xpath('/eLinkResult/LinkSet/LinkSetDb/Link/Id/text()')
+    n_citations = len(pmid_cited_all)
+    if not n_citations: # If there are no citations, likely a bad doc_id
+        return None
+    dict_out = {'n_citations': n_citations,
+                'doc_id': doc_id,
+                'id_type': id_type,
+                'pmid_cited': pmid_cited_all}
     return dict_out

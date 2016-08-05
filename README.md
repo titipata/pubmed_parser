@@ -161,6 +161,25 @@ PubMed Central ID. This will return a dictionary which contains the following ke
 dict_out = pp.parse_citation_web(pmc)
 ```
 
+#### Parse Outgoing XML citations from website
+
+The function `parse_outgoing_citation_web` allows you to get the articles a given
+article cites, given a PubMed ID or PubMed Central ID. This will return a dictionary
+which contains the following keys
+
+- `n_citations`: number of cited articles
+- `doc_id`: the document identifier given
+- `id_type`: the type of identifier given. Either 'PMID' or 'PMC'
+- `pmid_cited`: list of PMIDs cited by the article
+
+```python
+dict_out = pp.parse_outgoing_citation_web(doc_id, id_type='PMID')
+```
+
+Identifiers should be passed as strings. PubMed Central ID's are default, and
+should be passed as strings *without* the 'PMC' prefix. If no citations are
+found, or if no article is found matching `doc_id` in the indicated database,
+it will return `None`.
 
 ## Install package
 
