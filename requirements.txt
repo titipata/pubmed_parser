@@ -1,3 +1,4 @@
 lxml
 pandas
 unidecode
+requests
