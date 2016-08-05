@@ -3,7 +3,7 @@ from .utils import *
 
 __all__ = [
     'parse_medline_xml',
-    'parse_medline_grantid'
+    'parse_medline_grant_id'
 ]
 
 def parse_pmid(medline):
@@ -278,7 +278,7 @@ def parse_medline_xml(path):
     return article_list
 
 
-def parse_medline_grantid(path):
+def parse_medline_grant_id(path):
     """Parse grant id from Medline XML file
 
     Parameters

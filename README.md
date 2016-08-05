@@ -119,7 +119,7 @@ dicts_out = pp.parse_medline_xml('data/medline16n0902.xml.gz') # return list of 
 
 #### Parse Medline Grant ID
 
-Use `parse_medline_grantid` in order to parse MEDLINE grant IDs from XML file.
+Use `parse_medline_grant_id` in order to parse MEDLINE grant IDs from XML file.
 This will return a list of dictionaries, each containing
 
 - `pmid`: Pubmed ID

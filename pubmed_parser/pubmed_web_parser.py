@@ -19,7 +19,7 @@ def load_xml(pmid, sleep=None):
     return a dictionary for given pmid and xml string from the site
     sleep: how much time we want to wait until requesting new xml
     """
-    link = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id=" + str(pmid)
+    link = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id=%s" % str(pmid)
     page = requests.get(link)
     tree = html.fromstring(page.content)
     if sleep is not None:
@@ -164,6 +164,7 @@ def parse_citation_web(pmc):
                 'pmc': pmc,
                 'pmc_cited': pmc_cited_all}
     return dict_out
+
 
 def parse_outgoing_citation_web(doc_id, id_type='PMC'):
     """
