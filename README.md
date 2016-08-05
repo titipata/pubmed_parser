@@ -151,14 +151,14 @@ dict_out = pp.parse_xml_web(pmid, save_xml=False)
 #### Parse Medline XML citations from website
 
 The function `parse_citation_web` allows you to get the citations to a given
-PubMed Central ID. This will return a dictionary which contains the following keys
+PubMed ID or PubMed Central ID. This will return a dictionary which contains the following keys
 
-- `n_citations`: number of citations
-- `pmc`: Pubmed Central ID
-- `pmc_cited`: List of Pubmed Central IDs that cite the article
+- `n_citations`: total number of citations
+- `pmc`: Pubmed Central ID (convert given ID to PMC)
+- `pmc_cited`: list of Pubmed Central IDs that cite the article
 
 ```python
-dict_out = pp.parse_citation_web(pmc)
+dict_out = pp.parse_citation_web(doc_id, id_type='PMC')
 ```
 
 #### Parse Outgoing XML citations from website
@@ -263,7 +263,7 @@ and [contributors](https://github.com/titipata/pubmed_parser/graphs/contributors
 
 - [lxml](http://lxml.de/)
 - [unidecode](https://pypi.python.org/pypi/Unidecode)
-
+- [request](http://docs.python-requests.org/en/master/)
 
 ## Citation
 

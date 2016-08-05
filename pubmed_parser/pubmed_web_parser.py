@@ -132,14 +132,41 @@ def extract_pmc(citation):
     return pmc
 
 
-def parse_citation_web(pmc):
+def parse_citation_web(doc_id, id_type='PMC'):
     """
-    Parse citations from given PMC and return dictionary containing:
+    Parse citations from given document id
+
+    Parameters
+    ----------
+    doc_id: str or int, document id
+    id_type: str from ['PMC', 'PMID', 'DOI', 'OTHER']
+
+    Returns
+    -------
+    dict_out: dict, contains following keys
         n_citations: number of citations for given articles
-        pmc: Pubmed Central ID
+        doc_id: the document ID number
+        id_type: the type of document ID provided (PMC, PMID, DOI, OTHER)
+            other can be Manuscript ID, PMID or DOI
         pmc_cited: list of PMCs that cite the given PMC
     """
-    pmc = str(pmc)
+    doc_id = str(doc_id)
+    if id_type == 'PMC':
+        pmc = doc_id
+    elif id_type in ['PMID', 'DOI', 'OTHER']:
+        # convert other ID to PMC
+        convert_link = 'http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=my_tool&email=my_email@example.com&ids=%s' % doc_id
+        convert_page = requests.get(convert_link)
+        convert_tree = html.fromstring(convert_page.content)
+        record = convert_tree.find('record').attrib
+        if 'status' in record or 'pmcid' not in record:
+            raise ValueError('Cannot convert given document id to PMC')
+        else:
+            pmc = record['pmcid']
+            pmc = re.sub('PMC', '', pmc)
+    else:
+        raise ValueError("Provide id_type from ['PMC', 'PMID', 'DOI', 'OTHER']")
+
     link = "http://www.ncbi.nlm.nih.gov/pmc/articles/PMC%s/citedby/" % pmc
     page = requests.get(link)
     tree = html.fromstring(page.content)
