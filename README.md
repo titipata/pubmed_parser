@@ -119,7 +119,7 @@ dicts_out = pp.parse_medline_xml('data/medline16n0902.xml.gz') # return list of 
 
 #### Parse Medline Grant ID
 
-Use `parse_medline_grantid` in order to parse MEDLINE grant IDs from XML file.
+Use `parse_medline_grant_id` in order to parse MEDLINE grant IDs from XML file.
 This will return a list of dictionaries, each containing
 
 - `pmid`: Pubmed ID
@@ -160,6 +160,26 @@ PubMed Central ID. This will return a dictionary which contains the following ke
 ```python
 dict_out = pp.parse_citation_web(pmc)
 ```
+
+#### Parse Outgoing XML citations from website
+
+The function `parse_outgoing_citation_web` allows you to get the articles a given
+article cites, given a PubMed ID or PubMed Central ID. This will return a dictionary
+which contains the following keys
+
+- `n_citations`: number of cited articles
+- `doc_id`: the document identifier given
+- `id_type`: the type of identifier given. Either 'PMID' or 'PMC'
+- `pmid_cited`: list of PMIDs cited by the article
+
+```python
+dict_out = pp.parse_outgoing_citation_web(doc_id, id_type='PMID')
+```
+
+Identifiers should be passed as strings. PubMed Central ID's are default, and
+should be passed as strings *without* the 'PMC' prefix. If no citations are
+found, or if no article is found matching `doc_id` in the indicated database,
+it will return `None`.
 
 
 ## Install package
@@ -235,13 +255,13 @@ pubmed_oa_df = pd.DataFrame(pubmed_oa_all) # transform to pandas DataFrame
 
 - [Titipat Achakulvisut](http://titipata.github.io), Northwestern University
 - [Daniel E. Acuna](http://scienceofscience.org/about), Rehabilitation Institute of Chicago and Northwestern University
-- [David Brandfonbrener](https://github.com/davidbrandfonbrener), Yale University
+
+and [contributors](https://github.com/titipata/pubmed_parser/graphs/contributors)
 
 
 ## Dependencies
 
 - [lxml](http://lxml.de/)
-- [pandas](https://github.com/pydata/pandas)
 - [unidecode](https://pypi.python.org/pypi/Unidecode)
 
 

@@ -13,7 +13,6 @@ if __name__ == "__main__":
         author='Titipat Achakulvisut',
         author_email='titipata@u.northwestern.edu',
         license='(c) 2015 Titipat Achakulvisut, Daniel E. Acuna',
-        keywords='pubmed parser',
-        install_requires=['pandas', 'lxml', 'unidecode', 'nltk', 'requests'],
+        install_requires=['lxml', 'unidecode', 'requests'],
         packages=['pubmed_parser'],
     )
