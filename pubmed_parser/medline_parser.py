@@ -202,14 +202,14 @@ def parse_article_info(medline):
                 affiliation = ''
             authors_info.append(firstname + ' ' + lastname)
             affiliations_info.append(affiliation)
-        affiliations_info = join([a for a in affiliations_info if a is not ''])
+        affiliations_info = ' '.join([a for a in affiliations_info if a is not ''])
         authors_info = '; '.join(authors_info)
     else:
         affiliations_info = ''
         authors_info = ''
 
     journal = article.find('Journal')
-    journal_name = join(journal.xpath('Title/text()'))
+    journal_name = ' '.join(journal.xpath('Title/text()'))
     issue = journal.xpath('JournalIssue')[0]
     issue_date = issue.find('PubDate')
     if issue_date.find('Year') is not None:

@@ -1,7 +1,5 @@
-import collections
 from lxml import etree
 from itertools import chain
-from six import string_types
 
 
 def read_xml(path):
@@ -17,25 +15,6 @@ def read_xml(path):
             print("Error: it was not able to read a path, a file-like object, or a string as an XML")
             raise
     return tree
-
-
-def join(l):
-    """
-    Join list with single space
-    """
-    return ' '.join(l)
-
-
-def flatten(l):
-    """
-    Flatten list into one dimensional
-    """
-    for el in l:
-        if isinstance(el, collections.Iterable) and not isinstance(el, string_types):
-            for sub in flatten(el):
-                yield sub
-        else:
-            yield el
 
 
 def stringify_children(node):
@@ -82,13 +61,3 @@ def recur_children(node):
                  [recur_children(c) for c in node.getchildren()] +
                  [node.tail or ''])
         return parts
-
-
-def chunks(l, n):
-    """
-    Yield successive n-sized chunks from l
-    Suppose we want to chunk all path list into smaller chunk
-    example: chunks(path_list, 10000)
-    """
-    for i in xrange(0, len(l), n):
-        yield l[i:i+n]
