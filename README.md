@@ -153,9 +153,11 @@ dict_out = pp.parse_xml_web(pmid, save_xml=False)
 The function `parse_citation_web` allows you to get the citations to a given
 PubMed ID or PubMed Central ID. This will return a dictionary which contains the following keys
 
-- `n_citations`: total number of citations
-- `pmc`: Pubmed Central ID (convert given ID to PMC)
-- `pmc_cited`: list of Pubmed Central IDs that cite the article
+- `pmc`: Pubmed Central ID
+- `pmid`: Pubmed ID
+- `doi`: DOI of the article
+- `n_citations`: number of citations for given articles
+- `pmc_cited`: list of PMCs that cite the given PMC
 
 ```python
 dict_out = pp.parse_citation_web(doc_id, id_type='PMC')
@@ -193,7 +195,7 @@ $ pip install -r requirements.txt
 Then you can install the package as follows
 
 ```bash
-$ python setup.py develop install
+$ python setup.py install
 ```
 
 
@@ -263,7 +265,7 @@ and [contributors](https://github.com/titipata/pubmed_parser/graphs/contributors
 
 - [lxml](http://lxml.de/)
 - [unidecode](https://pypi.python.org/pypi/Unidecode)
-- [request](http://docs.python-requests.org/en/master/)
+- [requests](http://docs.python-requests.org/en/master/)
 
 ## Citation
 
