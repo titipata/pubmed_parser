@@ -180,7 +180,6 @@ def parse_outgoing_citation_web(doc_id, id_type='PMC'):
     link = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=%s&linkname=%s&id=%s' % (db, linkname, doc_id)
 
     tree = etree.parse(link)
-    print etree.tostring(tree, pretty_print=True)
     pmid_cited_all = tree.xpath('/eLinkResult/LinkSet/LinkSetDb/Link/Id/text()')
     n_citations = len(pmid_cited_all)
 
