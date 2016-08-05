@@ -181,6 +181,7 @@ should be passed as strings *without* the 'PMC' prefix. If no citations are
 found, or if no article is found matching `doc_id` in the indicated database,
 it will return `None`.
 
+
 ## Install package
 
 Install all dependencies
@@ -254,13 +255,13 @@ pubmed_oa_df = pd.DataFrame(pubmed_oa_all) # transform to pandas DataFrame
 
 - [Titipat Achakulvisut](http://titipata.github.io), Northwestern University
 - [Daniel E. Acuna](http://scienceofscience.org/about), Rehabilitation Institute of Chicago and Northwestern University
-- [David Brandfonbrener](https://github.com/davidbrandfonbrener), Yale University
+
+and [contributors](https://github.com/titipata/pubmed_parser/graphs/contributors)
 
 
 ## Dependencies
 
 - [lxml](http://lxml.de/)
-- [pandas](https://github.com/pydata/pandas)
 - [unidecode](https://pypi.python.org/pypi/Unidecode)
 
 

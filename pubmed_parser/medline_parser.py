@@ -1,5 +1,5 @@
-from .utils import *
 from itertools import chain
+from .utils import *
 
 __all__ = [
     'parse_medline_xml',

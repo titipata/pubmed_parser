@@ -1,9 +1,7 @@
 import os
-import pandas as pd
 from lxml import etree
-from functools import partial
-from operator import is_not
 from lxml.etree import tostring
+from itertools import chain
 from .utils import *
 
 __all__ = [
@@ -11,15 +9,21 @@ __all__ = [
     'parse_pubmed_xml',
     'parse_pubmed_paragraph',
     'parse_pubmed_references',
-    'parse_pubmed_caption',
-    'parse_pubmed_xml_to_df',
-    'pretty_print_xml',
+    'parse_pubmed_caption'
 ]
 
 
 def list_xml_path(path_dir):
     """
-    List full xml path under given directory `path_dir`
+    List full xml path under given directory
+
+    Parameters
+    ----------
+    path_dir: str, path to directory that contains xml or nxml file
+
+    Returns
+    -------
+    path_list: list, list of xml or nxml file from given path
     """
     fullpath = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(path_dir)) for f in fn]
     path_list = [folder for folder in fullpath if os.path.splitext(folder)[-1] == ('.nxml' or '.xml')]
@@ -33,7 +37,7 @@ def zip_author(author):
     [first_name, last_name, [key1, key2]]
     return [[first_name, last_name, key1], [first_name, last_name, key2]] instead
     """
-    author_zipped = list(zip([[author[0], author[1]]]*len(author[-1]), author[-1]))
+    author_zipped = list(zip([[author[0], author[1]]] * len(author[-1]), author[-1]))
     return list(map(lambda x: x[0] + [x[-1]], author_zipped))
 
 
@@ -43,18 +47,6 @@ def flatten_zip_author(author_list):
     """
     author_zipped_list = map(zip_author, author_list)
     return list(chain.from_iterable(author_zipped_list))
-
-
-def pretty_print_xml(path, save_path=None):
-    """
-    Given a XML path, file-like, or string, print a pretty xml version of it
-    """
-    tree = read_xml(path)
-
-    if save_path:
-        tree.write(save_path, pretty_print=True) # save prerry print to xml file
-
-    print(tostring(tree, pretty_print=True))
 
 
 def parse_article_meta(tree):
@@ -96,7 +88,7 @@ def parse_pubmed_xml(path, include_path=False):
         full_title = ' '.join(title)
     else:
         full_title = ''
-        
+
     try:
         abstract = ' '.join(tree.xpath('//abstract//text()'))
     except:
@@ -166,41 +158,6 @@ def parse_pubmed_xml(path, include_path=False):
     if include_path:
         dict_out['path_to_file'] = path
     return dict_out
-
-
-def parse_pubmed_xml_to_df(paths, include_path=False, remove_abstract=False):
-    """
-    Given list of xml paths, return parsed DataFrame
-
-    Parameters
-    ----------
-    path_list: list, list of xml paths
-    remove_abstract: boolean, if true, remove row of dataframe if parsed xml
-        contains empty abstract
-    include_path: boolean, if true, concat path to xml file when
-        constructing dataFrame
-
-    Return
-    ------
-    pm_docs_df: dataframe, dataframe of all parsed xml files
-    """
-    pm_docs = list()
-    if isinstance(paths, string_types):
-        pm_docs = [parse_pubmed_xml(paths, include_path=include_path)] # in case providing single path
-    else:
-        # else for list of paths
-        for path in paths:
-            pm_dict = parse_pubmed_xml(path, include_path=include_path)
-            pm_docs.append(pm_dict)
-
-    pm_docs = filter(partial(is_not, None), pm_docs)  # remove None
-    pm_docs_df = pd.DataFrame(pm_docs) # turn to pandas DataFrame
-
-    # remove empty abstract
-    if remove_abstract:
-        pm_docs_df = pm_docs_df[pm_docs_df.abstract != ''].reset_index().drop('index', axis=1)
-
-    return pm_docs_df
 
 
 def parse_references(tree):

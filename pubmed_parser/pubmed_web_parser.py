@@ -134,6 +134,12 @@ def extract_pmc(citation):
 
 
 def parse_citation_web(pmc):
+    """
+    Parse citations from given PMC and return dictionary containing:
+        n_citations: number of citations for given articles
+        pmc: Pubmed Central ID
+        pmc_cited: list of PMCs that cite the given PMC
+    """
     pmc = str(pmc)
     link = "http://www.ncbi.nlm.nih.gov/pmc/articles/PMC%s/citedby/" % pmc
     page = requests.get(link)
