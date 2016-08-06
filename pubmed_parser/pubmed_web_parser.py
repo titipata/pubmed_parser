@@ -140,6 +140,7 @@ def convert_document_id(doc_id, id_type='PMC'):
     doc_id = str(doc_id)
     if id_type == 'PMC':
         doc_id = 'PMC%s' % doc_id
+        pmc = doc_id
         convert_link = 'http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=my_tool&email=my_email@example.com&ids=%s' % doc_id
     elif id_type in ['PMID', 'DOI', 'OTHER']:
         convert_link = 'http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=my_tool&email=my_email@example.com&ids=%s' % doc_id
@@ -151,7 +152,12 @@ def convert_document_id(doc_id, id_type='PMC'):
     record = convert_tree.find('record').attrib
     if 'status' in record or 'pmcid' not in record:
         raise ValueError('Cannot convert given document id to PMC')
-    return {'pmc': record['pmcid'] if 'pmcid' in record else '',
+    if id_type in ['PMID', 'DOI', 'OTHER']:
+        if 'pmcid' in record:
+            pmc = record['pmcid']
+        else:
+            pmc = ''
+    return {'pmc': pmc,
             'pmid': record['pmid'] if 'pmid' in record else '',
             'doi': record['doi'] if 'doi' in record else ''}
 
