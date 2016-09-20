@@ -4,9 +4,9 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/titipata/pubmed_parser/blob/master/LICENSE)
 
 Python parser for [PubMed open-access (OA) subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
-(the download section of XML subset is at the end of the page, files are named like this
-  `articles.A-B.tar.gz` ) and [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/)
-  file.
+ and [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/) repository. See
+ [wiki page](https://github.com/titipata/pubmed_parser/wiki) on how to download and
+ process dataset using the repository.
 
 
 ## Parsers available
