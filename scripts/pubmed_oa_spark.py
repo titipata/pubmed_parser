@@ -1,6 +1,6 @@
 import os
 import pubmed_parser as pp
-from pyspark.sql import Row
+from pyspark.sql import Row, SQLContext
 from pyspark import SparkConf, SparkContext
 
 # directory
@@ -14,6 +14,7 @@ if 'SPARK_HOME' not in os.environ:
 
 conf = SparkConf().setAppName('pubmed_oa_spark').setMaster('local[8]')
 sc = SparkContext(conf=conf)
+sqlContext = SQLContext(sc)
 
 def parse_name(p):
     author_list = p.author_list
