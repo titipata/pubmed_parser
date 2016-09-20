@@ -108,7 +108,8 @@ def parse_pubmed_xml(path, include_path=False):
     subjects = list()
     if subjects_node is not None:
         for s in subjects_node:
-            subjects.append(s.text)
+            subject = ' '.join([s_.strip() for s_ in s.itertext()]).strip()
+            subjects.append(subject)
         subjects = '; '.join(subjects)
     else:
         subjects = ''
