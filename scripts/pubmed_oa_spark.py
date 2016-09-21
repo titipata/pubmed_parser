@@ -52,17 +52,20 @@ if __name__ == '__main__':
                                      'file_name', 'pmc', 'pmid',
                                      'publication_year', 'publisher_id',
                                      'journal', 'subjects']]
-    pubmed_oa_df_sel.write.parquet(os.path.join(save_dir, 'pubmed_oa.parquet'))
+    pubmed_oa_df_sel.write.parquet(os.path.join(save_dir, 'pubmed_oa.parquet'),
+                                   compression='gzip')
 
     parse_name_rdd = parse_results_rdd.map(lambda x: parse_name(x)).\
         filter(lambda x: x is not None).\
         flatMap(lambda xs: [x for x in xs])
     parse_name_df = parse_name_rdd.toDF()
-    parse_name_df.write.parquet(os.path.join(save_dir, 'pubmed_oa_author.parquet'))
+    parse_name_df.write.parquet(os.path.join(save_dir, 'pubmed_oa_author.parquet'),
+                                compression='gzip')
 
     parse_affil_rdd = parse_results_rdd.map(lambda x: parse_affiliation(x)).\
         filter(lambda x: x is not None).\
         flatMap(lambda xs: [x for x in xs])
     parse_affil_df = parse_affil_rdd.toDF()
-    parse_name_df.write.parquet(os.path.join(save_dir, 'pubmed_oa_affiliation.parquet'))
+    parse_name_df.write.parquet(os.path.join(save_dir, 'pubmed_oa_affiliation.parquet'),
+                                compression='gzip')
     print('Finished parsing Pubmed Open-Access subset')
