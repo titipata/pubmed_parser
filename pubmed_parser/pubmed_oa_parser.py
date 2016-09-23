@@ -90,7 +90,13 @@ def parse_pubmed_xml(path, include_path=False):
         full_title = ''
 
     try:
-        abstract = ' '.join(tree.xpath('//abstract//text()'))
+        abstracts = list()
+        abstract_tree = tree.findall('//abstract')
+        for a in abstract_tree:
+            for t in a.itertext():
+                text = t.replace('\n', ' ').replace('\t', ' ').strip()
+                abstracts.append(text)
+        abstract = ' '.join(abstracts)
     except:
         abstract = ''
 
