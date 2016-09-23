@@ -1,22 +1,21 @@
 import os
+import re
+from glob import glob
+from datetime import datetime
+import subprocess
 import pubmed_parser as pp
 from pyspark.sql import Row, SQLContext
 from pyspark import SparkConf, SparkContext
+from utils import get_update_date
 
 # directory
 home_dir = os.path.expanduser('~')
+download_dir = os.path.join(home_dir, 'Downloads')
+unzip_dir = os.path.join(download_dir, 'pubmed_oa') # path to unzip tar file
 save_dir = os.path.join(home_dir, 'Desktop')
-data_dir = os.path.join(home_dir, 'Downloads/data/')
-spark_dir = os.path.join(home_dir, 'Desktop/spark-2.0.0')
-
-if 'SPARK_HOME' not in os.environ:
-    os.environ['SPARK_HOME'] = spark_dir
-
-conf = SparkConf().setAppName('pubmed_oa_spark').setMaster('local[8]')
-sc = SparkContext(conf=conf)
-sqlContext = SQLContext(sc)
 
 def parse_name(p):
+    """Turn dataframe from pubmed_parser to list of Spark Row"""
     author_list = p.author_list
     author_table = list()
     if len(author_list) >= 1:
@@ -29,6 +28,7 @@ def parse_name(p):
         return None
 
 def parse_affiliation(p):
+    """Turn dataframe from pubmed_parser to list of Spark Row"""
     affiliation_list = p.affiliation_list
     affiliation_table = list()
     if len(affiliation_list) >= 1:
@@ -40,32 +40,78 @@ def parse_affiliation(p):
     else:
         return None
 
+def update():
+    """Update file"""
+    save_file = os.path.join(save_dir, 'pubmed_oa_*_*_*.parquet')
+    file_list = list(filter(os.path.isdir, glob(save_file)))
+    if file_list:
+        d = re.search('[0-9]+_[0-9]+_[0-9]+', file_list[0]).group(0)
+        date_file = datetime.strptime(d, '%Y_%m_%d')
+        date_update = get_update_date(option='oa')
+        # if update is newer
+        is_update = date_update > date_file
+        if is_update:
+            print("MEDLINE update available!")
+            subprocess.call(['rm', '-rf', os.path.join(save_dir, 'pubmed_oa_*_*_*.parquet')]) # remove
+            subprocess.call(['rm', '-rf', download_dir, 'pubmed_oa'])
+            subprocess.call(['wget', 'ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk/comm_use.A-B.xml.tar.gz', '--directory', download_dir])
+            subprocess.call(['tar', '-xzf', 'comm_use.A-B.xml.tar.gz', '--directory', unzip_dir])
+        else:
+            print("No update available")
+    else:
+        print("Download Pubmed Open-Access for the first time")
+        is_update = True
+        date_update = get_update_date(option='oa')
+        subprocess.call(['wget', 'ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk/comm_use.A-B.xml.tar.gz', '--directory', download_dir])
+        subprocess.call(['tar', '-xzf', 'comm_use.A-B.xml.tar.gz', '--directory', unzip_dir])
+    return is_update, date_update
 
-if __name__ == '__main__':
+def process_file(date_update, fraction=0.01):
 
-    path_all = pp.list_xml_path(data_dir)
-    path_rdd = sc.parallelize(path_all[0:1000], numSlices=10000) # example path
-    print(path_all[0:10])
+    print("Process Pubmed Open-Access file to parquet with fraction = %s" % str(fraction))
+    date_update_str = date_update.strftime("%Y_%m_%d")
+    if glob(os.path.join(save_dir, 'pubmed_oa_*.parquet')):
+        subprocess.call(['rm', '-rf', 'pubmed_oa_*.parquet']) # remove if folder still exist
+
+    path_all = pp.list_xml_path(unzip_dir)
+    if fraction < 1:
+        n_sample = int(fraction * len(path_all))
+        rand_index = random.sample(range(len(path_all)), n_sample)
+        rand_index.sort()
+        path_sample = [path_all[i] for i in rand_index]
+    else:
+        path_sample = path_all
+
+    path_rdd = sc.parallelize(path_sample, numSlices=10000) # use only example path
     parse_results_rdd = path_rdd.map(lambda x: Row(file_name=os.path.basename(x), **pp.parse_pubmed_xml(x)))
     pubmed_oa_df = parse_results_rdd.toDF()
     pubmed_oa_df_sel = pubmed_oa_df[['full_title', 'abstract', 'doi',
                                      'file_name', 'pmc', 'pmid',
                                      'publication_year', 'publisher_id',
                                      'journal', 'subjects']]
-    pubmed_oa_df_sel.write.parquet(os.path.join(save_dir, 'pubmed_oa.parquet'),
+    pubmed_oa_df_sel.write.parquet(os.path.join(save_dir, 'pubmed_oa_%s.parquet' % date_update_str),
                                    compression='gzip')
 
     parse_name_rdd = parse_results_rdd.map(lambda x: parse_name(x)).\
         filter(lambda x: x is not None).\
         flatMap(lambda xs: [x for x in xs])
     parse_name_df = parse_name_rdd.toDF()
-    parse_name_df.write.parquet(os.path.join(save_dir, 'pubmed_oa_author.parquet'),
+    parse_name_df.write.parquet(os.path.join(save_dir, 'pubmed_oa_author_%s.parquet' % date_update_str),
                                 compression='gzip')
 
     parse_affil_rdd = parse_results_rdd.map(lambda x: parse_affiliation(x)).\
         filter(lambda x: x is not None).\
         flatMap(lambda xs: [x for x in xs])
     parse_affil_df = parse_affil_rdd.toDF()
-    parse_name_df.write.parquet(os.path.join(save_dir, 'pubmed_oa_affiliation.parquet'),
+    parse_name_df.write.parquet(os.path.join(save_dir, 'pubmed_oa_affiliation_%s.parquet' % date_update_str),
                                 compression='gzip')
     print('Finished parsing Pubmed Open-Access subset')
+
+conf = SparkConf().setAppName('pubmed_oa_spark').setMaster('local[8]')
+sc = SparkContext(conf=conf)
+sqlContext = SQLContext(sc)
+
+if __name__ == '__main__':
+    is_update, date_update = update()
+    if is_update:
+        process_file(date_update)

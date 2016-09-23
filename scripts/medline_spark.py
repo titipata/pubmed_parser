@@ -13,7 +13,6 @@ from utils import get_update_date
 home_dir = os.path.expanduser('~')
 download_dir = os.path.join(home_dir, 'Downloads', 'medline')
 save_dir = os.path.join(home_dir, 'Desktop')
-spark_dir = os.path.join(home_dir, 'Desktop/spark-2.0.0')
 
 def update():
     """Update file"""
@@ -36,7 +35,7 @@ def update():
         else:
             print("No update available")
     else:
-        print("MEDLINE download for the first time")
+        print("Download MEDLINE for the first time")
         is_update = True
         date_update = get_update_date(option='medline')
         subprocess.call(['wget', 'ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/medline16n0001.xml.gz', '--directory', download_dir])
@@ -47,7 +46,7 @@ def update():
 def process_file(date_update):
 
     print("Process MEDLINE file to parquet")
-    # remove if file still exist
+    # remove if folder still exist
     if glob(os.path.join(save_dir, 'medline_*.parquet')):
         subprocess.call(['rm', '-rf', 'medline_*.parquet'])
 
@@ -77,10 +76,6 @@ def process_file(date_update):
     grant_df = parse_grant_rdd.toDF()
     grant_df.write.parquet(os.path.join(save_dir, 'medline_grant_%s.parquet' % date_update_str),
                            compression='gzip')
-
-# set up environment for pyspark
-if 'SPARK_HOME' not in os.environ:
-    os.environ['SPARK_HOME'] = spark_dir
 
 conf = SparkConf().setAppName('medline_spark').setMaster('local[8]')
 sc = SparkContext(conf=conf)
