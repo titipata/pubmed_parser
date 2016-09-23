@@ -15,7 +15,7 @@ download_dir = os.path.join(home_dir, 'Downloads', 'medline')
 save_dir = os.path.join(home_dir, 'Desktop')
 
 def update():
-    """Update file"""
+    """Download and update file"""
     save_file = os.path.join(save_dir, 'medline*_*_*_*.parquet')
     file_list = list(filter(os.path.isdir, glob(save_file)))
     if file_list:
@@ -44,7 +44,7 @@ def update():
     return is_update, date_update
 
 def process_file(date_update):
-
+    """Process downloaded MEDLINE folder to parquet file"""
     print("Process MEDLINE file to parquet")
     # remove if folder still exist
     if glob(os.path.join(save_dir, 'medline_*.parquet')):

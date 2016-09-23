@@ -2,6 +2,7 @@ import os
 import re
 from glob import glob
 from datetime import datetime
+import random
 import subprocess
 import pubmed_parser as pp
 from pyspark.sql import Row, SQLContext
@@ -41,7 +42,7 @@ def parse_affiliation(p):
         return None
 
 def update():
-    """Update file"""
+    """Download and update file"""
     save_file = os.path.join(save_dir, 'pubmed_oa_*_*_*.parquet')
     file_list = list(filter(os.path.isdir, glob(save_file)))
     if file_list:
@@ -54,20 +55,22 @@ def update():
             print("MEDLINE update available!")
             subprocess.call(['rm', '-rf', os.path.join(save_dir, 'pubmed_oa_*_*_*.parquet')]) # remove
             subprocess.call(['rm', '-rf', download_dir, 'pubmed_oa'])
-            subprocess.call(['wget', 'ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk/comm_use.A-B.xml.tar.gz', '--directory', download_dir])
-            subprocess.call(['tar', '-xzf', 'comm_use.A-B.xml.tar.gz', '--directory', unzip_dir])
+            subprocess.call(['wget', 'ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk/non_comm_use.A-B.xml.tar.gz', '--directory', download_dir])
+            if not os.path.isdir(unzip_dir): os.mkdir(unzip_dir)
+            subprocess.call(['tar', '-xzf', os.path.join(download_dir, 'non_comm_use.A-B.xml.tar.gz'), '--directory', unzip_dir])
         else:
             print("No update available")
     else:
         print("Download Pubmed Open-Access for the first time")
         is_update = True
         date_update = get_update_date(option='oa')
-        subprocess.call(['wget', 'ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk/comm_use.A-B.xml.tar.gz', '--directory', download_dir])
-        subprocess.call(['tar', '-xzf', 'comm_use.A-B.xml.tar.gz', '--directory', unzip_dir])
+        subprocess.call(['wget', 'ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk/non_comm_use.A-B.xml.tar.gz', '--directory', download_dir])
+        if not os.path.isdir(unzip_dir): os.mkdir(unzip_dir)
+        subprocess.call(['tar', '-xzf', os.path.join(download_dir, 'non_comm_use.A-B.xml.tar.gz'), '--directory', unzip_dir])
     return is_update, date_update
 
 def process_file(date_update, fraction=0.01):
-
+    """Process unzipped Pubmed Open-Access folder to parquet file"""
     print("Process Pubmed Open-Access file to parquet with fraction = %s" % str(fraction))
     date_update_str = date_update.strftime("%Y_%m_%d")
     if glob(os.path.join(save_dir, 'pubmed_oa_*.parquet')):
