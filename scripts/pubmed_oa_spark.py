@@ -110,7 +110,11 @@ def process_file(date_update, fraction=0.01):
                                 compression='gzip')
     print('Finished parsing Pubmed Open-Access subset')
 
-conf = SparkConf().setAppName('pubmed_oa_spark').setMaster('local[8]')
+conf = SparkConf().setAppName('pubmed_oa_spark')\
+    .setMaster('local[8]')\
+    .set('executor.memory', '8g')\
+    .set('driver.memory', '8g')\
+    .set('spark.driver.maxResultSize', '0')
 sc = SparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 

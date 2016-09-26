@@ -77,11 +77,16 @@ def process_file(date_update):
     grant_df.write.parquet(os.path.join(save_dir, 'medline_grant_%s.parquet' % date_update_str),
                            compression='gzip')
 
-conf = SparkConf().setAppName('medline_spark').setMaster('local[8]')
+conf = SparkConf().setAppName('medline_spark')\
+    .setMaster('local[8]')\
+    .set('executor.memory', '8g')\
+    .set('driver.memory', '8g')\
+    .set('spark.driver.maxResultSize', '0')
+
 sc = SparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 
 if __name__ == '__main__':
     is_update, date_update = update()
-    if is_update:
+    if is_update or not glob(os.path.join(save_dir, 'medline_*.parquet')):
         process_file(date_update)

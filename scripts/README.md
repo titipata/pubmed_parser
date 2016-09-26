@@ -10,7 +10,7 @@ To run script to download and process Pubmed Open-Access subset,
 change directory in `pubmed_oa_spark.py` and simply run
 
 ```bash
-source pubmed_oa_script.sh
+~/spark-2.0.0/bin/spark-submit pubmed_oa_spark.py
 ```
 
 or set up Cronjob by running `crontab -e` (**note** that you might have to
@@ -20,7 +20,7 @@ or set up Cronjob by running `crontab -e` (**note** that you might have to
 ```bash
 #!/bin/bash
 
-0 8 * * Sun source ~/.bash_profile;source pubmed_oa_script.sh
+0 8 * * Sun source ~/.bash_profile;~/spark-2.0.0/bin/spark-submit pubmed_oa_spark.py
 ```
 
 ## Running and preprocessing MEDLINE dataset to Spark Dataframe
@@ -28,7 +28,7 @@ or set up Cronjob by running `crontab -e` (**note** that you might have to
 Same as Open-Access, we can modify path in `medline_spark.py` then run
 
 ```bash
-source medline_script.sh
+~/spark-2.0.0/bin/spark-submit medline_spark.py
 ```
 
 to use Cronjob, follows the same instruction as above.
