@@ -12,7 +12,7 @@ from utils import get_update_date
 # directory
 home_dir = os.path.expanduser('~')
 download_dir = os.path.join(home_dir, 'Downloads', 'medline')
-save_dir = os.path.join(home_dir, 'Desktop')
+save_dir = os.path.join(home_dir, 'Downloads')
 
 def update():
     """Download and update file"""
@@ -83,10 +83,10 @@ conf = SparkConf().setAppName('medline_spark')\
     .set('driver.memory', '8g')\
     .set('spark.driver.maxResultSize', '0')
 
-sc = SparkContext(conf=conf)
-sqlContext = SQLContext(sc)
-
 if __name__ == '__main__':
+    sc = SparkContext(conf=conf)
+    sqlContext = SQLContext(sc)
     is_update, date_update = update()
     if is_update or not glob(os.path.join(save_dir, 'medline_*.parquet')):
         process_file(date_update)
+    sc.stop()

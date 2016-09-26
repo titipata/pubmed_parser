@@ -115,10 +115,11 @@ conf = SparkConf().setAppName('pubmed_oa_spark')\
     .set('executor.memory', '8g')\
     .set('driver.memory', '8g')\
     .set('spark.driver.maxResultSize', '0')
-sc = SparkContext(conf=conf)
-sqlContext = SQLContext(sc)
 
 if __name__ == '__main__':
+    sc = SparkContext(conf=conf)
+    sqlContext = SQLContext(sc)
     is_update, date_update = update()
     if is_update:
         process_file(date_update)
+    sc.stop()
