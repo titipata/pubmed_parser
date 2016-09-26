@@ -185,8 +185,8 @@ def date_extractor(journal, year_info_only):
         if not year_info_only:
             if issue_date.find('Month') is not None:
                 month = month_or_day_formater(issue_date.find('Month').text)
-            if issue_date.find('Day') is not None:
-                day = month_or_day_formater(issue_date.find('Day').text)
+                if issue_date.find('Day') is not None:
+                    day = month_or_day_formater(issue_date.find('Day').text)
     elif issue_date.find('MedlineDate') is not None:
         year_text = issue_date.find('MedlineDate').text
         year = year_text.split(' ')[0]
