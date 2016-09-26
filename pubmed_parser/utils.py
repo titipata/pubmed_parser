@@ -1,4 +1,6 @@
+import calendar
 import collections
+from time import strptime
 from six import string_types
 from lxml import etree
 from itertools import chain
@@ -75,3 +77,32 @@ def _recur_children(node):
                  [_recur_children(c) for c in node.getchildren()] +
                  [node.tail or ''])
         return parts
+
+
+def month_or_day_formater(month_or_day):
+    """
+    Parameters
+    ----------
+    month_or_day: str or int
+        must be one of the following:
+            (i)  month: a three letter month abbreviation, e.g., 'Jan'.
+            (ii) day: an integer.
+
+    Returns
+    -------
+    numeric: str
+        a month of the form 'MM' or a day of the form 'DD'.
+        Note: returns None if:
+            (a) the input could not be mapped to a known month abbreviation OR
+            (b) the input was not an integer (i.e., a day).
+    """
+    if month_or_day.replace(".", "") in filter(None, calendar.month_abbr):
+        to_format = strptime(month_or_day.replace(".", ""),'%b').tm_mon
+    elif month_or_day.strip().isdigit() and "." not in str(month_or_day):
+        to_format = int(month_or_day.strip())
+    else:
+        return None
+
+    return ("0" if to_format < 10 else "") + str(to_format)
+
+

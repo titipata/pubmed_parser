@@ -111,10 +111,16 @@ This function will return list of dictionaries, where each element contains:
 - `authors`: authors, each separated by `;`
 - `mesh_terms`: list of MeSH terms, each separated by `;`
 - `keywords`: list of keywords, each separated by `;`
-- `year`: Publication year
+- `pubdate`: Publication date. Defaults to year information only.
 
 ```python
 dicts_out = pp.parse_medline_xml('data/medline16n0902.xml.gz') # return list of dictionary
+```
+
+Try to extract month and day information from PubDate as well:
+
+```python
+dicts_out = pp.parse_medline_xml('data/medline16n0902.xml.gz', year_info_only=False)  
 ```
 
 #### Parse Medline Grant ID
