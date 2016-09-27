@@ -189,7 +189,7 @@ def parse_references(tree):
                 names = list()
                 if rc.find('name') is not None:
                     for n in rc.findall('name'):
-                        name = join([t.text for t in n.getchildren()][::-1])
+                        name = ' '.join([t.text for t in n.getchildren()][::-1])
                         names.append(name)
                 elif rc.find('person-group') is not None:
                     for n in rc.find('person-group'):
@@ -243,7 +243,7 @@ def parse_paragraph(tree, dict_refs):
     dict_pars = list()
     for p in paragraphs:
         try:
-            text = join(p.xpath('text()')) # text of the paragraph
+            text = ' '.join(p.xpath('text()')) # text of the paragraph
         except:
             text = ''
         try:
@@ -309,7 +309,7 @@ def parse_pubmed_caption(path):
             fig_id = fig.attrib['id']
             fig_label = stringify_children(fig.find('label'))
             fig_captions = fig.find('caption').getchildren()
-            caption = join([stringify_children(c) for c in fig_captions])
+            caption = ' '.join([stringify_children(c) for c in fig_captions])
             graphic = fig.find('graphic')
             if graphic is not None:
                 graphic_ref = graphic.attrib.values()[0]
