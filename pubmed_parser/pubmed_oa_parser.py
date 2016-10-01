@@ -26,7 +26,7 @@ def list_xml_path(path_dir):
     path_list: list, list of xml or nxml file from given path
     """
     fullpath = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(path_dir)) for f in fn]
-    path_list = [folder for folder in fullpath if os.path.splitext(folder)[-1] == ('.nxml' or '.xml')]
+    path_list = [folder for folder in fullpath if os.path.splitext(folder)[-1] in ('.nxml', '.xml')]
     return path_list
 
 
