@@ -1,9 +1,11 @@
+import sys
 import re
-import requests
 import time
+import requests
 from lxml import etree
 from lxml import html
 from unidecode import unidecode
+from .utils import stringify_children
 
 __all__ = [
     'parse_xml_web',
@@ -23,78 +25,56 @@ def load_xml(pmid, sleep=None):
     tree = html.fromstring(page.content)
     if sleep is not None:
         time.sleep(sleep)
-    dict_xml = {'pmid': str(pmid), 'xml': etree.tostring(tree)} # turn xml to string (easier to save later on)
-    return dict_xml
+    return tree
 
 
-def get_author_string(tree):
-    authors = tree.xpath('//authorlist//author')
-    authors_text = []
-    for a in authors:
-        firstname = a.find('forename').text
-        lastname = a.find('lastname').text
-        fullname = firstname + ' ' + lastname
-        authors_text.append(fullname)
-    return '; '.join(authors_text)
-
-
-def get_year_string(tree):
-    year = ''.join(tree.xpath('//pubmeddata//history//pubmedpubdate[@pubstatus="medline"]/year/text()'))
-    return year
-
-
-def get_abstract_string(tree):
-    abstract = unidecode(stringify_children(tree.xpath('//abstract')[0]))
-    return abstract
-
-
-def get_affiliation_string(tree):
-    """
-    Get all affiliation string
-    """
-    affiliation = '; '.join([a for a in tree.xpath('//affiliationinfo//affiliation/text()')])
-    return affiliation
-
-
-def parse_xml_tree(tree):
+def parse_pubmed_web_tree(tree):
     """
     Giving tree, return simple parsed information from the tree
     """
-    try:
-        title = ' '.join(tree.xpath('//articletitle/text()'))
-    except:
+
+    if tree.xpath('//articletitle') is not None:
+        title = ' '.join([title.text for title in tree.xpath('//articletitle')])
+    else:
         title = ''
 
-    try:
-        abstract = get_abstract_string(tree)
-    except:
-        abstract = ''
+    abstract_tree = tree.xpath('//abstract/abstracttext')
+    abstract = ' '.join([stringify_children(a).strip() for a in abstract_tree])
 
-    try:
-        journal = ' '.join(tree.xpath('//article//title/text()')).strip()
-    except:
+    if tree.xpath('//article//title') is not None:
+        journal = ';'.join([t.text.strip() for t in tree.xpath('//article//title')])
+    else:
         journal = ''
 
-    try:
-        year = get_year_string(tree)
-    except:
+    pubdate = tree.xpath('//pubmeddata//history//pubmedpubdate[@pubstatus="medline"]')
+    if len(pubdate) >= 1 and pubdate[0].find('year') is not None:
+        year = pubdate[0].find('year').text
+    else:
         year = ''
 
-    try:
-        affiliation = get_affiliation_string(tree)
-    except:
-        affiliation = ''
+    affiliations = list()
+    if tree.xpath('//affiliationinfo/affiliation') is not None:
+        for affil in tree.xpath('//affiliationinfo/affiliation'):
+            affiliations.append(affil.text)
+    affiliations_text = '; '.join(affiliations)
 
-    try:
-        authors = get_author_string(tree)
-    except:
-        authors = ''
+    authors_tree = tree.xpath('//authorlist/author')
+    authors = list()
+    if authors_tree is not None:
+        for a in authors_tree:
+            firstname = a.find('forename').text
+            lastname = a.find('lastname').text
+            fullname = firstname + ' ' + lastname
+            authors.append(fullname)
+        authors_text = '; '.join(authors)
+    else:
+        authors_text = ''
 
     dict_out = {'title': title,
                 'abstract': abstract,
                 'journal': journal,
-                'affiliation': affiliation,
-                'authors': authors,
+                'affiliation': affiliations_text,
+                'authors': authors_text,
                 'year': year}
     return dict_out
 
@@ -104,12 +84,11 @@ def parse_xml_web(pmid, sleep=None, save_xml=False):
     Give pmid, load and parse xml from Pubmed eutils
     if save_xml is True, save xml output in dictionary
     """
-    dict_xml = load_xml(pmid, sleep=sleep)
-    tree = etree.fromstring(dict_xml['xml'])
-    dict_out = parse_xml_tree(tree)
-    dict_out['pmid'] = dict_xml['pmid']
+    tree = load_xml(pmid, sleep=sleep)
+    dict_out = parse_pubmed_web_tree(tree)
+    dict_out['pmid'] = str(pmid)
     if save_xml:
-        dict_out['xml'] = dict_xml['xml']
+        dict_out['xml'] = etree.tostring(tree)
     return dict_out
 
 
