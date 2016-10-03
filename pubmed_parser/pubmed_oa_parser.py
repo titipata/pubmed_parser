@@ -3,6 +3,7 @@ from lxml import etree
 from lxml.etree import tostring
 from itertools import chain
 from .utils import *
+from unidecode import unidecode
 
 __all__ = [
     'list_xml_path',
@@ -323,3 +324,63 @@ def parse_pubmed_caption(path):
     if not dict_captions:
         dict_captions = None
     return dict_captions
+
+
+def table_to_df(table_text):
+    """
+    Function to transform plain xml text to list of row values and
+    columns
+    """
+    table_tree = etree.fromstring(table_text)
+    columns = []
+    for tr in table_tree.xpath('thead/tr'):
+        for c in tr.getchildren():
+            columns.append(unidecode(stringify_children(c)))
+
+    row_values = []
+    len_rows = []
+    for tr in table_tree.findall('tbody/tr'):
+        es = tr.xpath('td')
+        row_value = [unidecode(stringify_children(e)) for e in es]
+        len_rows.append(len(es))
+        row_values.append(row_value)
+    len_row = max(set(len_rows), key=len_rows.count)
+    row_values = [r for r in row_values if len(r) == len_row] # remove row with different length
+
+    return columns, row_values
+
+
+def parse_pubmed_table(path, return_xml=True):
+    """
+    Parse table from given Pubmed Open-Access XML file
+    """
+    tree = read_xml(path)
+    dict_article_meta = parse_article_meta(tree)
+    pmid = dict_article_meta['pmid']
+    pmc = dict_article_meta['pmc']
+
+    # parse table
+    tables = tree.xpath('//body//sec//table-wrap')
+    table_dicts = list()
+    for table in tables:
+        label = unidecode(table.find('label').text)
+        caption_node = table.find('caption/p')
+        if caption_node is not None:
+            caption = stringify_children(caption_node).strip()
+        else:
+            caption = ''
+        table_xml = etree.tostring(table.find('table'))
+        columns, row_values = table_to_df(table_xml)
+        table_dict = {'pmid': pmid,
+                      'pmc': pmc,
+                      'label': label,
+                      'caption': caption,
+                      'table_columns': columns,
+                      'table_values': row_values}
+        if return_xml:
+            table_dict['table_xml'] = table_xml
+        table_dicts.append(table_dict)
+    if len(table_dicts) >= 1:
+        return table_dicts
+    else:
+        return None

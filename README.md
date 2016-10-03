@@ -3,7 +3,7 @@
 [![Join the chat at https://gitter.im/titipata/pubmed_parser](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/titipata/pubmed_parser?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/titipata/pubmed_parser/blob/master/LICENSE)
 
-Python parser for [PubMed open-access (OA) subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
+Python parser for [PubMed Open-Access (OA) subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
  and [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/) repository. See
  [wiki page](https://github.com/titipata/pubmed_parser/wiki) on how to download and
  process dataset using the repository.
@@ -89,6 +89,7 @@ For someone who might be interested in parsing the text surrounding
 a citation, the library also provides that functionality.
 You can use `parse_pubmed_paragraph` to parse text and reference PMIDs.
 This function will return a list of dictionaries, where each entry will have
+following keys
 
 - `pmid`: Pubmed ID
 - `pmc`: Pubmed Central ID
@@ -96,6 +97,23 @@ This function will return a list of dictionaries, where each entry will have
 - `references_pmids`: list of reference PMIDs
 - `references_code`: list of reference code within that paragraph
 - `section`: section of paragraph (e.g. Background, Discussion, Appendix)
+
+#### Parse Pubmed OA Table [WIP]
+
+You can use `parse_pubmed_table` to parse table from XML file. This function
+will return list of dictionaries where each has following keys.
+
+- `pmid`: Pubmed ID
+- `pmc`: Pubmed Central ID
+- `caption`: caption of the table
+- `label`: lable of the table
+- `table_columns`: list of column name
+- `table_values`: list of values inside the table
+- `table_xml`: raw xml text of the table (return if `return_xml=True`)
+
+```python
+dicts_out = pp.parse_pubmed_table('data/medline16n0902.xml.gz')
+```
 
 #### Parse Medline NML XML
 
@@ -207,7 +225,7 @@ $ python setup.py install
 
 ## Example Usage for Pubmed OA
 
-An example usage is shown below:
+An example usage is shown as follows
 
 ```python
 import pubmed_parser as pp
@@ -232,21 +250,11 @@ print(pubmed_dict)
  'subjects': 'Research Article'}
 ```
 
-You can also pass a list of XML paths to the function `parse_pubmed_xml_to_df`.
-This will return the parsed information in DataFrame format.
-Providing less than 10k XML paths is recommended, otherwise you may run out of
-memory. It takes about 1/2 day to parse all PubMed Open Access subset (around one million files).
-
-```python
-import pubmed_parser as pp
-path_xml = pp.list_xml_path('data') # list all xml paths under given directory
-pubmed_df = pp.parse_pubmed_xml_to_df(path_xml, include_path=True) # return DataFrame
-```
-
 
 ## Example Usage with PySpark
 
-This script takes about 3.1 mins to parse all Pubmed Open Access subset using PySpark on Amazon EC2 `r3.8xlarge` (with 32 cores).
+This script takes about 3.1 mins to parse all Pubmed Open Access subset using
+PySpark on Amazon EC2 `r3.8xlarge`.
 
 ```python
 import pandas as pd
@@ -254,9 +262,12 @@ import pubmed_parser as pp
 path_all = pp.list_xml_path('/path/to/folder/')
 path_rdd = sc.parallelize(path_all, numSlices=10000)
 pubmed_oa_all = path_rdd.map(lambda p: pp.parse_pubmed_xml(p)).collect() # load to memory
-# path_rdd.map(lambda p: pp.parse_pubmed_xml(p)).saveAsPickleFile('/mnt/daniel/pubmed_oa.pickle') # or to save to pickle
+# path_rdd.map(lambda p: pp.parse_pubmed_xml(p)).saveAsPickleFile('pubmed_oa.pickle') # or to save to pickle
 pubmed_oa_df = pd.DataFrame(pubmed_oa_all) # transform to pandas DataFrame
 ```
+
+See [scripts](https://github.com/titipata/pubmed_parser/tree/master/scripts)
+folder for more information.
 
 
 ## Members
