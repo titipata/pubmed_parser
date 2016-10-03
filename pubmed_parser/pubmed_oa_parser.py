@@ -364,22 +364,37 @@ def parse_pubmed_table(path, return_xml=True):
     table_dicts = list()
     for table in tables:
         label = unidecode(table.find('label').text)
-        caption_node = table.find('caption/p')
+
+        # table caption
+        if table.find('caption/p') is not None:
+            caption_node = table.find('caption/p')
+        elif table.find('caption/title') is not None:
+            caption_node = table.find('caption/title')
         if caption_node is not None:
-            caption = stringify_children(caption_node).strip()
+            caption = unidecode(stringify_children(caption_node).strip())
         else:
             caption = ''
-        table_xml = etree.tostring(table.find('table'))
-        columns, row_values = table_to_df(table_xml)
-        table_dict = {'pmid': pmid,
-                      'pmc': pmc,
-                      'label': label,
-                      'caption': caption,
-                      'table_columns': columns,
-                      'table_values': row_values}
-        if return_xml:
-            table_dict['table_xml'] = table_xml
-        table_dicts.append(table_dict)
+
+        # table content
+        if table.find('table') is not None:
+            table_tree = table.find('table')
+        elif table.find('alternatives/table') is not None:
+            table_tree = table.find('alternatives/table')
+        else:
+            table_tree = None
+        table_xml = etree.tostring(table_tree)
+
+        if table_tree is not None:
+            columns, row_values = table_to_df(table_xml)
+            table_dict = {'pmid': pmid,
+                          'pmc': pmc,
+                          'label': label,
+                          'caption': caption,
+                          'table_columns': columns,
+                          'table_values': row_values}
+            if return_xml:
+                table_dict['table_xml'] = table_xml
+            table_dicts.append(table_dict)
     if len(table_dicts) >= 1:
         return table_dicts
     else:
