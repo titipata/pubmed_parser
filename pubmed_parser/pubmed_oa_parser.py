@@ -382,9 +382,9 @@ def parse_pubmed_table(path, return_xml=True):
             table_tree = table.find('alternatives/table')
         else:
             table_tree = None
-        table_xml = etree.tostring(table_tree)
 
         if table_tree is not None:
+            table_xml = etree.tostring(table_tree)
             columns, row_values = table_to_df(table_xml)
             table_dict = {'pmid': pmid,
                           'pmc': pmc,
