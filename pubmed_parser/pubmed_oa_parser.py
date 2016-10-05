@@ -363,7 +363,10 @@ def parse_pubmed_table(path, return_xml=True):
     tables = tree.xpath('//body//sec//table-wrap')
     table_dicts = list()
     for table in tables:
-        label = unidecode(table.find('label').text)
+        if table.find('label') is not None:
+            label = unidecode(table.find('label').text)
+        else:
+            label = ''
 
         # table caption
         if table.find('caption/p') is not None:

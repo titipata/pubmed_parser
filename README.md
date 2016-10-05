@@ -12,7 +12,7 @@ Python parser for [PubMed Open-Access (OA) subset](http://www.ncbi.nlm.nih.gov/p
 ## Parsers available
 
 **note** path can be path to compressed or uncompressed xml file. We provide example
-file in [`data`]('data/') folder
+file in [`data`](data/) folder
 
 #### Parse Pubmed OA XML information
 
