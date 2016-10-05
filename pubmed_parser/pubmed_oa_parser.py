@@ -344,10 +344,12 @@ def table_to_df(table_text):
         row_value = [unidecode(stringify_children(e)) for e in es]
         len_rows.append(len(es))
         row_values.append(row_value)
-    len_row = max(set(len_rows), key=len_rows.count)
-    row_values = [r for r in row_values if len(r) == len_row] # remove row with different length
-
-    return columns, row_values
+    if len(len_rows) >= 1:
+        len_row = max(set(len_rows), key=len_rows.count)
+        row_values = [r for r in row_values if len(r) == len_row] # remove row with different length
+        return columns, row_values
+    else:
+        return None, None
 
 
 def parse_pubmed_table(path, return_xml=True):
@@ -364,7 +366,7 @@ def parse_pubmed_table(path, return_xml=True):
     table_dicts = list()
     for table in tables:
         if table.find('label') is not None:
-            label = unidecode(table.find('label').text)
+            label = unidecode(table.find('label').text or '')
         else:
             label = ''
 
@@ -373,6 +375,8 @@ def parse_pubmed_table(path, return_xml=True):
             caption_node = table.find('caption/p')
         elif table.find('caption/title') is not None:
             caption_node = table.find('caption/title')
+        else:
+            caption_node = None
         if caption_node is not None:
             caption = unidecode(stringify_children(caption_node).strip())
         else:
@@ -389,15 +393,16 @@ def parse_pubmed_table(path, return_xml=True):
         if table_tree is not None:
             table_xml = etree.tostring(table_tree)
             columns, row_values = table_to_df(table_xml)
-            table_dict = {'pmid': pmid,
-                          'pmc': pmc,
-                          'label': label,
-                          'caption': caption,
-                          'table_columns': columns,
-                          'table_values': row_values}
-            if return_xml:
-                table_dict['table_xml'] = table_xml
-            table_dicts.append(table_dict)
+            if row_values is not None:
+                table_dict = {'pmid': pmid,
+                              'pmc': pmc,
+                              'label': label,
+                              'caption': caption,
+                              'table_columns': columns,
+                              'table_values': row_values}
+                if return_xml:
+                    table_dict['table_xml'] = table_xml
+                table_dicts.append(table_dict)
     if len(table_dicts) >= 1:
         return table_dicts
     else:
