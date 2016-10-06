@@ -168,74 +168,70 @@ def parse_pubmed_xml(path, include_path=False):
     return dict_out
 
 
-def parse_references(tree):
+def parse_pubmed_references(path):
     """
-    Give a tree as an input,
-    parse it to dictionary if ref-id and cited PMID
+    Given path to xml file, parse references articles
+    to list of dictionary
     """
+    tree = read_xml(path)
     dict_article_meta = parse_article_meta(tree)
     pmid = dict_article_meta['pmid']
     pmc = dict_article_meta['pmc']
 
     references = tree.xpath('//ref-list/ref[@id]')
     dict_refs = list()
-    for r in references:
-        ref_id = r.attrib['id']
-        for rc in r:
-            if 'publication-type' in rc.attrib.keys():
-                if rc.attrib.values() is not None:
-                    journal_type = rc.attrib.values()[0]
-                else:
-                    journal_type = ''
-                names = list()
-                if rc.find('name') is not None:
-                    for n in rc.findall('name'):
-                        name = ' '.join([t.text for t in n.getchildren()][::-1])
-                        names.append(name)
-                elif rc.find('person-group') is not None:
-                    for n in rc.find('person-group'):
-                        name = ' '.join(n.xpath('given-names/text()') + n.xpath('surname/text()'))
-                        names.append(name)
-                try:
-                    article_title = rc.findall('article-title')[0].text
-                except:
-                    article_title = ''
-                try:
-                    journal = rc.findall('source')[0].text
-                except:
-                    journal = ''
-                try:
-                    pmid_cited = rc.findall('pub-id[@pub-id-type="pmid"]')[0].text
-                except:
-                    pmid_cited = ''
-                dict_ref = {'ref_id': ref_id,
-                            'name': '; '.join(names),
-                            'article_title': article_title,
-                            'journal': journal,
-                            'journal_type': journal_type,
-                            'pmid': pmid,
-                            'pmc': pmc,
-                            'pmid_cited': pmid_cited}
-                dict_refs.append(dict_ref)
+    for reference in references:
+        ref_id = reference.attrib['id']
+        ref = reference.find('mixed-citation')
+        if 'publication-type' in ref.attrib.keys() and ref is not None:
+            if ref.attrib.values() is not None:
+                journal_type = ref.attrib.values()[0]
+            else:
+                journal_type = ''
+            names = list()
+            if ref.find('name') is not None:
+                for n in ref.findall('name'):
+                    name = ' '.join([t.text for t in n.getchildren()][::-1])
+                    names.append(name)
+            elif ref.find('person-group') is not None:
+                for n in ref.find('person-group'):
+                    name = ' '.join(n.xpath('given-names/text()') + n.xpath('surname/text()'))
+                    names.append(name)
+            if ref.find('article-title') is not None:
+                article_title = ref.find('article-title').text or ''
+                article_title = article_title.replace('\n', ' ')
+            else:
+                article_title = ''
+            if ref.find('source') is not None:
+                journal = ref.find('source').text or ''
+            else:
+                journal = ''
+            if ref.find('pub-id[@pub-id-type="pmid"]') is not None:
+                pmid_cited = ref.find('pub-id[@pub-id-type="pmid"]').text or ''
+            else:
+                pmid_cited = ''
+            dict_ref = {'ref_id': ref_id,
+                        'name': '; '.join(names),
+                        'article_title': article_title,
+                        'journal': journal,
+                        'journal_type': journal_type,
+                        'pmid': pmid,
+                        'pmc': pmc,
+                        'pmid_cited': pmid_cited}
+            dict_refs.append(dict_ref)
+    if len(dict_refs) == 0:
+        dict_refs = None
     return dict_refs
 
 
-def parse_pubmed_references(path):
-    """
-    Given path to xml file, parse all references
-    from that PMID
-    """
-    tree = read_xml(path)
-    dict_refs = parse_references(tree)
-    return dict_refs
-
-
-def parse_paragraph(tree, dict_refs):
+def parse_pubmed_paragraph(path):
     """
     Give tree and reference dictionary
     return dictionary of referenced paragraph, section that it belongs to,
     and its cited PMID
     """
+    tree = read_xml(path)
+    dict_refs = parse_pubmed_references(path)
     dict_article_meta = parse_article_meta(tree)
     pmid = dict_article_meta['pmid']
     pmc = dict_article_meta['pmc']
@@ -281,24 +277,12 @@ def parse_paragraph(tree, dict_refs):
     return dict_pars
 
 
-def parse_pubmed_paragraph(path):
-    """
-    Given single xml path, extract information from xml file
-    and return parsed xml file in dictionary format.
-    """
-    tree = read_xml(path)
-    dict_refs = parse_references(tree)
-    dict_pars = parse_paragraph(tree, dict_refs)
-    return dict_pars
-
-
 def parse_pubmed_caption(path):
     """
     Given single xml path, extract figure caption and
     reference id back to that figure
     """
     tree = read_xml(path)
-
     dict_article_meta = parse_article_meta(tree)
     pmid = dict_article_meta['pmid']
     pmc = dict_article_meta['pmc']

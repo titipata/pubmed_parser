@@ -49,7 +49,7 @@ import pubmed_parser as pp
 dict_out = pp.parse_pubmed_xml(path)
 ```
 
-#### Parse Pubmed OA citations
+#### Parse Pubmed OA citation references
 
 The function `parse_pubmed_references` will process a Pubmed Open Access XML
 file and return a list of the PMID it cites.
@@ -112,7 +112,7 @@ will return list of dictionaries where each has following keys.
 - `table_xml`: raw xml text of the table (return if `return_xml=True`)
 
 ```python
-dicts_out = pp.parse_pubmed_table('data/medline16n0902.xml.gz')
+dicts_out = pp.parse_pubmed_table('data/medline16n0902.xml.gz', return_xml=False)
 ```
 
 #### Parse Medline NML XML
