@@ -182,43 +182,62 @@ def parse_pubmed_references(path):
     dict_refs = list()
     for reference in references:
         ref_id = reference.attrib['id']
-        ref = reference.find('mixed-citation')
-        if 'publication-type' in ref.attrib.keys() and ref is not None:
-            if ref.attrib.values() is not None:
-                journal_type = ref.attrib.values()[0]
-            else:
-                journal_type = ''
-            names = list()
-            if ref.find('name') is not None:
-                for n in ref.findall('name'):
-                    name = ' '.join([t.text for t in n.getchildren()][::-1])
-                    names.append(name)
-            elif ref.find('person-group') is not None:
-                for n in ref.find('person-group'):
-                    name = ' '.join(n.xpath('given-names/text()') + n.xpath('surname/text()'))
-                    names.append(name)
-            if ref.find('article-title') is not None:
-                article_title = ref.find('article-title').text or ''
-                article_title = article_title.replace('\n', ' ')
-            else:
-                article_title = ''
-            if ref.find('source') is not None:
-                journal = ref.find('source').text or ''
-            else:
-                journal = ''
-            if ref.find('pub-id[@pub-id-type="pmid"]') is not None:
-                pmid_cited = ref.find('pub-id[@pub-id-type="pmid"]').text or ''
-            else:
-                pmid_cited = ''
-            dict_ref = {'ref_id': ref_id,
-                        'name': '; '.join(names),
-                        'article_title': article_title,
-                        'journal': journal,
-                        'journal_type': journal_type,
-                        'pmid': pmid,
-                        'pmc': pmc,
-                        'pmid_cited': pmid_cited}
-            dict_refs.append(dict_ref)
+
+        if reference.find('mixed-citation') is not None:
+            ref = reference.find('mixed-citation')
+        elif reference.find('element-citation') is not None:
+            ref = reference.find('element-citation')
+        else:
+            ref = None
+
+        if ref is not None:
+            if 'publication-type' in ref.attrib.keys() and ref is not None:
+                if ref.attrib.values() is not None:
+                    journal_type = ref.attrib.values()[0]
+                else:
+                    journal_type = ''
+                names = list()
+                if ref.find('name') is not None:
+                    for n in ref.findall('name'):
+                        name = ' '.join([t.text for t in n.getchildren()][::-1])
+                        names.append(name)
+                elif ref.find('person-group') is not None:
+                    for n in ref.find('person-group'):
+                        name = ' '.join(n.xpath('given-names/text()') + n.xpath('surname/text()'))
+                        names.append(name)
+                if ref.find('article-title') is not None:
+                    article_title = stringify_children(ref.find('article-title')) or ''
+                    article_title = article_title.replace('\n', ' ').strip()
+                else:
+
+                    article_title = ''
+                if ref.find('source') is not None:
+                    journal = ref.find('source').text or ''
+                else:
+                    journal = ''
+                if len(ref.findall('pub-id')) >= 1:
+                    for pubid in ref.findall('pub-id'):
+                        if 'doi' in pubid.attrib.values():
+                            doi_cited = pubid.text
+                        else:
+                            doi_cited = ''
+                        if 'pmid' in pubid.attrib.values():
+                            pmid_cited = pubid.text
+                        else:
+                            pmid_cited = ''
+                else:
+                    doi_cited = ''
+                    pmid_cited = ''
+                dict_ref = {'pmid': pmid,
+                            'pmc': pmc,
+                            'ref_id': ref_id,
+                            'pmid_cited': pmid_cited,
+                            'doi_cited': doi_cited,
+                            'article_title': article_title,
+                            'name': '; '.join(names),
+                            'journal': journal,
+                            'journal_type': journal_type}
+                dict_refs.append(dict_ref)
     if len(dict_refs) == 0:
         dict_refs = None
     return dict_refs

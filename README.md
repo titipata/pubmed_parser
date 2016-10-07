@@ -55,12 +55,13 @@ The function `parse_pubmed_references` will process a Pubmed Open Access XML
 file and return a list of the PMID it cites.
 Each dictionary has keys as follows
 
+- `pmid`: Pubmed ID of the article
+- `pmc`: Pubmed Central ID of the article
 - `article_title`: title of cited article
 - `journal`: journal name
 - `journal_type`: type of journal
-- `pmid`: Pubmed ID of the article
-- `pmc`: Pubmed Central ID of the article
-- `pmid_cited`: Pubmed ID of article that given article cites
+- `pmid_cited`: Pubmed ID of article that article cites
+- `doi_cited`: DOI of article that article cites
 
 ```python
 dicts_out = pp.parse_pubmed_references(path) # return list of dictionary
