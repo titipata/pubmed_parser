@@ -231,49 +231,33 @@ def parse_pubmed_paragraph(path):
     and its cited PMID
     """
     tree = read_xml(path)
-    dict_refs = parse_pubmed_references(path)
     dict_article_meta = parse_article_meta(tree)
     pmid = dict_article_meta['pmid']
     pmc = dict_article_meta['pmc']
 
     paragraphs = tree.xpath('//body//p')
     dict_pars = list()
-    for p in paragraphs:
-        try:
-            text = ' '.join(p.xpath('text()')) # text of the paragraph
-        except:
-            text = ''
-        try:
-            section = p.xpath('../title/text()')[0]
-        except:
+    for paragraph in paragraphs:
+        paragraph_text = stringify_children(paragraph)
+        section = paragraph.find('../title')
+        if section is not None:
+            section = stringify_children(section).strip()
+        else:
             section = ''
 
-        # find the reference codes used in the paragraphs, can be compared with bibliogrpahy
-        try:
-            par_bib_refs = p.findall('.//xref[@ref-type="bibr"]')
-            par_refs = list()
-            for r in par_bib_refs:
-                par_refs.append(r.xpath('@rid')[0])
-        except:
-            par_refs = ''
+        ref_ids = list()
+        for reference in paragraph.getchildren():
+            if 'rid' in reference.attrib.keys():
+                ref_id = reference.attrib['rid']
+                ref_ids.append(ref_id)
 
-        # search bibliography for PubMed ID's of referenced articles
-        try:
-            pm_ids = list()
-            for r in par_refs:
-                r_ref = list(filter(lambda ref: ref['ref_id'] == r, dict_refs))
-                if r_ref[0]['pmid'] != '':
-                    pm_ids.append(r_ref[0]['pmid'])
-        except:
-            pm_ids = list()
-
-        dict_par = {'pmc': pmc,
-                    'pmid': pmid,
-                    'references_code': par_refs,
-                    'references_pmids': pm_ids,
-                    'section': section,
-                    'text': text}
-        dict_pars.append(dict_par)
+        if len(ref_ids) >= 1:
+            dict_par = {'pmc': pmc,
+                        'pmid': pmid,
+                        'reference_ids': ref_ids,
+                        'section': section,
+                        'text': paragraph_text}
+            dict_pars.append(dict_par)
     return dict_pars
 
 

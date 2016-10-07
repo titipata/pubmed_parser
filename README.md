@@ -11,7 +11,7 @@ Python parser for [PubMed Open-Access (OA) subset](http://www.ncbi.nlm.nih.gov/p
 
 ## Parsers available
 
-**note** path can be path to compressed or uncompressed xml file. We provide example
+**note** `path` can be path to compressed or uncompressed xml file. We provide example
 file in [`data`](data/) folder
 
 #### Parse Pubmed OA XML information
@@ -94,9 +94,9 @@ following keys
 - `pmid`: Pubmed ID
 - `pmc`: Pubmed Central ID
 - `text`: full text of the paragraph
-- `references_pmids`: list of reference PMIDs
-- `references_code`: list of reference code within that paragraph
-- `section`: section of paragraph (e.g. Background, Discussion, Appendix)
+- `reference_ids`: list of reference code within that paragraph.
+This IDs can merge with output from `parse_pubmed_references`.
+- `section`: section of paragraph (e.g. Background, Discussion, Appendix, etc.)
 
 #### Parse Pubmed OA Table [WIP]
 
