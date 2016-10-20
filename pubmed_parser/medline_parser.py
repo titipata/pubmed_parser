@@ -317,6 +317,7 @@ def parse_medline_xml(path, year_info_only=True):
              'pubdate': None,
              'pmid': p.text,
              'other_id': None,
+             'pmc': None,
              'mesh_terms': None,
              'keywords': None,
              'delete': True
