@@ -243,7 +243,7 @@ def parse_pubmed_references(path):
     return dict_refs
 
 
-def parse_pubmed_paragraph(path):
+def parse_pubmed_paragraph(path, all_paragraph=False):
     """
     Give tree and reference dictionary
     return dictionary of referenced paragraph, section that it belongs to,
@@ -270,13 +270,14 @@ def parse_pubmed_paragraph(path):
                 ref_id = reference.attrib['rid']
                 ref_ids.append(ref_id)
 
-        if len(ref_ids) >= 1:
-            dict_par = {'pmc': pmc,
-                        'pmid': pmid,
-                        'reference_ids': ref_ids,
-                        'section': section,
-                        'text': paragraph_text}
+        dict_par = {'pmc': pmc,
+                    'pmid': pmid,
+                    'reference_ids': ref_ids,
+                    'section': section,
+                    'text': paragraph_text}
+        if len(ref_ids) >= 1 or all_paragraph:
             dict_pars.append(dict_par)
+
     return dict_pars
 
 
