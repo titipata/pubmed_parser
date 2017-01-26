@@ -304,9 +304,11 @@ def parse_medline_xml(path, year_info_only=True):
         added with no information other than the field `delete` being `True`
     """
     tree = read_xml(path)
-    medline_citations = tree.xpath('//MedlineCitationSet/MedlineCitation')
+    medline_citations = tree.findall('//MedlineCitationSet/MedlineCitation')
+    if len(medline_citations) == 0:
+        medline_citations = tree.findall('//MedlineCitation')
     article_list = list(map(lambda m: parse_article_info(m, year_info_only), medline_citations))
-    delete_citations = tree.xpath('//DeleteCitation/PMID')
+    delete_citations = tree.findall('//DeleteCitation/PMID')
     dict_delete = \
         [
             {'title': None,
@@ -342,7 +344,9 @@ def parse_medline_grant_id(path):
         will have the information returned by `parse_grant_id`
     """
     tree = read_xml(path)
-    medline_citations = tree.xpath('//MedlineCitationSet/MedlineCitation')
+    medline_citations = tree.findall('//MedlineCitationSet/MedlineCitation')
+    if len(medline_citations) == 0:
+        medline_citations = tree.findall('//MedlineCitation')
     grant_id_list = list(map(parse_grant_id, medline_citations))
     grant_id_list = list(chain(*grant_id_list)) # flatten list
     return grant_id_list
