@@ -2,7 +2,7 @@
 
 This folder is created to hold utility scripts for downloading and
 preprocessing [PubMed open-access (OA) subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
- and [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/) repository using pyspark.
+ and [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/) repository using pyspark version 2.1.
 
 ## Running and preprocessing Pubmed Open-Access dataset to Spark Dataframe
 
@@ -10,7 +10,7 @@ To run script to download and process Pubmed Open-Access subset,
 change directory in `pubmed_oa_spark.py` and simply run
 
 ```bash
-~/spark-2.0.0/bin/spark-submit pubmed_oa_spark.py
+~/spark-2.1.0/bin/spark-submit pubmed_oa_spark.py
 ```
 
 or set up Cronjob by running `crontab -e` (**note** that you might have to
@@ -20,7 +20,7 @@ or set up Cronjob by running `crontab -e` (**note** that you might have to
 ```bash
 #!/bin/bash
 
-0 8 * * Sun source ~/.bash_profile;~/spark-2.0.0/bin/spark-submit pubmed_oa_spark.py
+0 8 * * Sun source ~/.bash_profile;~/spark-2.1.0/bin/spark-submit pubmed_oa_spark.py
 ```
 
 ## Running and preprocessing MEDLINE dataset to Spark Dataframe
@@ -28,7 +28,7 @@ or set up Cronjob by running `crontab -e` (**note** that you might have to
 Same as Open-Access, we can modify path in `medline_spark.py` then run
 
 ```bash
-~/spark-2.0.0/bin/spark-submit medline_spark.py
+~/spark-2.1.0/bin/spark-submit medline_spark.py
 ```
 
 to use Cronjob, follows the same instruction as above.

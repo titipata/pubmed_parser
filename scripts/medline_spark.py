@@ -57,7 +57,7 @@ def process_file(date_update):
                            for publication_dict in pp.parse_medline_xml(x)])
     medline_df = parse_results_rdd.toDF()
     medline_df.write.parquet(os.path.join(save_dir, 'medline_raw_%s.parquet' % date_update_str),
-                             compression='gzip')
+                             mode='overwrite')
 
     window = Window.partitionBy(['pmid']).orderBy(desc('file_name'))
     windowed_df = medline_df.select(
@@ -67,7 +67,7 @@ def process_file(date_update):
     windowed_df.\
         where('is_deleted = False and pos = 1').\
         write.parquet(os.path.join(save_dir, 'medline_lastview_%s.parquet' % date_update_str),
-                      compression='gzip')
+                      mode='overwrite')
 
     # parse grant database
     parse_grant_rdd = path_rdd.flatMap(lambda x: pp.parse_medline_grant_id(x))\
@@ -75,7 +75,7 @@ def process_file(date_update):
         .map(lambda x: Row(**x))
     grant_df = parse_grant_rdd.toDF()
     grant_df.write.parquet(os.path.join(save_dir, 'medline_grant_%s.parquet' % date_update_str),
-                           compression='gzip')
+                           mode='overwrite')
 
 conf = SparkConf().setAppName('medline_spark')\
     .setMaster('local[8]')\

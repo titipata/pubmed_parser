@@ -93,21 +93,21 @@ def process_file(date_update, fraction=0.01):
                                      'publication_year', 'publisher_id',
                                      'journal', 'subjects']]
     pubmed_oa_df_sel.write.parquet(os.path.join(save_dir, 'pubmed_oa_%s.parquet' % date_update_str),
-                                   compression='gzip')
+                                   mode='overwrite')
 
     parse_name_rdd = parse_results_rdd.map(lambda x: parse_name(x)).\
         filter(lambda x: x is not None).\
         flatMap(lambda xs: [x for x in xs])
     parse_name_df = parse_name_rdd.toDF()
     parse_name_df.write.parquet(os.path.join(save_dir, 'pubmed_oa_author_%s.parquet' % date_update_str),
-                                compression='gzip')
+                                mode='overwrite')
 
     parse_affil_rdd = parse_results_rdd.map(lambda x: parse_affiliation(x)).\
         filter(lambda x: x is not None).\
         flatMap(lambda xs: [x for x in xs])
     parse_affil_df = parse_affil_rdd.toDF()
     parse_name_df.write.parquet(os.path.join(save_dir, 'pubmed_oa_affiliation_%s.parquet' % date_update_str),
-                                compression='gzip')
+                                mode='overwrite')
     print('Finished parsing Pubmed Open-Access subset')
 
 conf = SparkConf().setAppName('pubmed_oa_spark')\

@@ -8,11 +8,14 @@ Python parser for [PubMed Open-Access (OA) subset](http://www.ncbi.nlm.nih.gov/p
  [wiki page](https://github.com/titipata/pubmed_parser/wiki) on how to download and
  process dataset using the repository.
 
+**note**
+- `path` provided to function can be path to compressed or uncompressed xml file.
+We provide example files in [`data`](data/) folder.
+- for website parser, you should scrape with pause. Please see
+[copyright notice](https://www.ncbi.nlm.nih.gov/pmc/about/copyright/#copy-PMC) because your IP
+can get blocked if you try to download in bulk.
 
 ## Parsers available
-
-**note** `path` can be path to compressed or uncompressed xml file. We provide example
-file in [`data`](data/) folder
 
 #### Parse Pubmed OA XML information
 
@@ -254,17 +257,24 @@ print(pubmed_dict)
 
 ## Example Usage with PySpark
 
-This script takes about 3.1 mins to parse all Pubmed Open Access subset using
-PySpark on Amazon EC2 `r3.8xlarge`.
+This is snippet to parse all Pubmed Open Access subset using
+PySpark 2.1
 
 ```python
-import pandas as pd
+import os
 import pubmed_parser as pp
-path_all = pp.list_xml_path('/path/to/folder/')
-path_rdd = sc.parallelize(path_all, numSlices=10000)
-pubmed_oa_all = path_rdd.map(lambda p: pp.parse_pubmed_xml(p)).collect() # load to memory
-# path_rdd.map(lambda p: pp.parse_pubmed_xml(p)).saveAsPickleFile('pubmed_oa.pickle') # or to save to pickle
-pubmed_oa_df = pd.DataFrame(pubmed_oa_all) # transform to pandas DataFrame
+from pyspark.sql import Row
+
+path_all = pp.list_xml_path('/path/to/xml/folder/')
+path_rdd = spark.sparkContext.parallelize(path_all, numSlices=10000)
+parse_results_rdd = path_rdd.map(lambda x: Row(file_name=os.path.basename(x),
+                                               **pp.parse_pubmed_xml(x)))
+pubmed_oa_df = parse_results_rdd.toDF() # Spark dataframe
+pubmed_oa_df_sel = pubmed_oa_df[['full_title', 'abstract', 'doi',
+                                 'file_name', 'pmc', 'pmid',
+                                 'publication_year', 'publisher_id',
+                                 'journal', 'subjects']] # select columns
+pubmed_oa_df_sel.write.parquet('pubmed_oa.parquet', mode='overwrite') # write dataframe
 ```
 
 See [scripts](https://github.com/titipata/pubmed_parser/tree/master/scripts)
