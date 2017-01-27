@@ -221,7 +221,7 @@ def parse_article_info(medline, year_info_only):
     article = medline.find('Article')
 
     if article.find('ArticleTitle') is not None:
-        title = stringify_children(article.find('ArticleTitle'))
+        title = stringify_children(article.find('ArticleTitle')).strip()
     else:
         title = ''
 
@@ -236,15 +236,15 @@ def parse_article_info(medline, year_info_only):
         affiliations_info = list()
         for author in authors:
             if author.find('Initials') is not None:
-                firstname = author.find('Initials').text
+                firstname = author.find('Initials').text or ''
             else:
                 firstname = ''
             if author.find('LastName') is not None:
-                lastname = author.find('LastName').text
+                lastname = author.find('LastName').text or ''
             else:
                 lastname = ''
             if author.find('AffiliationInfo/Affiliation') is not None:
-                affiliation = author.find('AffiliationInfo/Affiliation').text
+                affiliation = author.find('AffiliationInfo/Affiliation').text or ''
             else:
                 affiliation = ''
             authors_info.append(firstname + ' ' + lastname)
