@@ -134,6 +134,11 @@ This function will return list of dictionaries, where each element contains:
 - `mesh_terms`: list of MeSH terms, each separated by `;`
 - `keywords`: list of keywords, each separated by `;`
 - `pubdate`: Publication date. Defaults to year information only.
+- `journal`: journal of the given paper
+- `medline_ta`: this is abbreviation of the journal name
+-`nlm_unique_id`: NLM unique identification
+- `issn_linking`: ISSN linkage, typically use to link with Web of Science dataset
+- `country`: Country extracted from journal information field
 
 ```python
 dicts_out = pp.parse_medline_xml('data/medline16n0902.xml.gz') # return list of dictionary

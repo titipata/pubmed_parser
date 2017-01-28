@@ -101,6 +101,49 @@ def parse_other_id(medline):
     return {'pmc': pmc,
             'other_id': other_id}
 
+def parse_journal_info(medline):
+    """Parse MEDLINE journal information
+
+    Parameters
+    ----------
+    medline: Element
+        The lxml node pointing to a medline document
+
+    Returns
+    -------
+    dict_out: dict
+        dictionary with keys including `medline_ta`, `nlm_unique_id`,
+        `issn_linking` and `country`
+
+    """
+    journal_info = medline.find('MedlineJournalInfo')
+    if journal_info is not None:
+        if journal_info.find('MedlineTA') is not None:
+            medline_ta = journal_info.find('MedlineTA').text.strip() or '' # equivalent to Journal name
+        else:
+            medline_ta = ''
+        if journal_info.find('NlmUniqueID') is not None:
+            nlm_unique_id = journal_info.find('NlmUniqueID').text or ''
+        else:
+            nlm_unique_id = ''
+        if journal_info.find('ISSNLinking') is not None:
+            issn_linking = journal_info.find('ISSNLinking').text
+        else:
+            issn_linking = ''
+        if journal_info.find('Country') is not None:
+            country = journal_info.find('Country').text or ''
+        else:
+            country = ''
+    else:
+        medline_ta = ''
+        nlm_unique_id = ''
+        issn_linking = ''
+        country = ''
+    dict_info = {'medline_ta': medline_ta,
+                 'nlm_unique_id': nlm_unique_id,
+                 'issn_linking': issn_linking,
+                 'country': country}
+    return dict_info
 
 def parse_grant_id(medline):
     """Parse Grant ID and related information given MEDLINE tree
@@ -221,12 +264,12 @@ def parse_article_info(medline, year_info_only):
     article = medline.find('Article')
 
     if article.find('ArticleTitle') is not None:
-        title = stringify_children(article.find('ArticleTitle')).strip()
+        title = stringify_children(article.find('ArticleTitle')).strip() or ''
     else:
         title = ''
 
     if article.find('Abstract') is not None:
-        abstract = stringify_children(article.find('Abstract'))
+        abstract = stringify_children(article.find('Abstract')).strip() or ''
     else:
         abstract = ''
 
@@ -263,6 +306,7 @@ def parse_article_info(medline, year_info_only):
     mesh_terms = parse_mesh_terms(medline)
     keywords = parse_keywords(medline)
     other_id_dict = parse_other_id(medline)
+    journal_info_dict = parse_journal_info(medline)
 
     dict_out = {'title': title,
                 'abstract': abstract,
@@ -275,6 +319,7 @@ def parse_article_info(medline, year_info_only):
                 'keywords': keywords,
                 'delete': False}
     dict_out.update(other_id_dict)
+    dict_out.update(journal_info_dict)
     return dict_out
 
 
@@ -322,7 +367,11 @@ def parse_medline_xml(path, year_info_only=True):
              'pmc': None,
              'mesh_terms': None,
              'keywords': None,
-             'delete': True
+             'delete': True,
+             'medline_ta': None,
+             'nlm_unique_id': None,
+             'issn_linking': None,
+             'country': None
              } for p in delete_citations
             ]
     article_list.extend(dict_delete)
