@@ -1,7 +1,7 @@
 # Parser for Pubmed Open-Access XML Subset and MEDLINE XML Dataset
 
 [![Join the chat at https://gitter.im/titipata/pubmed_parser](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/titipata/pubmed_parser?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/titipata/pubmed_parser/blob/master/LICENSE) [![DOI](https://zenodo.org/badge/31697087.svg)](https://zenodo.org/badge/latestdoi/31697087)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/titipata/pubmed_parser/blob/master/LICENSE) [![DOI](https://zenodo.org/badge/31697087.svg)](https://zenodo.org/badge/latestdoi/31697087)
 
 Python parser for [PubMed Open-Access (OA) subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
  and [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/) repository. See

@@ -66,7 +66,8 @@ def parse_keywords(medline):
     keywords = list()
     if keyword_list is not None:
         for k in keyword_list.findall('Keyword'):
-            keywords.append(k.text)
+            if k.text is not None:
+                keywords.append(k.text)
         keywords = '; '.join(keywords)
     else:
         keywords = ''
@@ -119,7 +120,7 @@ def parse_journal_info(medline):
     journal_info = medline.find('MedlineJournalInfo')
     if journal_info is not None:
         if journal_info.find('MedlineTA') is not None:
-            medline_ta = journal_info.find('MedlineTA').text.strip() or '' # equivalent to Journal name
+            medline_ta = journal_info.find('MedlineTA').text or '' # equivalent to Journal name
         else:
             medline_ta = ''
         if journal_info.find('NlmUniqueID') is not None:
@@ -139,7 +140,7 @@ def parse_journal_info(medline):
         nlm_unique_id = ''
         issn_linking = ''
         country = ''
-    dict_info = {'medline_ta': medline_ta,
+    dict_info = {'medline_ta': medline_ta.strip(),
                  'nlm_unique_id': nlm_unique_id,
                  'issn_linking': issn_linking,
                  'country': country}
