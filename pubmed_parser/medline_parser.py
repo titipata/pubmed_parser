@@ -269,7 +269,9 @@ def parse_article_info(medline, year_info_only):
     else:
         title = ''
 
-    if article.find('Abstract') is not None:
+    if article.find('Abstract/AbstractText') is not None:
+        abstract = stringify_children(article.find('Abstract/AbstractText')).strip() or ''
+    elif article.find('Abstract') is not None:
         abstract = stringify_children(article.find('Abstract')).strip() or ''
     else:
         abstract = ''
