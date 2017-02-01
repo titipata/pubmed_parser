@@ -127,6 +127,7 @@ This function will return list of dictionaries, where each element contains:
 
 - `pmid`: Pubmed ID
 - `pmc`: Pubmed Central ID
+- `other_id`: Other IDs found, each separated by `;`
 - `title`: title of the article
 - `abstract`: abstract of the article
 - `affiliation`: corresponding author's affiliation
@@ -136,9 +137,12 @@ This function will return list of dictionaries, where each element contains:
 - `pubdate`: Publication date. Defaults to year information only.
 - `journal`: journal of the given paper
 - `medline_ta`: this is abbreviation of the journal name
--`nlm_unique_id`: NLM unique identification
+- `nlm_unique_id`: NLM unique identification
 - `issn_linking`: ISSN linkage, typically use to link with Web of Science dataset
 - `country`: Country extracted from journal information field
+- `delete`: boolean if `False` means paper got updated so you might have two
+XMLs for the same paper. You can delete the record of deleted paper
+because it got updated.
 
 ```python
 dicts_out = pp.parse_medline_xml('data/medline16n0902.xml.gz') # return list of dictionary
