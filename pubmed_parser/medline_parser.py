@@ -295,7 +295,7 @@ def parse_article_info(medline, year_info_only):
                 affiliation = ''
             authors_info.append((firstname + ' ' + lastname).strip())
             affiliations_info.append(affiliation)
-        affiliations_info = ' '.join([a for a in affiliations_info if a is not ''])
+        affiliations_info = '\n'.join([a for a in affiliations_info if a is not ''])
         authors_info = '; '.join(authors_info)
     else:
         affiliations_info = ''

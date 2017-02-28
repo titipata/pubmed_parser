@@ -130,7 +130,8 @@ This function will return list of dictionaries, where each element contains:
 - `other_id`: Other IDs found, each separated by `;`
 - `title`: title of the article
 - `abstract`: abstract of the article
-- `affiliation`: corresponding author's affiliation
+- `affiliation`: corresponding author's affiliation. If multiple, each separated by `\n` and will
+correspond to each authors
 - `authors`: authors, each separated by `;`
 - `mesh_terms`: list of MeSH terms, each separated by `;`
 - `keywords`: list of keywords, each separated by `;`
