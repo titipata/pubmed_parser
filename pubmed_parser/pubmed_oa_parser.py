@@ -199,7 +199,7 @@ def parse_pubmed_references(path):
                 names = list()
                 if ref.find('name') is not None:
                     for n in ref.findall('name'):
-                        name = ' '.join([t.text for t in n.getchildren()][::-1])
+                        name = ' '.join([t.text or '' for t in n.getchildren()][::-1])
                         names.append(name)
                 elif ref.find('person-group') is not None:
                     for n in ref.find('person-group'):
