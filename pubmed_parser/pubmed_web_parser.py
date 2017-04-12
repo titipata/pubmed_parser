@@ -5,6 +5,7 @@ import requests
 from lxml import etree
 from lxml import html
 from unidecode import unidecode
+from urllib.request import urlopen
 from .utils import stringify_children
 
 __all__ = [
@@ -20,7 +21,7 @@ def load_xml(pmid, sleep=None):
     return a dictionary for given pmid and xml string from the site
     sleep: how much time we want to wait until requesting new xml
     """
-    link = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id=%s" % str(pmid)
+    link = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id=%s" % str(pmid)
     page = requests.get(link)
     tree = html.fromstring(page.content)
     if sleep is not None:
@@ -207,9 +208,11 @@ def parse_outgoing_citation_web(doc_id, id_type='PMC'):
         linkname = 'pubmed_pubmed_refs'
     else:
         raise ValueError('Unsupported id_type `%s`' % id_type)
-    link = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=%s&linkname=%s&id=%s' % (db, linkname, doc_id)
+    link = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=%s&linkname=%s&id=%s' % (db, linkname, doc_id)
 
-    tree = etree.parse(link)
+    parser = etree.XMLParser()
+    with urlopen(link) as f:
+        tree = etree.parse(f, parser)
     pmid_cited_all = tree.xpath('/eLinkResult/LinkSet/LinkSetDb/Link/Id/text()')
     n_citations = len(pmid_cited_all)
     if not n_citations: # If there are no citations, likely a bad doc_id
