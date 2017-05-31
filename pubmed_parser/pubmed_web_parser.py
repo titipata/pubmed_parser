@@ -63,9 +63,11 @@ def parse_pubmed_web_tree(tree):
     authors = list()
     if authors_tree is not None:
         for a in authors_tree:
-            firstname = a.find('forename').text or ''
-            lastname = a.find('lastname').text or ''
+            firstname = a.find('forename').text if a.find('forename') is not None else ''
+            lastname = a.find('lastname').text if a.find('forename') is not None else ''
             fullname = (firstname + ' ' + lastname).strip()
+            if fullname == '':
+                fullname = a.find('collectivename').text if a.find('collectivename') is not None else ''
             authors.append(fullname)
         authors_text = '; '.join(authors)
     else:
