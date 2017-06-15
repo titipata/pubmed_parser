@@ -13,4 +13,7 @@ if __name__ == "__main__":
         license='(c) 2015 Titipat Achakulvisut, Daniel E. Acuna',
         install_requires=['lxml', 'unidecode', 'requests'],
         packages=['pubmed_parser'],
+        package_data={
+            'pubmed_parser.data': ['*.xml.gz', '*.nxml', '*.txt'],
+        }
     )
