@@ -6,6 +6,19 @@ from lxml import etree
 from itertools import chain
 
 
+def remove_namespace(tree):
+    """
+    Strip namespace from parsed XML
+    """
+    for node in tree.iter():
+        try:
+            has_namespace = node.tag.startswith('{')
+        except AttributeError:
+            continue  # node.tag is not a string (node is a comment or similar)
+        if has_namespace:
+            node.tag = node.tag.split('}', 1)[1]
+
+
 def read_xml(path):
     """
     Parse tree from given XML path
@@ -18,6 +31,8 @@ def read_xml(path):
         except Exception as e:
             print("Error: it was not able to read a path, a file-like object, or a string as an XML")
             raise
+    if '.nxml' in path:
+        remove_namespace(tree) # strip namespace for
     return tree
 
 
@@ -104,5 +119,3 @@ def month_or_day_formater(month_or_day):
         return None
 
     return ("0" if to_format < 10 else "") + str(to_format)
-
-
