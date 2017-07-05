@@ -272,8 +272,14 @@ def parse_article_info(medline, year_info_only):
     if article.find('Abstract/AbstractText') is not None:
         # structured abstract
         if len(article.findall('Abstract/AbstractText')) > 1:
-            abstract_list = [stringify_children(abstract).strip() for abstract in article.findall('Abstract/AbstractText')]
-            abstract = '\n'.join(abstract_list)
+            abstract_list = list()
+            for abstract in article.findall('Abstract/AbstractText'):
+                section = abstract.attrib.get('NlmCategory', '')
+                if section is not 'UNASSIGNED':
+                    abstract_list.append('\n')
+                    abstract_list.append(abstract.attrib.get('NlmCategory', ''))
+                abstract_list.append(stringify_children(abstract).strip())
+            abstract = '\n'.join(abstract_list).strip()
         else:
             abstract = stringify_children(article.find('Abstract/AbstractText')).strip() or ''
     elif article.find('Abstract') is not None:
