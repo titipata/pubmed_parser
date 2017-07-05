@@ -270,7 +270,12 @@ def parse_article_info(medline, year_info_only):
         title = ''
 
     if article.find('Abstract/AbstractText') is not None:
-        abstract = stringify_children(article.find('Abstract/AbstractText')).strip() or ''
+        # structured abstract
+        if len(article.findall('Abstract/AbstractText')) > 1:
+            abstract_list = [stringify_children(abstract).strip() for abstract in article.findall('Abstract/AbstractText')]
+            abstract = '\n'.join(abstract_list)
+        else:
+            abstract = stringify_children(article.find('Abstract/AbstractText')).strip() or ''
     elif article.find('Abstract') is not None:
         abstract = stringify_children(article.find('Abstract')).strip() or ''
     else:
