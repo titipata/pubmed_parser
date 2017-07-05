@@ -150,14 +150,13 @@ XMLs for the same paper. You can delete the record of deleted paper
 because it got updated.
 
 ```python
-dicts_out = pp.parse_medline_xml('data/medline16n0902.xml.gz') # return list of dictionary
+dicts_out = pp.parse_medline_xml('data/medline16n0902.xml.gz', year_info_only=False, nlm_category=False) # return list of dictionary
 ```
 
-Try to extract month and day information from PubDate as well:
+To extract month and day information from PubDate, set `year_info_only=True`.
+We also allow parsing structured abstract and we can control display of each
+section or label by changing `nlm_category` argument.
 
-```python
-dicts_out = pp.parse_medline_xml('data/medline16n0902.xml.gz', year_info_only=False)  
-```
 
 #### Parse Medline Grant ID
 

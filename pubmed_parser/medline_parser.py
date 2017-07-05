@@ -1,4 +1,5 @@
 from itertools import chain
+from collections import defaultdict
 from pubmed_parser.utils import read_xml, stringify_children, month_or_day_formater
 
 __all__ = [
@@ -243,7 +244,7 @@ def date_extractor(journal, year_info_only):
         return "-".join(str(x) for x in filter(None, [year, month, day]))
 
 
-def parse_article_info(medline, year_info_only):
+def parse_article_info(medline, year_info_only, nlm_category):
     """Parse article nodes from Medline dataset
 
     Parameters
@@ -251,7 +252,9 @@ def parse_article_info(medline, year_info_only):
     medline: Element
         The lxml node pointing to a medline document
     year_info_only: bool
-        see: date_extractor().
+        see: date_extractor()
+    nlm_category: bool
+        see: parse_medline_xml()
 
     Returns
     -------
@@ -269,16 +272,18 @@ def parse_article_info(medline, year_info_only):
     else:
         title = ''
 
+    category = 'NlmCategory' if nlm_category else 'Label'
     if article.find('Abstract/AbstractText') is not None:
-        # structured abstract
+        # parsing structured abstract
         if len(article.findall('Abstract/AbstractText')) > 1:
             abstract_list = list()
             for abstract in article.findall('Abstract/AbstractText'):
-                section = abstract.attrib.get('NlmCategory', '')
-                if section is not 'UNASSIGNED':
+                section = abstract.attrib.get(category, '')
+                if section != 'UNASSIGNED':
                     abstract_list.append('\n')
-                    abstract_list.append(abstract.attrib.get('NlmCategory', ''))
-                abstract_list.append(stringify_children(abstract).strip())
+                    abstract_list.append(abstract.attrib.get(category, ''))
+                section_text = stringify_children(abstract).strip()
+                abstract_list.append(section_text)
             abstract = '\n'.join(abstract_list).strip()
         else:
             abstract = stringify_children(article.find('Abstract/AbstractText')).strip() or ''
@@ -337,7 +342,7 @@ def parse_article_info(medline, year_info_only):
     return dict_out
 
 
-def parse_medline_xml(path, year_info_only=True):
+def parse_medline_xml(path, year_info_only=True, nlm_category=False):
     """Parse XML file from Medline XML format available at
     ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/
 
@@ -354,6 +359,10 @@ def parse_medline_xml(path, year_info_only=True):
         NOTE: the resolution of PubDate information in the Medline(R) database varies
         between articles.
         Defaults to True.
+    nlm_category: bool, default False
+        if True, this will parse structured abstract where each section if original Label
+        if False, this will parse structured abstract where each section will be assigned to
+        NLM category of each sections
 
     Returns
     -------
@@ -366,7 +375,7 @@ def parse_medline_xml(path, year_info_only=True):
     medline_citations = tree.findall('//MedlineCitationSet/MedlineCitation')
     if len(medline_citations) == 0:
         medline_citations = tree.findall('//MedlineCitation')
-    article_list = list(map(lambda m: parse_article_info(m, year_info_only), medline_citations))
+    article_list = list(map(lambda m: parse_article_info(m, year_info_only, nlm_category), medline_citations))
     delete_citations = tree.findall('//DeleteCitation/PMID')
     dict_delete = \
         [
