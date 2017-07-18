@@ -5,7 +5,10 @@ import requests
 from lxml import etree
 from lxml import html
 from unidecode import unidecode
-from urllib.request import urlopen
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib2 import urlopen
 from .utils import stringify_children
 
 __all__ = [
