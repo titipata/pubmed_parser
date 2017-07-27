@@ -7,6 +7,7 @@ __all__ = [
     'parse_medline_grant_id'
 ]
 
+
 def parse_pmid(medline):
     """Parse PMID from article
 
@@ -43,7 +44,11 @@ def parse_mesh_terms(medline):
     """
     if medline.find('MeshHeadingList') is not None:
         mesh = medline.find('MeshHeadingList')
-        mesh_terms_list = [m.find('DescriptorName').text for m in mesh.getchildren()]
+        mesh_terms_list = [
+            m.find('DescriptorName').attrib.get('UI', '') +
+            ":" +
+            m.find('DescriptorName').text for m in mesh.getchildren()
+        ]
         mesh_terms = '; '.join(mesh_terms_list)
     else:
         mesh_terms = ''
@@ -103,6 +108,7 @@ def parse_other_id(medline):
     return {'pmc': pmc,
             'other_id': other_id}
 
+
 def parse_journal_info(medline):
     """Parse MEDLINE journal information
 
@@ -146,6 +152,7 @@ def parse_journal_info(medline):
                  'issn_linking': issn_linking,
                  'country': country}
     return dict_info
+
 
 def parse_grant_id(medline):
     """Parse Grant ID and related information given MEDLINE tree

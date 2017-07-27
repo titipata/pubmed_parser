@@ -137,7 +137,7 @@ This function will return list of dictionaries, where each element contains:
 - `affiliation`: corresponding author's affiliation. If multiple, each separated by `\n` and will
 correspond to each authors
 - `authors`: authors, each separated by `;`
-- `mesh_terms`: list of MeSH terms, each separated by `;`
+- `mesh_terms`: list of MeSH terms with corresponding MeSH ID, each separated by `;` e.g. `'D000161:Acoustic Stimulation; D000328:Adult; ...`
 - `keywords`: list of keywords, each separated by `;`
 - `pubdate`: Publication date. Defaults to year information only.
 - `journal`: journal of the given paper

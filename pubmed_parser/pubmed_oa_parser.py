@@ -54,7 +54,7 @@ def parse_article_meta(tree):
     """
     Parse PMID, PMC and DOI from given article tree
     """
-    article_meta = tree.find('//article-meta')
+    article_meta = tree.find('.//article-meta')
     pmid_node = article_meta.find('article-id[@pub-id-type="pmid"]')
     pmc_node = article_meta.find('article-id[@pub-id-type="pmc"]')
     pub_id_node = article_meta.find('article-id[@pub-id-type="publisher-id"]')
