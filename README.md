@@ -231,6 +231,7 @@ Clone the repository
 
 ```bash
 $ git clone https://github.com/titipata/pubmed_parser
+$ cd pubmed_parser/
 ```
 
 Install all dependencies
