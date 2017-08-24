@@ -9,7 +9,7 @@ if __name__ == "__main__":
         long_description=open('README.md').read(),
         url='https://github.com/titipata/pubmed_parser',
         author='Titipat Achakulvisut',
-        author_email='titipata@u.northwestern.edu',
+        author_email='my.titipat@gmail.com',
         license='(c) 2015 Titipat Achakulvisut, Daniel E. Acuna',
         install_requires=['lxml', 'unidecode', 'requests'],
         packages=['pubmed_parser'],
