@@ -227,25 +227,12 @@ it will return `None`.
 
 ## Install package
 
-Clone the repository
+Clone the repository and install using `pip`.
 
 ```bash
 $ git clone https://github.com/titipata/pubmed_parser
-$ cd pubmed_parser/
+$ pip install ./pubmed_parser
 ```
-
-Install all dependencies
-
-```bash
-$ pip install -r requirements.txt
-```
-
-Then you can install the package as follows
-
-```bash
-$ python setup.py install
-```
-
 
 ## Example Usage for Pubmed OA
 
