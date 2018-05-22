@@ -97,12 +97,20 @@ def parse_pubmed_web_tree(tree):
     else:
         keywords = ''
 
+    doi = ''
+    article_ids = tree.xpath('//articleidlist//articleid')
+    if len(article_ids) >= 1:
+        for article_id in article_ids:
+            if article_id.attrib.get('idtype') == 'doi':
+                doi = article_id.text
+
     dict_out = {'title': title,
                 'abstract': abstract,
                 'journal': journal,
                 'affiliation': affiliations_text,
                 'authors': authors_text,
                 'keywords': keywords,
+                'doi': doi,
                 'year': year}
     return dict_out
 
