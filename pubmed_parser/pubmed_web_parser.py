@@ -81,13 +81,31 @@ def parse_pubmed_web_tree(tree):
     else:
         authors_text = ''
 
+    keywords = ''
+    keywords_mesh = tree.xpath('//meshheadinglist//meshheading')
+    keywords_book = tree.xpath('//keywordlist//keyword')
+    if len(keywords_mesh) > 0:
+        mesh_terms_list = []
+        for m in keywords_mesh:
+            keyword = m.find('descriptorname').attrib.get('ui', '') + \
+                ":" + \
+                m.find('descriptorname').text
+            mesh_terms_list.append(keyword)
+        keywords = ';'.join(mesh_terms_list)
+    elif len(keywords_book) > 0:
+        keywords = ';'.join([m.text or '' for m in keywords_book])
+    else:
+        keywords = ''
+
     dict_out = {'title': title,
                 'abstract': abstract,
                 'journal': journal,
                 'affiliation': affiliations_text,
                 'authors': authors_text,
+                'keywords': keywords,
                 'year': year}
     return dict_out
+
 
 def parse_xml_web(pmid, sleep=None, save_xml=False):
     """

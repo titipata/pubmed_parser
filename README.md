@@ -184,6 +184,7 @@ get a dictionary with following keys
 - `affiliation`: affiliation of first author
 - `authors`: string of authors, separated by `;`
 - `year`: Publication year
+- `keywords`: keywords or MESH terms of the article
 
 ```python
 dict_out = pp.parse_xml_web(pmid, save_xml=False)
