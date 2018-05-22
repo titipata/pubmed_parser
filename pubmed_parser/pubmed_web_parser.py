@@ -37,22 +37,27 @@ def parse_pubmed_web_tree(tree):
     Giving tree, return simple parsed information from the tree
     """
 
-    if tree.xpath('//articletitle') is not None:
+    if len(tree.xpath('//articletitle')) != 0:
         title = ' '.join([title.text for title in tree.xpath('//articletitle')])
+    elif len(tree.xpath('//booktitle')) != 0:
+        title = ' '.join([title.text for title in tree.xpath('//booktitle')])
     else:
         title = ''
 
     abstract_tree = tree.xpath('//abstract/abstracttext')
     abstract = ' '.join([stringify_children(a).strip() for a in abstract_tree])
 
-    if tree.xpath('//article//title') is not None:
+    if len(tree.xpath('//article//title')) != 0:
         journal = ';'.join([t.text.strip() for t in tree.xpath('//article//title')])
     else:
         journal = ''
 
     pubdate = tree.xpath('//pubmeddata//history//pubmedpubdate[@pubstatus="medline"]')
+    pubdatebook = tree.xpath('//pubmedbookdata//history//pubmedpubdate[@pubstatus="medline"]')
     if len(pubdate) >= 1 and pubdate[0].find('year') is not None:
         year = pubdate[0].find('year').text
+    elif len(pubdatebook) >= 1 and pubdatebook[0].find('year') is not None:
+        year = pubdatebook[0].find('year').text
     else:
         year = ''
 
@@ -83,7 +88,6 @@ def parse_pubmed_web_tree(tree):
                 'authors': authors_text,
                 'year': year}
     return dict_out
-
 
 def parse_xml_web(pmid, sleep=None, save_xml=False):
     """
