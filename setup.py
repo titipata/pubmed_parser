@@ -4,9 +4,8 @@ from setuptools import setup
 if __name__ == "__main__":
     setup(
         name='pubmed_parser',
-        version='0.1',
+        version='0.2',
         description='Python parser for Pubmed Open-Access Subset and MEDLINE XML repository',
-        long_description=open('README.md').read(),
         url='https://github.com/titipata/pubmed_parser',
         author='Titipat Achakulvisut',
         author_email='my.titipat@gmail.com',
