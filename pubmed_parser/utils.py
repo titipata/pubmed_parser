@@ -19,7 +19,7 @@ def remove_namespace(tree):
             node.tag = node.tag.split('}', 1)[1]
 
 
-def read_xml(path):
+def read_xml(path, nxml=False):
     """
     Parse tree from given XML path
     """
@@ -31,7 +31,7 @@ def read_xml(path):
         except Exception as e:
             print("Error: it was not able to read a path, a file-like object, or a string as an XML")
             raise
-    if '.nxml' in path:
+    if '.nxml' in path or nxml:
         remove_namespace(tree) # strip namespace for
     return tree
 

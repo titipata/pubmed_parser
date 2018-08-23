@@ -73,17 +73,17 @@ def parse_article_meta(tree):
     return dict_article_meta
 
 
-def parse_pubmed_xml(path, include_path=False):
+def parse_pubmed_xml(path, include_path=False, nxml=False):
     """
     Given single xml path, extract information from xml file
     and return parsed xml file in dictionary format.
     """
-    tree = read_xml(path)
+    tree = read_xml(path, nxml)
 
-    tree_title = tree.find('//title-group/article-title')
+    tree_title = tree.find('.//title-group/article-title')
     if tree_title is not None:
         title = [t for t in tree_title.itertext()]
-        sub_title = tree.xpath('//title-group/subtitle/text()')
+        sub_title = tree.xpath('.//title-group/subtitle/text()')
         title.extend(sub_title)
         title = [t.replace('\n', ' ').replace('\t', ' ') for t in title]
         full_title = ' '.join(title)
@@ -92,7 +92,7 @@ def parse_pubmed_xml(path, include_path=False):
 
     try:
         abstracts = list()
-        abstract_tree = tree.findall('//abstract')
+        abstract_tree = tree.findall('.//abstract')
         for a in abstract_tree:
             for t in a.itertext():
                 text = t.replace('\n', ' ').replace('\t', ' ').strip()
@@ -101,17 +101,21 @@ def parse_pubmed_xml(path, include_path=False):
     except:
         abstract = ''
 
-    journal_node = tree.findall('//journal-title')
+    journal_node = tree.findall('.//journal-title')
     if journal_node is not None:
         journal = ' '.join([j.text for j in journal_node])
     else:
         journal = ''
 
     dict_article_meta = parse_article_meta(tree)
-    pub_year_node = tree.find('//pub-date/year')
+    pub_year_node = tree.find('.//pub-date/year')
     pub_year = pub_year_node.text if pub_year_node is not None else ''
+    pub_month_node = tree.find('.//pub-date/month')
+    pub_month = pub_month_node.text if pub_month_node is not None else '01'
+    pub_day_node = tree.find('.//pub-date/day')
+    pub_day = pub_day_node.text if pub_day_node is not None else '01'
 
-    subjects_node = tree.findall('//article-categories//subj-group/subject')
+    subjects_node = tree.findall('.//article-categories.//subj-group/subject')
     subjects = list()
     if subjects_node is not None:
         for s in subjects_node:
@@ -122,13 +126,13 @@ def parse_pubmed_xml(path, include_path=False):
         subjects = ''
 
     # create affiliation dictionary
-    affil_id = tree.xpath('//aff[@id]/@id')
+    affil_id = tree.xpath('.//aff[@id]/@id')
     if len(affil_id) > 0:
         affil_id = list(map(str, affil_id))
     else:
         affil_id = ['']  # replace id with empty list
 
-    affil_name = tree.xpath('//aff[@id]')
+    affil_name = tree.xpath('.//aff[@id]')
     affil_name_list = list()
     for e in affil_name:
         name = stringify_affiliation_rec(e)
@@ -136,7 +140,7 @@ def parse_pubmed_xml(path, include_path=False):
         affil_name_list.append(name)
     affiliation_list = [[idx, name] for idx, name in zip(affil_id, affil_name_list)]
 
-    tree_author = tree.xpath('//contrib-group/contrib[@contrib-type="author"]')
+    tree_author = tree.xpath('.//contrib-group/contrib[@contrib-type="author"]')
     author_list = list()
     for author in tree_author:
         author_aff = author.findall('xref[@ref-type="aff"]')
@@ -162,6 +166,7 @@ def parse_pubmed_xml(path, include_path=False):
                 'author_list': author_list,
                 'affiliation_list': affiliation_list,
                 'publication_year': pub_year,
+                'publication_date': '{}-{}-{}'.format(pub_day, pub_month, pub_year),
                 'subjects': subjects}
     if include_path:
         dict_out['path_to_file'] = path
@@ -178,7 +183,7 @@ def parse_pubmed_references(path):
     pmid = dict_article_meta['pmid']
     pmc = dict_article_meta['pmc']
 
-    references = tree.xpath('//ref-list/ref[@id]')
+    references = tree.xpath('.//ref-list/ref[@id]')
     dict_refs = list()
     for reference in references:
         ref_id = reference.attrib['id']
@@ -254,7 +259,7 @@ def parse_pubmed_paragraph(path, all_paragraph=False):
     pmid = dict_article_meta['pmid']
     pmc = dict_article_meta['pmc']
 
-    paragraphs = tree.xpath('//body//p')
+    paragraphs = tree.xpath('.//body.//p')
     dict_pars = list()
     for paragraph in paragraphs:
         paragraph_text = stringify_children(paragraph)
@@ -291,7 +296,7 @@ def parse_pubmed_caption(path):
     pmid = dict_article_meta['pmid']
     pmc = dict_article_meta['pmc']
 
-    figs = tree.findall('//fig')
+    figs = tree.findall('.//fig')
     dict_captions = list()
     if figs is not None:
         for fig in figs:
@@ -350,7 +355,7 @@ def parse_pubmed_table(path, return_xml=True):
     pmc = dict_article_meta['pmc']
 
     # parse table
-    tables = tree.xpath('//body//sec//table-wrap')
+    tables = tree.xpath('.//body.//sec.//table-wrap')
     table_dicts = list()
     for table in tables:
         if table.find('label') is not None:
