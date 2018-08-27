@@ -15,7 +15,9 @@ We provide example files in [`data`](data/) folder.
 [copyright notice](https://www.ncbi.nlm.nih.gov/pmc/about/copyright/#copy-PMC) because your IP
 can get blocked if you try to download in bulk.
 
-## Parsers available
+## Available Parsers
+
+Here are available parsers.
 
 #### Parse Pubmed OA XML information
 
@@ -291,8 +293,8 @@ folder for more information.
 
 ## Members
 
-- [Titipat Achakulvisut](http://titipata.github.io), Northwestern University
-- [Daniel E. Acuna](http://scienceofscience.org/about), Rehabilitation Institute of Chicago and Northwestern University
+- [Titipat Achakulvisut](http://titipata.github.io)
+- [Daniel E. Acuna](http://scienceofscience.org/about)
 
 and [contributors](https://github.com/titipata/pubmed_parser/graphs/contributors)
 
@@ -313,9 +315,9 @@ http://doi.org/10.5281/zenodo.159504
 
 ## Acknowledgement
 
-Package is developed in [Konrad Kording's Lab](http://kordinglab.com/) at Northwestern University
+Package is developed in [Konrad Kording's Lab](http://kordinglab.com/) at the University of Pennsylvania
 
 
 ## License
 
-MIT License Copyright (c) 2015, 2016 Titipat Achakulvisut, Daniel E. Acuna
+MIT License Copyright (c) 2015-2018 Titipat Achakulvisut, Daniel E. Acuna

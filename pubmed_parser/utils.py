@@ -112,7 +112,7 @@ def month_or_day_formater(month_or_day):
             (b) the input was not an integer (i.e., a day).
     """
     if month_or_day.replace(".", "") in filter(None, calendar.month_abbr):
-        to_format = strptime(month_or_day.replace(".", ""),'%b').tm_mon
+        to_format = strptime(month_or_day.replace(".", ""), '%b').tm_mon
     elif month_or_day.strip().isdigit() and "." not in str(month_or_day):
         to_format = int(month_or_day.strip())
     else:

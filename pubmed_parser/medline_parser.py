@@ -1,3 +1,4 @@
+import re
 from itertools import chain
 from collections import defaultdict
 from pubmed_parser.utils import read_xml, stringify_children, month_or_day_formater
@@ -241,7 +242,11 @@ def date_extractor(journal, year_info_only):
                     day = month_or_day_formater(issue_date.find('Day').text)
     elif issue_date.find('MedlineDate') is not None:
         year_text = issue_date.find('MedlineDate').text
-        year = year_text.split(' ')[0]
+        year = re.findall(r'\d{4}', year_text)
+        if len(year) >= 1:
+            year = year[0]
+        else:
+            year = ""
     else:
         year = ""
 
@@ -403,7 +408,7 @@ def parse_medline_xml(path, year_info_only=True, nlm_category=False):
              'issn_linking': None,
              'country': None
              } for p in delete_citations
-            ]
+        ]
     article_list.extend(dict_delete)
     return article_list
 
