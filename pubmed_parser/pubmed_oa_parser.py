@@ -247,43 +247,47 @@ def parse_pubmed_references(path):
         dict_refs = None
     return dict_refs
 
+def parse_pubmed_sectext(currentpath): 
 
-def parse_pubmed_paragraph(path, all_paragraph=False):
-    """
-    Give tree and reference dictionary
-    return dictionary of referenced paragraph, section that it belongs to,
-    and its cited PMID
-    """
-    tree = read_xml(path)
-    dict_article_meta = parse_article_meta(tree)
-    pmid = dict_article_meta['pmid']
-    pmc = dict_article_meta['pmc']
+    #print(currentpath)
+    sectexts = list()
+    sectext_tree = tree.find(currentpath)
+    for a in sectext_tree:
+        
+        try:    
+            for t in a.itertext():
+                text = t.replace('\n', ' ').replace('\t', ' ').strip()
+                sectexts.append(text)
+            
+        except:
+            sectexts = ''
+            
+        sectext = ' '.join(sectexts)
+    return sectext
 
-    paragraphs = tree.xpath('.//body.//p')
-    dict_pars = list()
-    for paragraph in paragraphs:
-        paragraph_text = stringify_children(paragraph)
-        section = paragraph.find('../title')
-        if section is not None:
-            section = stringify_children(section).strip()
-        else:
-            section = ''
+def parse_sec_nameandtext(tree): 
+    tree_content = tree.find('.//body')
+    dict_sec_name = {}
+    
+    if tree_content == None:
+        dict_sec_name = {}
+    
+    else:
+        for level3 in tree_content: 
+            firstSectionName=None
+            i = 0
+            for level4 in level3:  
+                if level4.tag=="title": 
+                    firstSectionName=level4.text
+                    dict_sec_nameandtext[firstSectionName]={}
 
-        ref_ids = list()
-        for reference in paragraph.getchildren():
-            if 'rid' in reference.attrib.keys():
-                ref_id = reference.attrib['rid']
-                ref_ids.append(ref_id)
-
-        dict_par = {'pmc': pmc,
-                    'pmid': pmid,
-                    'reference_ids': ref_ids,
-                    'section': section,
-                    'text': paragraph_text}
-        if len(ref_ids) >= 1 or all_paragraph:
-            dict_pars.append(dict_par)
-
-    return dict_pars
+                    currentpath = tree.getpath(level4)
+                    currentpath = currentpath.replace("/article/", ".//")
+                    currentpath = currentpath.replace("/title", "")
+                    sectiontext = parse_pubmed_sectext(currentpath)
+                    dict_sec_nameandtext[firstSectionName] = {sectiontext}
+                
+    return dict_sec_nameandtext
 
 
 def parse_pubmed_caption(path):
