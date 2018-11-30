@@ -220,6 +220,10 @@ def parse_pubmed_references(path):
                     journal = ref.find('source').text or ''
                 else:
                     journal = ''
+                if ref.find('year') is not None:
+                    year = ref.find('year').text or ''
+                else:
+                    year = ''
                 if len(ref.findall('pub-id')) >= 1:
                     for pubid in ref.findall('pub-id'):
                         if 'doi' in pubid.attrib.values():
@@ -240,6 +244,7 @@ def parse_pubmed_references(path):
                             'doi_cited': doi_cited,
                             'article_title': article_title,
                             'name': '; '.join(names),
+                            'year': year,
                             'journal': journal,
                             'journal_type': journal_type}
                 dict_refs.append(dict_ref)
