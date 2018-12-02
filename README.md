@@ -67,6 +67,7 @@ Each dictionary has keys as follows
 - `journal_type`: type of journal
 - `pmid_cited`: Pubmed ID of article that article cites
 - `doi_cited`: DOI of article that article cites
+- `year`: Publication year as it appears in the reference (May include letter suffix, e.g. 2007a)
 
 ```python
 dicts_out = pp.parse_pubmed_references(path) # return list of dictionary
