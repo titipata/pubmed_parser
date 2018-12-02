@@ -264,7 +264,7 @@ def parse_pubmed_paragraph(path, all_paragraph=False):
     pmid = dict_article_meta['pmid']
     pmc = dict_article_meta['pmc']
 
-    paragraphs = tree.xpath('.//body.//p')
+    paragraphs = tree.xpath('//body//p')
     dict_pars = list()
     for paragraph in paragraphs:
         paragraph_text = stringify_children(paragraph)
