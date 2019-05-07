@@ -1,4 +1,5 @@
 import re
+import numpy as np
 from itertools import chain
 from collections import defaultdict
 from pubmed_parser.utils import read_xml, stringify_children, month_or_day_formater
@@ -156,7 +157,7 @@ def parse_journal_info(medline):
 
 
 def parse_grant_id(medline):
-    """Parse Grant ID and related information given MEDLINE tree
+    """Parse Grant ID and related information from a given MEDLINE tree
 
     Parameters
     ----------
@@ -205,6 +206,28 @@ def parse_grant_id(medline):
                      'agency': agency}
             grant_list.append(dict_)
     return grant_list
+
+
+def parse_doi(medline):
+    """Parse DOI from a given MEDLINE tree
+
+    Parameters
+    ----------
+    medline: Element
+        The lxml node pointing to a medline document
+
+    Returns
+    -------
+    doi: str, DOI from a given lxml node
+    """
+    article = medline.find('Article')
+    elocation_ids = article.findall('ELocationID')
+
+    doi = ''
+    if len(elocation_ids) > 0:
+        for e in elocation_ids:
+            doi = e.text.strip() or '' if e.attrib.get('EIdType', '') == 'doi' else ''
+    return doi
 
 
 def date_extractor(journal, year_info_only):
@@ -334,21 +357,24 @@ def parse_article_info(medline, year_info_only, nlm_category):
     pubdate = date_extractor(journal, year_info_only)
 
     pmid = parse_pmid(medline)
+    doi = parse_doi(medline)
     mesh_terms = parse_mesh_terms(medline)
     keywords = parse_keywords(medline)
     other_id_dict = parse_other_id(medline)
     journal_info_dict = parse_journal_info(medline)
-
-    dict_out = {'title': title,
-                'abstract': abstract,
-                'journal': journal_name,
-                'author': authors_info,
-                'affiliation': affiliations_info,
-                'pubdate': pubdate,
-                'pmid': pmid,
-                'mesh_terms': mesh_terms,
-                'keywords': keywords,
-                'delete': False}
+    dict_out = {
+        'title': title,
+        'abstract': abstract,
+        'journal': journal_name,
+        'author': authors_info,
+        'affiliation': affiliations_info,
+        'pubdate': pubdate,
+        'pmid': pmid,
+        'mesh_terms': mesh_terms,
+        'keywords': keywords,
+        'doi': doi,
+        'delete': False
+    }
     dict_out.update(other_id_dict)
     dict_out.update(journal_info_dict)
     return dict_out
@@ -389,26 +415,25 @@ def parse_medline_xml(path, year_info_only=True, nlm_category=False):
         medline_citations = tree.findall('//MedlineCitation')
     article_list = list(map(lambda m: parse_article_info(m, year_info_only, nlm_category), medline_citations))
     delete_citations = tree.findall('//DeleteCitation/PMID')
-    dict_delete = \
-        [
-            {'title': None,
-             'abstract': None,
-             'journal': None,
-             'author': None,
-             'affiliation': None,
-             'pubdate': None,
-             'pmid': p.text,
-             'other_id': None,
-             'pmc': None,
-             'mesh_terms': None,
-             'keywords': None,
-             'delete': True,
-             'medline_ta': None,
-             'nlm_unique_id': None,
-             'issn_linking': None,
-             'country': None
-             } for p in delete_citations
-        ]
+    dict_delete = [{
+        'title': np.nan,
+        'abstract': np.nan,
+        'journal': np.nan,
+        'author': np.nan,
+        'affiliation': np.nan,
+        'pubdate': np.nan,
+        'pmid': p.text,
+        'doi': np.nan,
+        'other_id': np.nan,
+        'pmc': np.nan,
+        'mesh_terms': np.nan,
+        'keywords': np.nan,
+        'delete': True,
+        'medline_ta': np.nan,
+        'nlm_unique_id': np.nan,
+        'issn_linking': np.nan,
+        'country': np.nan
+    } for p in delete_citations]
     article_list.extend(dict_delete)
     return article_list
 

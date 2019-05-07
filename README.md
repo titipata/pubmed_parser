@@ -134,6 +134,7 @@ This function will return list of dictionaries, where each element contains:
 
 - `pmid`: Pubmed ID
 - `pmc`: Pubmed Central ID
+- `doi`: DOI
 - `other_id`: Other IDs found, each separated by `;`
 - `title`: title of the article
 - `abstract`: abstract of the article
