@@ -1,6 +1,5 @@
 import os
 from lxml import etree
-from lxml.etree import tostring
 from itertools import chain
 from .utils import *
 from unidecode import unidecode

@@ -28,7 +28,7 @@ def read_xml(path, nxml=False):
     except:
         try:
             tree = etree.fromstring(path)
-        except Exception as e:
+        except Exception:
             print("Error: it was not able to read a path, a file-like object, or a string as an XML")
             raise
     if '.nxml' in path or nxml:
@@ -119,3 +119,10 @@ def month_or_day_formater(month_or_day):
         return None
 
     return ("0" if to_format < 10 else "") + str(to_format)
+
+
+def pretty_print(node):
+    """
+    Pretty print a given lxml node
+    """
+    print(etree.tostring(node, pretty_print=True).decode('utf-8'))

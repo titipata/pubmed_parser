@@ -15,3 +15,4 @@ from .medline_parser import parse_medline_xml, \
 from .pubmed_web_parser import parse_xml_web, \
                                parse_citation_web, \
                                parse_outgoing_citation_web
+from .utils import pretty_print
