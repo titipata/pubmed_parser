@@ -57,6 +57,31 @@ def parse_mesh_terms(medline):
     return mesh_terms
 
 
+def parse_publication_types(medline):
+    """Parse Publication types from article
+
+    Parameters
+    ----------
+    medline: Element
+        The lxml node pointing to a medline document
+
+    Returns
+    -------
+    publication_types: str
+        String of semi-colon spearated publication types
+    """
+    publication_types = []
+    publication_type_list = medline.find('Article/PublicationTypeList')
+    if publication_type_list is not None:
+        publication_type_list = publication_type_list.findall('PublicationType')
+        for publication_type in publication_type_list:
+            publication_types.append(
+                publication_type.attrib.get('UI', '') + ':' + (publication_type.text or '')
+            )
+    publication_types = '; '.join(publication_types)
+    return publication_types
+
+
 def parse_keywords(medline):
     """Parse keywords from article, separated by ;
 
@@ -359,6 +384,7 @@ def parse_article_info(medline, year_info_only, nlm_category):
     pmid = parse_pmid(medline)
     doi = parse_doi(medline)
     mesh_terms = parse_mesh_terms(medline)
+    publication_types = parse_publication_types(medline)
     keywords = parse_keywords(medline)
     other_id_dict = parse_other_id(medline)
     journal_info_dict = parse_journal_info(medline)
@@ -371,6 +397,7 @@ def parse_article_info(medline, year_info_only, nlm_category):
         'pubdate': pubdate,
         'pmid': pmid,
         'mesh_terms': mesh_terms,
+        'publication_types': publication_types,
         'keywords': keywords,
         'doi': doi,
         'delete': False
@@ -432,7 +459,8 @@ def parse_medline_xml(path, year_info_only=True, nlm_category=False):
         'medline_ta': np.nan,
         'nlm_unique_id': np.nan,
         'issn_linking': np.nan,
-        'country': np.nan
+        'country': np.nan,
+        'publication_types': np.nan
     } for p in delete_citations]
     article_list.extend(dict_delete)
     return article_list
