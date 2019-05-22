@@ -76,7 +76,7 @@ def parse_publication_types(medline):
         publication_type_list = publication_type_list.findall('PublicationType')
         for publication_type in publication_type_list:
             publication_types.append(
-                publication_type.attrib.get('UI', '') + ':' + (publication_type.text or '')
+                publication_type.attrib.get('UI', '') + ':' + (publication_type.text.strip() or '')
             )
     publication_types = '; '.join(publication_types)
     return publication_types
@@ -107,6 +107,31 @@ def parse_keywords(medline):
     return keywords
 
 
+def parse_chemical_list(medline):
+    """Parse chemical list from article
+
+    Parameters
+    ----------
+    medline: Element
+        The lxml node pointing to a medline document
+
+    Returns
+    -------
+    chemical_list: str
+        String of semi-colon spearated chemical list
+    """
+    chemical_list = []
+    chemicals  = medline.find('ChemicalList')
+    if chemicals is not None:
+        for chemical in chemicals.findall('Chemical'):
+            substance_name = chemical.find('NameOfSubstance')
+            chemical_list.append(
+                substance_name.attrib.get('UI', '') + ':' + (substance_name.text.strip() or '')
+            )
+    chemical_list = '; '.join(chemical_list)
+    return chemical_list
+
+
 def parse_other_id(medline):
     """Parse OtherID from article, each separated by ;
 
@@ -132,8 +157,10 @@ def parse_other_id(medline):
         other_id = '; '.join(other_id)
     else:
         other_id = ''
-    return {'pmc': pmc,
-            'other_id': other_id}
+    return {
+        'pmc': pmc,
+        'other_id': other_id
+    }
 
 
 def parse_journal_info(medline):
@@ -224,12 +251,14 @@ def parse_grant_id(medline):
                 gid = grant_id.text
             else:
                 gid = ''
-            dict_ = {'pmid': pmid,
-                     'grant_id': gid,
-                     'grant_acronym': acronym,
-                     'country': country,
-                     'agency': agency}
-            grant_list.append(dict_)
+            grant_dict = {
+                'pmid': pmid,
+                'grant_id': gid,
+                'grant_acronym': acronym,
+                'country': country,
+                'agency': agency
+            }
+            grant_list.append(grant_dict)
     return grant_list
 
 
@@ -385,6 +414,7 @@ def parse_article_info(medline, year_info_only, nlm_category):
     doi = parse_doi(medline)
     mesh_terms = parse_mesh_terms(medline)
     publication_types = parse_publication_types(medline)
+    chemical_list = parse_chemical_list(medline)
     keywords = parse_keywords(medline)
     other_id_dict = parse_other_id(medline)
     journal_info_dict = parse_journal_info(medline)
@@ -398,6 +428,7 @@ def parse_article_info(medline, year_info_only, nlm_category):
         'pmid': pmid,
         'mesh_terms': mesh_terms,
         'publication_types': publication_types,
+        'chemical_list': chemical_list,
         'keywords': keywords,
         'doi': doi,
         'delete': False
@@ -455,12 +486,13 @@ def parse_medline_xml(path, year_info_only=True, nlm_category=False):
         'pmc': np.nan,
         'mesh_terms': np.nan,
         'keywords': np.nan,
+        'publication_types': np.nan, 
+        'chemical_list': np.nan,
         'delete': True,
         'medline_ta': np.nan,
         'nlm_unique_id': np.nan,
         'issn_linking': np.nan,
         'country': np.nan,
-        'publication_types': np.nan
     } for p in delete_citations]
     article_list.extend(dict_delete)
     return article_list
