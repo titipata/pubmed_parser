@@ -128,7 +128,8 @@ dicts_out = pp.parse_pubmed_table('data/medline16n0902.xml.gz', return_xml=False
 
 #### Parse Medline NML XML
 
-Medline NML XML has a different XML format than PubMed Open Access.
+Medline NML XML has a different XML format than PubMed Open Access. 
+The structure of XML files can be found in MEDLINE/PubMed DTD [here](https://www.nlm.nih.gov/databases/dtd/).
 You can use the function `parse_medline_xml` to parse that format.
 This function will return list of dictionaries, where each element contains:
 
