@@ -139,8 +139,6 @@ This function will return list of dictionaries, where each element contains:
 - `other_id`: Other IDs found, each separated by `;`
 - `title`: title of the article
 - `abstract`: abstract of the article
-- `affiliation`: corresponding author's affiliation. If multiple, each separated by `\n` and will
-correspond to each authors
 - `authors`: authors, each separated by `;`
 - `mesh_terms`: list of MeSH terms with corresponding MeSH ID, each separated by `;` e.g. `'D000161:Acoustic Stimulation; D000328:Adult; ...`
 - `publication_types`: list of publication type list each separated by `;` e.g. `'D016428:Journal Article'`
@@ -157,7 +155,9 @@ XMLs for the same paper. You can delete the record of deleted paper
 because it got updated.
 
 ```python
-dicts_out = pp.parse_medline_xml('data/medline16n0902.xml.gz', year_info_only=False, nlm_category=False) # return list of dictionary
+dicts_out = pp.parse_medline_xml('data/medline16n0902.xml.gz', 
+                                 year_info_only=False, 
+                                 nlm_category=False, author_list=False) # return list of dictionary
 ```
 
 To extract month and day information from PubDate, set `year_info_only=True`.

@@ -284,6 +284,52 @@ def parse_doi(medline):
     return doi
 
 
+def parse_author_affiliation(medline):
+    """Parse MEDLINE authors and their corresponding affiliations
+
+    Parameters
+    ----------
+    medline: Element
+        The lxml node pointing to a medline document
+    
+    Returns
+    -------
+    authors: list
+        List of authors and their corresponding affiliation in dictionary format
+    """
+    authors = []
+    article = medline.find('Article')
+    if article is not None:
+        author_list = article.find('AuthorList')
+        if author_list is not None:
+            authors_list = author_list.findall('Author')
+            for author in authors_list:
+                if author.find('ForeName') is not None:
+                    forename = author.find('ForeName').text.strip() or ''
+                else:
+                    forename = ''
+                if author.find('Initials') is not None:
+                    firstname = author.find('Initials').text.strip() or ''
+                else:
+                    firstname = ''
+                if author.find('LastName') is not None:
+                    lastname = author.find('LastName').text.strip() or ''
+                else:
+                    lastname = ''
+                if author.find('AffiliationInfo/Affiliation') is not None:
+                    affiliation = author.find('AffiliationInfo/Affiliation').text or ''
+                    affiliation = affiliation.replace("For a full list of the authors' affiliations please see the Acknowledgements section.", '')
+                else:
+                    affiliation = ''
+                authors.append({
+                    'forename': forename,
+                    'firstname': firstname, 
+                    'lastname': lastname,
+                    'affiliation': affiliation
+                })
+    return authors
+
+
 def date_extractor(journal, year_info_only):
     """Extract PubDate information from an Article in the Medline dataset.
 
@@ -333,7 +379,7 @@ def date_extractor(journal, year_info_only):
         return "-".join(str(x) for x in filter(None, [year, month, day]))
 
 
-def parse_article_info(medline, year_info_only, nlm_category):
+def parse_article_info(medline, year_info_only, nlm_category, author_list):
     """Parse article nodes from Medline dataset
 
     Parameters
@@ -344,12 +390,13 @@ def parse_article_info(medline, year_info_only, nlm_category):
         see: date_extractor()
     nlm_category: bool
         see: parse_medline_xml()
+    author_list: bool, if True, return output as list, else
 
     Returns
     -------
     article: dict
         Dictionary containing information about the article, including
-        `title`, `abstract`, `journal`, `author`, `affiliation`, `pubdate`,
+        `title`, `abstract`, `journal`, `authors`, `affiliations`, `pubdate`,
         `pmid`, `other_id`, `mesh_terms`, and `keywords`. The field
         `delete` is always `False` because this function parses
         articles that by definition are not deleted.
@@ -381,35 +428,18 @@ def parse_article_info(medline, year_info_only, nlm_category):
     else:
         abstract = ''
 
-    if article.find('AuthorList') is not None:
-        authors = article.find('AuthorList').getchildren()
-        authors_info = list()
-        affiliations_info = list()
-        for author in authors:
-            if author.find('Initials') is not None:
-                firstname = author.find('Initials').text or ''
-            else:
-                firstname = ''
-            if author.find('LastName') is not None:
-                lastname = author.find('LastName').text or ''
-            else:
-                lastname = ''
-            if author.find('AffiliationInfo/Affiliation') is not None:
-                affiliation = author.find('AffiliationInfo/Affiliation').text or ''
-            else:
-                affiliation = ''
-            authors_info.append((firstname + ' ' + lastname).strip())
-            affiliations_info.append(affiliation)
-        affiliations_info = '\n'.join([a for a in affiliations_info if a is not ''])
-        authors_info = '; '.join(authors_info)
+    authors_dict = parse_author_affiliation(medline)
+    if not author_list:
+        affiliations = ';'.join([author.get('affiliation', '') 
+                                for author in authors_dict if author.get('affiliation', '') is not ''])
+        authors = ';'.join([author.get('firstname', '') + ' ' + author.get('lastname', '')
+                            for author in authors_dict])
     else:
-        affiliations_info = ''
-        authors_info = ''
-
+        authors = authors_dict
     journal = article.find('Journal')
     journal_name = ' '.join(journal.xpath('Title/text()'))
-    pubdate = date_extractor(journal, year_info_only)
 
+    pubdate = date_extractor(journal, year_info_only)
     pmid = parse_pmid(medline)
     doi = parse_doi(medline)
     mesh_terms = parse_mesh_terms(medline)
@@ -422,8 +452,7 @@ def parse_article_info(medline, year_info_only, nlm_category):
         'title': title,
         'abstract': abstract,
         'journal': journal_name,
-        'author': authors_info,
-        'affiliation': affiliations_info,
+        'authors': authors,
         'pubdate': pubdate,
         'pmid': pmid,
         'mesh_terms': mesh_terms,
@@ -433,12 +462,14 @@ def parse_article_info(medline, year_info_only, nlm_category):
         'doi': doi,
         'delete': False
     }
+    if not author_list:
+        dict_out.update({'affiliations': affiliations})
     dict_out.update(other_id_dict)
     dict_out.update(journal_info_dict)
     return dict_out
 
 
-def parse_medline_xml(path, year_info_only=True, nlm_category=False):
+def parse_medline_xml(path, year_info_only=True, nlm_category=False, author_list=False):
     """Parse XML file from Medline XML format available at
     ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/
 
@@ -471,7 +502,7 @@ def parse_medline_xml(path, year_info_only=True, nlm_category=False):
     medline_citations = tree.findall('//MedlineCitationSet/MedlineCitation')
     if len(medline_citations) == 0:
         medline_citations = tree.findall('//MedlineCitation')
-    article_list = list(map(lambda m: parse_article_info(m, year_info_only, nlm_category), medline_citations))
+    article_list = list(map(lambda m: parse_article_info(m, year_info_only, nlm_category, author_list), medline_citations))
     delete_citations = tree.findall('//DeleteCitation/PMID')
     dict_delete = [{
         'title': np.nan,
