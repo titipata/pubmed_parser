@@ -305,15 +305,15 @@ def parse_author_affiliation(medline):
             authors_list = author_list.findall('Author')
             for author in authors_list:
                 if author.find('ForeName') is not None:
-                    forename = author.find('ForeName').text.strip() or ''
+                    forename = (author.find('ForeName').text or '').strip() or ''
                 else:
                     forename = ''
                 if author.find('Initials') is not None:
-                    firstname = author.find('Initials').text.strip() or ''
+                    firstname = (author.find('Initials').text or '').strip() or ''
                 else:
                     firstname = ''
                 if author.find('LastName') is not None:
-                    lastname = author.find('LastName').text.strip() or ''
+                    lastname = (author.find('LastName').text or '').strip() or ''
                 else:
                     lastname = ''
                 if author.find('AffiliationInfo/Affiliation') is not None:
