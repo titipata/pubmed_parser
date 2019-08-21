@@ -106,7 +106,8 @@ def process_file(date_update, fraction=0.01):
         filter(lambda x: x is not None).\
         flatMap(lambda xs: [x for x in xs])
     parse_affil_df = parse_affil_rdd.toDF()
-    parse_name_df.write.parquet(os.path.join(save_dir, 'pubmed_oa_affiliation_%s.parquet' % date_update_str),
+    # change to parse_affil_df
+    parse_affil_df.write.parquet(os.path.join(save_dir, 'pubmed_oa_affiliation_%s.parquet' % date_update_str),
                                 mode='overwrite')
     print('Finished parsing Pubmed Open-Access subset')
 
