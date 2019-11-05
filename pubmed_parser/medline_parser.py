@@ -10,7 +10,7 @@ __all__ = [
 ]
 
 
-def parse_pmid(medline):
+def parse_pmid(pubmed_article):
     """Parse PMID from article
 
     Parameters
@@ -23,11 +23,49 @@ def parse_pmid(medline):
     pmid: str
         String version of the PubMed ID
     """
+    medline = pubmed_article.find('MedlineCitation')
     if medline.find('PMID') is not None:
         pmid = medline.find('PMID').text
+        return pmid
     else:
-        pmid = ''
+        article_ids = pubmed_article.find('PubmedData/ArticleIdList')
+        if article_ids is not None:
+            pmid = [d.text.strip() for d in article_ids.find('ArticleId') 
+                    if d.attrib.get('IdType', '') == 'pmid']
+            pmid = ''.join(pmid)
+        else:
+            pmid = ''
     return pmid
+
+
+def parse_doi(pubmed_article):
+    """Parse DOI from a given MEDLINE tree
+
+    Parameters
+    ----------
+    medline: Element
+        The lxml node pointing to a medline document
+
+    Returns
+    -------
+    doi: str, DOI from a given lxml node
+    """
+    medline = pubmed_article.find('MedlineCitation')
+    article = medline.find('Article')
+    elocation_ids = article.findall('ELocationID')
+
+    if len(elocation_ids) > 0:
+        for e in elocation_ids:
+            doi = e.text.strip() or '' if e.attrib.get('EIdType', '') == 'doi' else ''
+    else:
+        article_ids = pubmed_article.find('PubmedData/ArticleIdList')
+        if article_ids is not None:
+            doi = [d.text.strip() for d in article_ids.findall('ArticleId') 
+                   if d.attrib.get('IdType', '') == 'doi']
+            doi = ''.join(doi)
+        else:
+            doi = ''
+    return doi
 
 
 def parse_mesh_terms(medline):
@@ -262,28 +300,6 @@ def parse_grant_id(medline):
     return grant_list
 
 
-def parse_doi(medline):
-    """Parse DOI from a given MEDLINE tree
-
-    Parameters
-    ----------
-    medline: Element
-        The lxml node pointing to a medline document
-
-    Returns
-    -------
-    doi: str, DOI from a given lxml node
-    """
-    article = medline.find('Article')
-    elocation_ids = article.findall('ELocationID')
-
-    doi = ''
-    if len(elocation_ids) > 0:
-        for e in elocation_ids:
-            doi = e.text.strip() or '' if e.attrib.get('EIdType', '') == 'doi' else ''
-    return doi
-
-
 def parse_author_affiliation(medline):
     """Parse MEDLINE authors and their corresponding affiliations
 
@@ -379,7 +395,7 @@ def date_extractor(journal, year_info_only):
         return "-".join(str(x) for x in filter(None, [year, month, day]))
 
 
-def parse_article_info(medline, year_info_only, nlm_category, author_list):
+def parse_article_info(pubmed_article, year_info_only, nlm_category, author_list):
     """Parse article nodes from Medline dataset
 
     Parameters
@@ -401,6 +417,7 @@ def parse_article_info(medline, year_info_only, nlm_category, author_list):
         `delete` is always `False` because this function parses
         articles that by definition are not deleted.
     """
+    medline = pubmed_article.find('MedlineCitation')
     article = medline.find('Article')
 
     if article.find('ArticleTitle') is not None:
@@ -439,9 +456,9 @@ def parse_article_info(medline, year_info_only, nlm_category, author_list):
     journal = article.find('Journal')
     journal_name = ' '.join(journal.xpath('Title/text()'))
 
+    pmid = parse_pmid(pubmed_article)
+    doi = parse_doi(pubmed_article)
     pubdate = date_extractor(journal, year_info_only)
-    pmid = parse_pmid(medline)
-    doi = parse_doi(medline)
     mesh_terms = parse_mesh_terms(medline)
     publication_types = parse_publication_types(medline)
     chemical_list = parse_chemical_list(medline)
@@ -501,7 +518,7 @@ def parse_medline_xml(path, year_info_only=True, nlm_category=False, author_list
     tree = read_xml(path)
     medline_citations = tree.findall('//MedlineCitationSet/MedlineCitation')
     if len(medline_citations) == 0:
-        medline_citations = tree.findall('//MedlineCitation')
+        medline_citations = tree.findall('//PubmedArticle')
     article_list = list(map(lambda m: parse_article_info(m, year_info_only, nlm_category, author_list), medline_citations))
     delete_citations = tree.findall('//DeleteCitation/PMID')
     dict_delete = [{
