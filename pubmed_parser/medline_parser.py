@@ -30,7 +30,7 @@ def parse_pmid(pubmed_article):
     else:
         article_ids = pubmed_article.find('PubmedData/ArticleIdList')
         if article_ids is not None:
-            pmid = [d.text.strip() for d in article_ids.find('ArticleId') 
+            pmid = [d.text.strip() for d in article_ids.findall('ArticleId') 
                     if d.attrib.get('IdType', '') == 'pmid']
             pmid = ''.join(pmid)
         else:
