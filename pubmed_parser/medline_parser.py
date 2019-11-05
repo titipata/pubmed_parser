@@ -11,7 +11,7 @@ __all__ = [
 
 
 def parse_pmid(pubmed_article):
-    """Parse PMID from article
+    """Parse PMID from a given Pubmed Article tree
 
     Parameters
     ----------
@@ -30,16 +30,15 @@ def parse_pmid(pubmed_article):
     else:
         article_ids = pubmed_article.find('PubmedData/ArticleIdList')
         if article_ids is not None:
-            pmid = [d.text.strip() for d in article_ids.findall('ArticleId') 
-                    if d.attrib.get('IdType', '') == 'pmid']
-            pmid = ''.join(pmid)
+            pmid = article_ids.find('ArticleId[@IdType="pmid"]')
+            pmid = pmid.text.strip() if pmid is not None else ''
         else:
             pmid = ''
     return pmid
 
 
 def parse_doi(pubmed_article):
-    """Parse DOI from a given MEDLINE tree
+    """Parse DOI from a given Pubmed Article tree
 
     Parameters
     ----------
@@ -60,9 +59,8 @@ def parse_doi(pubmed_article):
     else:
         article_ids = pubmed_article.find('PubmedData/ArticleIdList')
         if article_ids is not None:
-            doi = [d.text.strip() for d in article_ids.findall('ArticleId') 
-                   if d.attrib.get('IdType', '') == 'doi']
-            doi = ''.join(doi)
+            doi = article_ids.find('ArticleId[@IdType="doi"]')
+            doi = doi.text.strip() if doi is not None else ''
         else:
             doi = ''
     return doi
@@ -395,7 +393,33 @@ def date_extractor(journal, year_info_only):
         return "-".join(str(x) for x in filter(None, [year, month, day]))
 
 
-def parse_article_info(pubmed_article, year_info_only, nlm_category, author_list):
+def parse_references(pubmed_article, reference_list):
+    """Parse references from Pubmed Article
+
+    if reference_list is True, return list, if False return string
+    """
+    references = []
+    reference_list_data = pubmed_article.find('PubmedData/ReferenceList')
+    if reference_list_data is not None:
+        for ref in reference_list_data.findall('Reference'):
+            citation = ref.find('Citation')
+            citation = citation.text.strip() if citation is not None else ''
+            article_ids = ref.find('ArticleIdList')
+            pmid = article_ids.find('ArticleId[@IdType="pubmed"]')
+            pmid = pmid.text.strip() if pmid is not None else ''
+            references.append({
+                'citation': citation,
+                'pmid': pmid
+            })
+
+    if reference_list:
+        return references
+    else:
+        references = ';'.join([ref['pmid'] for ref in references if ref['pmid'] is not ''])
+        return references
+
+
+def parse_article_info(pubmed_article, year_info_only, nlm_category, author_list, reference_list):
     """Parse article nodes from Medline dataset
 
     Parameters
@@ -407,6 +431,7 @@ def parse_article_info(pubmed_article, year_info_only, nlm_category, author_list
     nlm_category: bool
         see: parse_medline_xml()
     author_list: bool, if True, return output as list, else
+    reference_list: bool, if True, parse reference list as an output
 
     Returns
     -------
@@ -458,6 +483,7 @@ def parse_article_info(pubmed_article, year_info_only, nlm_category, author_list
 
     pmid = parse_pmid(pubmed_article)
     doi = parse_doi(pubmed_article)
+    references = parse_references(pubmed_article, reference_list)
     pubdate = date_extractor(journal, year_info_only)
     mesh_terms = parse_mesh_terms(medline)
     publication_types = parse_publication_types(medline)
@@ -477,6 +503,7 @@ def parse_article_info(pubmed_article, year_info_only, nlm_category, author_list
         'chemical_list': chemical_list,
         'keywords': keywords,
         'doi': doi,
+        'references': references,
         'delete': False
     }
     if not author_list:
@@ -486,7 +513,8 @@ def parse_article_info(pubmed_article, year_info_only, nlm_category, author_list
     return dict_out
 
 
-def parse_medline_xml(path, year_info_only=True, nlm_category=False, author_list=False):
+def parse_medline_xml(path, year_info_only=True, nlm_category=False, 
+                      author_list=False, reference_list=False):
     """Parse XML file from Medline XML format available at
     ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/
 
@@ -507,6 +535,12 @@ def parse_medline_xml(path, year_info_only=True, nlm_category=False, author_list
         if True, this will parse structured abstract where each section if original Label
         if False, this will parse structured abstract where each section will be assigned to
         NLM category of each sections
+    author_list: bool, default False, 
+        if True, return parsed author output as a list of authors
+        if False, return parsed author output as a string of authors concatenated with ;
+    reference_list: bool, default False
+        if True, parse reference list as an output
+        if False, return string of PMIDs concatenated with ;
 
     Returns
     -------
@@ -519,7 +553,7 @@ def parse_medline_xml(path, year_info_only=True, nlm_category=False, author_list
     medline_citations = tree.findall('//MedlineCitationSet/MedlineCitation')
     if len(medline_citations) == 0:
         medline_citations = tree.findall('//PubmedArticle')
-    article_list = list(map(lambda m: parse_article_info(m, year_info_only, nlm_category, author_list), medline_citations))
+    article_list = list(map(lambda m: parse_article_info(m, year_info_only, nlm_category, author_list, reference_list), medline_citations))
     delete_citations = tree.findall('//DeleteCitation/PMID')
     dict_delete = [{
         'title': np.nan,
@@ -528,7 +562,7 @@ def parse_medline_xml(path, year_info_only=True, nlm_category=False, author_list
         'authors': np.nan,
         'affiliations': np.nan,
         'pubdate': np.nan,
-        'pmid': p.text,
+        'pmid': p.text.strip(),
         'doi': np.nan,
         'other_id': np.nan,
         'pmc': np.nan,
@@ -541,6 +575,7 @@ def parse_medline_xml(path, year_info_only=True, nlm_category=False, author_list
         'nlm_unique_id': np.nan,
         'issn_linking': np.nan,
         'country': np.nan,
+        'references': np.nan
     } for p in delete_citations]
     article_list.extend(dict_delete)
     return article_list
