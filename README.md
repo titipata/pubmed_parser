@@ -1,67 +1,56 @@
-# Pubmed Parser: Parser for Pubmed Open-Access XML Subset and MEDLINE XML Dataset
+# Pubmed Parser: A Python Parser for Pubmed Open-Access XML Subset and MEDLINE XML Dataset
 
-[![Join the chat at https://gitter.im/titipata/pubmed_parser](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/titipata/pubmed_parser?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/titipata/pubmed_parser/blob/master/LICENSE) [![DOI](https://zenodo.org/badge/31697087.svg)](https://zenodo.org/badge/latestdoi/31697087)
 
 Pubmed Parser is a Python library for parsing [PubMed Open-Access (OA) subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
- and [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/) repository. See
+ and [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/) repository. It parses a dataset to dictionary which can be easily used for research such as text mining or natural language processing pipeline. See
  [wiki page](https://github.com/titipata/pubmed_parser/wiki) on how to download and
  process dataset using the repository.
 
-**note**
-
-* `path` provided to a function can be path to a compressed or uncompressed XML file. We provide example files in [ `data` ](data/) folder.
-
-* for website parser, you should scrape with pause. Please see [copyright notice](https://www.ncbi.nlm.nih.gov/pmc/about/copyright/#copy-PMC) because your IP can get blocked if you try to download in bulk.
-
 ## Available Parsers
 
-Here are available parsers.
+* `path` provided to a function can be path to a compressed or uncompressed XML file. We provide example files in [ `data` ](data/) folder.
+* for website parser, you should scrape with pause. Please see [copyright notice](https://www.ncbi.nlm.nih.gov/pmc/about/copyright/#copy-PMC) because your IP can get blocked if you try to download in bulk.
 
-#### Parse Pubmed OA XML information
+Below, we list available parsers.
 
-We created a simple parser for PubMed Open Access Subset where you can give
-an XML path or string to the function called `parse_pubmed_xml` which will return
-a dictionary with the following information:
+### Parse Pubmed OA XML information
 
- - `full_title` : article's title
- - `abstract` : abstract
- - `journal` : Journal name
- - `pmid` : Pubmed ID
- - `pmc` : Pubmed Central ID
- - `doi` : DOI of the article
- - `publisher_id` : publisher ID
- - `author_list` : list of authors with affiliation keys in the following format
+We created a simple parser for PubMed Open Access Subset where you can give an XML path or string to the function called `parse_pubmed_xml` which will return a dictionary with the following information:
 
- 
+* `full_title` : article's title
+* `abstract` : abstract
+* `journal` : Journal name
+* `pmid` : Pubmed ID
+* `pmc` : Pubmed Central ID
+* `doi` : DOI of the article
+* `publisher_id` : publisher ID
+* `author_list` : list of authors with affiliation keys in the following format
+
 ``` python
  [['last_name_1', 'first_name_1', 'aff_key_1'],
   ['last_name_1', 'first_name_1', 'aff_key_2'],
   ['last_name_2', 'first_name_2', 'aff_key_1'], ...]
  ```
 
- - `affiliation_list` : list of affiliation keys and affiliation strings in the following format
- 
+* `affiliation_list` : list of affiliation keys and affiliation strings in the following format
 
 ``` python
  [['aff_key_1', 'affiliation_1'],
   ['aff_key_2', 'affiliation_2'], ...]
- ```
+```
 
- - `publication_year` : publication year
- - `subjects` : list of subjects listed in the article separated by semicolon.
- Sometimes, it only contains type of article, such as research article, review, proceedings, etc.
+* `publication_year` : publication year
+* `subjects` : list of subjects listed in the article separated by semicolon. Sometimes, it only contains type of article, such as research article, review proceedings, etc.
 
 ``` python
 import pubmed_parser as pp
 dict_out = pp.parse_pubmed_xml(path)
 ```
 
-#### Parse Pubmed OA citation references
+### Parse Pubmed OA citation references
 
-The function `parse_pubmed_references` will process a Pubmed Open Access XML
-file and return a list of the PMID it cites.
-Each dictionary has keys as follows
+The function `parse_pubmed_references` will process a Pubmed Open Access XML file and return a list of the PMID it cites. Each dictionary has keys as follows
 
 * `pmid` : Pubmed ID of the article
 * `pmc` : Pubmed Central ID of the article
@@ -76,11 +65,9 @@ Each dictionary has keys as follows
 dicts_out = pp.parse_pubmed_references(path) # return list of dictionary
 ```
 
-#### Parse Pubmed OA images and captions
+### Parse Pubmed OA images and captions
 
-The function `parse_pubmed_caption` can parse image captions from given path
-to XML file. It will return reference index that you can refer back to actual
-images. The function will return list of dictionary which has following keys
+The function `parse_pubmed_caption` can parse image captions from given path to XML file. It will return reference index that you can refer back to actual images. The function will return list of dictionary which has following keys
 
 * `pmid` : Pubmed ID
 * `pmc` : Pubmed Central ID
@@ -93,13 +80,9 @@ images. The function will return list of dictionary which has following keys
 dicts_out = pp.parse_pubmed_caption(path) # return list of dictionary
 ```
 
-#### Parse Pubmed OA Paragraph
+### Parse Pubmed OA Paragraph
 
-For someone who might be interested in parsing the text surrounding
-a citation, the library also provides that functionality.
-You can use `parse_pubmed_paragraph` to parse text and reference PMIDs.
-This function will return a list of dictionaries, where each entry will have
-following keys:
+For someone who might be interested in parsing the text surrounding a citation, the library also provides that functionality. You can use `parse_pubmed_paragraph` to parse text and reference PMIDs. This function will return a list of dictionaries, where each entry will have following keys:
 
 * `pmid` : Pubmed ID
 * `pmc` : Pubmed Central ID
@@ -114,10 +97,9 @@ This IDs can merge with output from `parse_pubmed_references` .
 dicts_out = pp.parse_pubmed_paragraph('data/6605965a.nxml', all_paragraph=False)
 ```
 
-#### Parse Pubmed OA Table [WIP]
+### Parse Pubmed OA Table [WIP]
 
-You can use `parse_pubmed_table` to parse table from XML file. This function
-will return list of dictionaries where each has following keys.
+You can use `parse_pubmed_table` to parse table from XML file. This function will return list of dictionaries where each has following keys.
 
 * `pmid` : Pubmed ID
 * `pmc` : Pubmed Central ID
@@ -125,18 +107,15 @@ will return list of dictionaries where each has following keys.
 * `label` : lable of the table
 * `table_columns` : list of column name
 * `table_values` : list of values inside the table
-* `table_xml` : raw xml text of the table (return if `return_xml=True` )
+* `table_xml` : raw xml text of the table (return if `return_xml=True`)
 
 ``` python
 dicts_out = pp.parse_pubmed_table('data/medline16n0902.xml.gz', return_xml=False)
 ```
 
-#### Parse Medline NML XML
+### Parse Medline NML XML
 
-Medline NML XML has a different XML format than PubMed Open Access.
-The structure of XML files can be found in MEDLINE/PubMed DTD [here](https://www.nlm.nih.gov/databases/dtd/).
-You can use the function `parse_medline_xml` to parse that format.
-This function will return list of dictionaries, where each element contains:
+Medline NML XML has a different XML format than PubMed Open Access. The structure of XML files can be found in MEDLINE/PubMed DTD [here](https://www.nlm.nih.gov/databases/dtd/). You can use the function `parse_medline_xml` to parse that format. This function will return list of dictionaries, where each element contains:
 
 * `pmid` : Pubmed ID
 * `pmc` : Pubmed Central ID
@@ -158,8 +137,7 @@ This function will return list of dictionaries, where each element contains:
 * `reference` : string of PMID each separated by `;` or list of references made to the article
 * `delete` : boolean if `False` means paper got updated so you might have two
 
-XMLs for the same paper. You can delete the record of deleted paper
-because it got updated.
+XMLs for the same paper. You can delete the record of deleted paper because it got updated.
 
 ``` python
 dicts_out = pp.parse_medline_xml('data/medline16n0902.xml.gz',
@@ -169,14 +147,11 @@ dicts_out = pp.parse_medline_xml('data/medline16n0902.xml.gz',
                                  reference_list=False) # return list of dictionary
 ```
 
-To extract month and day information from PubDate, set `year_info_only=True` .
-We also allow parsing structured abstract and we can control display of each
-section or label by changing `nlm_category` argument.
+To extract month and day information from PubDate, set `year_info_only=True`. We also allow parsing structured abstract and we can control display of each section or label by changing `nlm_category` argument.
 
-#### Parse Medline Grant ID
+### Parse Medline Grant ID
 
-Use `parse_medline_grant_id` in order to parse MEDLINE grant IDs from XML file.
-This will return a list of dictionaries, each containing
+Use `parse_medline_grant_id` in order to parse MEDLINE grant IDs from XML file. This will return a list of dictionaries, each containing
 
 * `pmid` : Pubmed ID
 * `grant_id` : Grant ID
@@ -184,13 +159,11 @@ This will return a list of dictionaries, each containing
 * `country` : Country where grant funding from
 * `agency` : Grant agency
 
-If no Grant ID is found, it will return `None` 
+If no Grant ID is found, it will return `None`
 
-#### Parse Medline XML from eutils website
+### Parse Medline XML from eutils website
 
-You can use PubMed parser to parse XML file from [E-Utilities](http://www.ncbi.nlm.nih.gov/books/NBK25501/)
-using `parse_xml_web` . For this function, you can provide a single `pmid` as an input and
-get a dictionary with following keys
+You can use PubMed parser to parse XML file from [E-Utilities](http://www.ncbi.nlm.nih.gov/books/NBK25501/) using `parse_xml_web` . For this function, you can provide a single `pmid` as an input and get a dictionary with following keys
 
 * `title` : title
 * `abstract` : abstract
@@ -204,10 +177,9 @@ get a dictionary with following keys
 dict_out = pp.parse_xml_web(pmid, save_xml=False)
 ```
 
-#### Parse Medline XML citations from website
+### Parse Medline XML citations from website
 
-The function `parse_citation_web` allows you to get the citations to a given
-PubMed ID or PubMed Central ID. This will return a dictionary which contains the following keys
+The function `parse_citation_web` allows you to get the citations to a given PubMed ID or PubMed Central ID. This will return a dictionary which contains the following keys
 
 * `pmc` : Pubmed Central ID
 * `pmid` : Pubmed ID
@@ -219,11 +191,9 @@ PubMed ID or PubMed Central ID. This will return a dictionary which contains the
 dict_out = pp.parse_citation_web(doc_id, id_type='PMC')
 ```
 
-#### Parse Outgoing XML citations from website
+### Parse Outgoing XML citations from website
 
-The function `parse_outgoing_citation_web` allows you to get the articles a given
-article cites, given a PubMed ID or PubMed Central ID. This will return a dictionary
-which contains the following keys
+The function `parse_outgoing_citation_web` allows you to get the articles a given article cites, given a PubMed ID or PubMed Central ID. This will return a dictionary which contains the following keys
 
 * `n_citations` : number of cited articles
 * `doc_id` : the document identifier given
@@ -234,10 +204,7 @@ which contains the following keys
 dict_out = pp.parse_outgoing_citation_web(doc_id, id_type='PMID')
 ```
 
-Identifiers should be passed as strings. PubMed Central ID's are default, and
-should be passed as strings *without* the 'PMC' prefix. If no citations are
-found, or if no article is found matching `doc_id` in the indicated database, 
-it will return `None` .
+Identifiers should be passed as strings. PubMed Central ID's are default, and should be passed as strings *without* the 'PMC' prefix. If no citations are found, or if no article is found matching `doc_id` in the indicated database, it will return `None`.
 
 ## Install package
 
@@ -317,9 +284,7 @@ and [contributors](https://github.com/titipata/pubmed_parser/graphs/contributors
 
 If you use this package, please cite it like this
 
-> Titipat Achakulvisut, Daniel E. Acuna (2015) "_Pubmed Parser_" [http://github.com/titipata/pubmed_parser](http://github.com/titipata/pubmed_parser).
-
-http://doi.org/10.5281/zenodo.159504
+> Titipat Achakulvisut, Daniel E. Acuna (2015) "_Pubmed Parser: A Python Parser for Pubmed Open-Access XML Subset and MEDLINE XML Dataset_" [http://github.com/titipata/pubmed_parser](http://github.com/titipata/pubmed_parser). http://doi.org/10.5281/zenodo.159504
 
 ## Acknowledgement
 
@@ -327,4 +292,4 @@ Package is developed in [Konrad Kording's Lab](http://kordinglab.com/) at the Un
 
 ## License
 
-MIT License Copyright (c) 2015-2018 Titipat Achakulvisut, Daniel E. Acuna
+MIT License Copyright (c) 2015-2020 Titipat Achakulvisut, Daniel E. Acuna
