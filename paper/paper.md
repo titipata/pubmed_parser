@@ -37,7 +37,7 @@ Biomedical publications are increasing exponetially in the recent years. Due to 
 
 Pubmed Parser is built as an additional tool for parsing open biomedical text data from MEDLINE dataset and Pubmed Open-Access data using Python directly. It is built to parse incoming XML and HTML format to dictionary or JSON format suitable to future process. The implemented functions can be scaled easily using parallel functionality using [PySpark](https://spark.apache.org/). This allow users to parse the most recently available corpus and customize for their need.
 
-Pubmed Parser has already been used in published work including [@vseva2019vist; @miller2017automated; @shahri2019propheno; @galea2018sub]. It is also been used in multiple biomedical and natural language class projects due to the ease of implemented functionalities.
+Pubmed Parser has already been used in published work including [@achakulvisut2019claim; @vseva2019vist; @miller2017automated; @shahri2019propheno; @galea2018sub; @abdeddaim2018mesh]. It is also been used in multiple biomedical and natural language class projects and blog posts due to the ease of implemented functionalities.
 
 
 # Acknowledgements
