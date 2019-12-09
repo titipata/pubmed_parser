@@ -9,7 +9,7 @@ tags:
 authors:
   - name: Titipat Achakulvisut
     affiliation: 1
-  - name: Daniel Acuna
+  - name: Daniel E. Acuna
     affiliation: 2
   - name: Ted Cybulski
     affiliation: 3
@@ -33,10 +33,15 @@ bibliography: paper.bib
 
 # Summary
 
-Pubmed Parser is a Python library for parsing PubMed Open-Access (OA) subset and MEDLINE XML repository.
+Biomedical publications are increasing exponetially in the recent years. Due to the availability of such large-scale corpus, researchers can mine the text and meta-data from such exploding of biomedical text. Examples of application are ranged from predicting of novel drug-drug interaction, classifying biomedical text data, targeted search engine made for specified oncological profile, or automatic learning of biomedical ontology. Python has become one of the datascience tool that researchers use for building machine learning model and deep learning model to analyze text data.
 
-# Citations
+Pubmed Parser is built as an additional tool for parsing open biomedical text data from MEDLINE dataset and Pubmed Open-Access data using Python directly. It is built to parse incoming XML and HTML format to dictionary or JSON format suitable to future process. The implemented functions can be scaled easily using parallel functionality using [PySpark](https://spark.apache.org/). This allow users to parse the most recently available corpus and customize for their need.
+
+Pubmed Parser has already been used in published work including [@vseva2019vist; @miller2017automated; @shahri2019propheno; @galea2018sub]. It is also been used in multiple biomedical and natural language class projects due to the ease of implemented functionalities.
+
 
 # Acknowledgements
+
+Titipat Achakulvisut was supportyed by the Royal Thai Government Scholarship grant #50AC002. Daniel E. Acuna is supported by National Science Foundation #XXXX.
 
 # References
