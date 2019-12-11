@@ -1,4 +1,4 @@
-# Pubmed Parser: A Python Parser for Pubmed Open-Access XML Subset and MEDLINE XML Dataset
+# Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/titipata/pubmed_parser/blob/master/LICENSE) [![DOI](https://zenodo.org/badge/31697087.svg)](https://zenodo.org/badge/latestdoi/31697087)
 
@@ -300,14 +300,14 @@ and [contributors](https://github.com/titipata/pubmed_parser/graphs/contributors
 
 If you use Pubmed Parser, please cite it as follows
 
-> Titipat Achakulvisut, Daniel E. Acuna (2015) "_Pubmed Parser: A Python Parser for Pubmed Open-Access XML Subset and MEDLINE XML Dataset_" [http://github.com/titipata/pubmed_parser](http://github.com/titipata/pubmed_parser). doi:10.5281/zenodo.159504
+> Titipat Achakulvisut, Daniel E. Acuna (2015) "_Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset_" [http://github.com/titipata/pubmed_parser](http://github.com/titipata/pubmed_parser). doi:10.5281/zenodo.159504
 
 or using BibTex
 
 ``` bib
 @misc{achakulvisut2015,
   author = {Achakulvisut Titipat AND Acuna, Daniel},
-  title = {Pubmed Parser: A Python Parser for Pubmed Open-Access XML Subset and MEDLINE XML Dataset},
+  title = {Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset},
   year = {2015},
   publisher = {GitHub},
   journal = {GitHub repository},

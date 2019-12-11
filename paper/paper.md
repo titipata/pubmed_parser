@@ -1,5 +1,5 @@
 ---
-title: 'Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE
+title: 'Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset
   XML Dataset'
 authors:
 - affiliation: 1
