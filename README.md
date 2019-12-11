@@ -14,26 +14,16 @@ Pubmed Parser is a Python library for parsing [PubMed Open-Access (OA) subset](h
 
 Below, we list available parsers from `pubmed_parser`.
 
-- [Pubmed Parser: A Python Parser for Pubmed Open-Access XML Subset and MEDLINE XML Dataset](#pubmed-parser-a-python-parser-for-pubmed-open-access-xml-subset-and-medline-xml-dataset)
-  - [Available Parsers](#available-parsers)
-    - [Parse PubMed OA XML information](#parse-pubmed-oa-xml-information)
-    - [Parse PubMed OA citation references](#parse-pubmed-oa-citation-references)
-    - [Parse PubMed OA images and captions](#parse-pubmed-oa-images-and-captions)
-    - [Parse PubMed OA Paragraph](#parse-pubmed-oa-paragraph)
-    - [Parse PubMed OA Table [WIP]](#parse-pubmed-oa-table-wip)
-    - [Parse MEDLINE NML XML](#parse-medline-nml-xml)
-    - [Parse MEDLINE Grant ID](#parse-medline-grant-id)
-    - [Parse MEDLINE XML from eutils website](#parse-medline-xml-from-eutils-website)
-    - [Parse MEDLINE XML citations from website](#parse-medline-xml-citations-from-website)
-    - [Parse Outgoing XML citations from website](#parse-outgoing-xml-citations-from-website)
-  - [Install Package](#install-package)
-  - [Example Usage for Pubmed OA](#example-usage-for-pubmed-oa)
-  - [Example Usage with PySpark](#example-usage-with-pyspark)
-  - [Core Members](#core-members)
-  - [Dependencies](#dependencies)
-  - [Citation](#citation)
-  - [Acknowledgement](#acknowledgement)
-  - [License](#license)
+  * [Parse PubMed OA XML information](#parse-pubmed-oa-xml-information)
+  * [Parse PubMed OA citation references](#parse-pubmed-oa-citation-references)
+  * [Parse PubMed OA images and captions](#parse-pubmed-oa-images-and-captions)
+  * [Parse PubMed OA Paragraph](#parse-pubmed-oa-paragraph)
+  * [Parse PubMed OA Table [WIP]](#parse-pubmed-oa-table-wip)
+  * [Parse MEDLINE NML XML](#parse-medline-nml-xml)
+  * [Parse MEDLINE Grant ID](#parse-medline-grant-id)
+  * [Parse MEDLINE XML from eutils website](#parse-medline-xml-from-eutils-website)
+  * [Parse MEDLINE XML citations from website](#parse-medline-xml-citations-from-website)
+  * [Parse Outgoing XML citations from website](#parse-outgoing-xml-citations-from-website)
 
 ### Parse PubMed OA XML information
 
@@ -242,7 +232,7 @@ or install directly from the repository
 pip install git+git://github.com/titipata/pubmed_parser.git
 ```
 
-## Example Usage for Pubmed OA
+## Example snippet to parse PubMed OA dataset
 
 An example usage is shown as follows
 
@@ -271,8 +261,7 @@ print(pubmed_dict)
 
 ## Example Usage with PySpark
 
-This is snippet to parse all Pubmed Open Access subset using
-PySpark 2.1
+This is a snippet to parse all PubMed Open Access subset using [PySpark 2.1](https://spark.apache.org/docs/latest/api/python/index.html)
 
 ``` python
 import os
