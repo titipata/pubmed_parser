@@ -19,7 +19,7 @@ Below, we list available parsers from `pubmed_parser`.
   * [Parse PubMed OA images and captions](#parse-pubmed-oa-images-and-captions)
   * [Parse PubMed OA Paragraph](#parse-pubmed-oa-paragraph)
   * [Parse PubMed OA Table [WIP]](#parse-pubmed-oa-table-wip)
-  * [Parse MEDLINE NML XML](#parse-medline-nml-xml)
+  * [Parse MEDLINE XML](#parse-medline-xml)
   * [Parse MEDLINE Grant ID](#parse-medline-grant-id)
   * [Parse MEDLINE XML from eutils website](#parse-medline-xml-from-eutils-website)
   * [Parse MEDLINE XML citations from website](#parse-medline-xml-citations-from-website)
@@ -32,8 +32,8 @@ We created a simple parser for PubMed Open Access Subset where you can give an X
 * `full_title` : article's title
 * `abstract` : abstract
 * `journal` : Journal name
-* `pmid` : Pubmed ID
-* `pmc` : Pubmed Central ID
+* `pmid` : PubMed ID
+* `pmc` : PubMed Central ID
 * `doi` : DOI of the article
 * `publisher_id` : publisher ID
 * `author_list` : list of authors with affiliation keys in the following format
@@ -63,12 +63,12 @@ dict_out = pp.parse_pubmed_xml(path)
 
 The function `parse_pubmed_references` will process a Pubmed Open Access XML file and return a list of the PMID it cites. Each dictionary has keys as follows
 
-* `pmid` : Pubmed ID of the article
-* `pmc` : Pubmed Central ID of the article
+* `pmid` : PubMed ID of the article
+* `pmc` : PubMed Central ID of the article
 * `article_title` : title of cited article
 * `journal` : journal name
 * `journal_type` : type of journal
-* `pmid_cited` : Pubmed ID of article that article cites
+* `pmid_cited` : PubMed ID of article that article cites
 * `doi_cited` : DOI of article that article cites
 * `year` : Publication year as it appears in the reference (May include letter suffix, e.g.2007a)
 
@@ -80,8 +80,8 @@ dicts_out = pp.parse_pubmed_references(path) # return list of dictionary
 
 The function `parse_pubmed_caption` can parse image captions from given path to XML file. It will return reference index that you can refer back to actual images. The function will return list of dictionary which has following keys
 
-* `pmid` : Pubmed ID
-* `pmc` : Pubmed Central ID
+* `pmid` : PubMed ID
+* `pmc` : PubMed Central ID
 * `fig_caption` : string of caption
 * `fig_id` : reference id for figure (use to refer in XML article)
 * `fig_label` : label of the figure
@@ -95,8 +95,8 @@ dicts_out = pp.parse_pubmed_caption(path) # return list of dictionary
 
 For someone who might be interested in parsing the text surrounding a citation, the library also provides that functionality. You can use `parse_pubmed_paragraph` to parse text and reference PMIDs. This function will return a list of dictionaries, where each entry will have following keys:
 
-* `pmid` : Pubmed ID
-* `pmc` : Pubmed Central ID
+* `pmid` : PubMed ID
+* `pmc` : PubMed Central ID
 * `text` : full text of the paragraph
 * `reference_ids` : list of reference code within that paragraph.
 
@@ -112,8 +112,8 @@ dicts_out = pp.parse_pubmed_paragraph('data/6605965a.nxml', all_paragraph=False)
 
 You can use `parse_pubmed_table` to parse table from XML file. This function will return list of dictionaries where each has following keys.
 
-* `pmid` : Pubmed ID
-* `pmc` : Pubmed Central ID
+* `pmid` : PubMed ID
+* `pmc` : PubMed Central ID
 * `caption` : caption of the table
 * `label` : lable of the table
 * `table_columns` : list of column name
@@ -124,12 +124,12 @@ You can use `parse_pubmed_table` to parse table from XML file. This function wil
 dicts_out = pp.parse_pubmed_table('data/medline16n0902.xml.gz', return_xml=False)
 ```
 
-### Parse MEDLINE NML XML
+### Parse MEDLINE XML
 
-Medline NML XML has a different XML format than PubMed Open Access. The structure of XML files can be found in MEDLINE/PubMed DTD [here](https://www.nlm.nih.gov/databases/dtd/). You can use the function `parse_medline_xml` to parse that format. This function will return list of dictionaries, where each element contains:
+MEDLINE XML has a different XML format than PubMed Open Access. The structure of XML files can be found in MEDLINE/PubMed DTD [here](https://www.nlm.nih.gov/databases/dtd/). You can use the function `parse_medline_xml` to parse that format. This function will return list of dictionaries, where each element contains:
 
-* `pmid` : Pubmed ID
-* `pmc` : Pubmed Central ID
+* `pmid` : PubMed ID
+* `pmc` : PubMed Central ID
 * `doi` : DOI
 * `other_id` : Other IDs found, each separated by `;`
 * `title` : title of the article
@@ -164,7 +164,7 @@ To extract month and day information from PubDate, set `year_info_only=True`. We
 
 Use `parse_medline_grant_id` in order to parse MEDLINE grant IDs from XML file. This will return a list of dictionaries, each containing
 
-* `pmid` : Pubmed ID
+* `pmid` : PubMed ID
 * `grant_id` : Grant ID
 * `grant_acronym` : Acronym of grant
 * `country` : Country where grant funding from
@@ -192,8 +192,8 @@ dict_out = pp.parse_xml_web(pmid, save_xml=False)
 
 The function `parse_citation_web` allows you to get the citations to a given PubMed ID or PubMed Central ID. This will return a dictionary which contains the following keys
 
-* `pmc` : Pubmed Central ID
-* `pmid` : Pubmed ID
+* `pmc` : PubMed Central ID
+* `pmid` : PubMed ID
 * `doi` : DOI of the article
 * `n_citations` : number of citations for given articles
 * `pmc_cited` : list of PMCs that cite the given PMC
@@ -219,17 +219,17 @@ Identifiers should be passed as strings. PubMed Central ID's are default, and sh
 
 ## Install Package
 
-Clone the repository and install using `pip` .
+Install directly from the repository
+
+``` bash
+pip install git+git://github.com/titipata/pubmed_parser.git
+```
+
+or clone the repository and install using `pip`
 
 ``` bash
 git clone https://github.com/titipata/pubmed_parser
 pip install ./pubmed_parser
-```
-
-or install directly from the repository
-
-``` bash
-pip install git+git://github.com/titipata/pubmed_parser.git
 ```
 
 ## Example snippet to parse PubMed OA dataset
