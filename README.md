@@ -12,9 +12,30 @@ Pubmed Parser is a Python library for parsing [PubMed Open-Access (OA) subset](h
 * `path` provided to a function can be path to a compressed or uncompressed XML file. We provide example files in [ `data` ](data/) folder.
 * for website parser, you should scrape with pause. Please see [copyright notice](https://www.ncbi.nlm.nih.gov/pmc/about/copyright/#copy-PMC) because your IP can get blocked if you try to download in bulk.
 
-Below, we list available parsers.
+Below, we list available parsers from `pubmed_parser`.
 
-### Parse Pubmed OA XML information
+- [Pubmed Parser: A Python Parser for Pubmed Open-Access XML Subset and MEDLINE XML Dataset](#pubmed-parser-a-python-parser-for-pubmed-open-access-xml-subset-and-medline-xml-dataset)
+  - [Available Parsers](#available-parsers)
+    - [Parse PubMed OA XML information](#parse-pubmed-oa-xml-information)
+    - [Parse PubMed OA citation references](#parse-pubmed-oa-citation-references)
+    - [Parse PubMed OA images and captions](#parse-pubmed-oa-images-and-captions)
+    - [Parse PubMed OA Paragraph](#parse-pubmed-oa-paragraph)
+    - [Parse PubMed OA Table [WIP]](#parse-pubmed-oa-table-wip)
+    - [Parse MEDLINE NML XML](#parse-medline-nml-xml)
+    - [Parse MEDLINE Grant ID](#parse-medline-grant-id)
+    - [Parse MEDLINE XML from eutils website](#parse-medline-xml-from-eutils-website)
+    - [Parse MEDLINE XML citations from website](#parse-medline-xml-citations-from-website)
+    - [Parse Outgoing XML citations from website](#parse-outgoing-xml-citations-from-website)
+  - [Install Package](#install-package)
+  - [Example Usage for Pubmed OA](#example-usage-for-pubmed-oa)
+  - [Example Usage with PySpark](#example-usage-with-pyspark)
+  - [Core Members](#core-members)
+  - [Dependencies](#dependencies)
+  - [Citation](#citation)
+  - [Acknowledgement](#acknowledgement)
+  - [License](#license)
+
+### Parse PubMed OA XML information
 
 We created a simple parser for PubMed Open Access Subset where you can give an XML path or string to the function called `parse_pubmed_xml` which will return a dictionary with the following information:
 
@@ -48,7 +69,7 @@ import pubmed_parser as pp
 dict_out = pp.parse_pubmed_xml(path)
 ```
 
-### Parse Pubmed OA citation references
+### Parse PubMed OA citation references
 
 The function `parse_pubmed_references` will process a Pubmed Open Access XML file and return a list of the PMID it cites. Each dictionary has keys as follows
 
@@ -65,7 +86,7 @@ The function `parse_pubmed_references` will process a Pubmed Open Access XML fil
 dicts_out = pp.parse_pubmed_references(path) # return list of dictionary
 ```
 
-### Parse Pubmed OA images and captions
+### Parse PubMed OA images and captions
 
 The function `parse_pubmed_caption` can parse image captions from given path to XML file. It will return reference index that you can refer back to actual images. The function will return list of dictionary which has following keys
 
@@ -80,7 +101,7 @@ The function `parse_pubmed_caption` can parse image captions from given path to 
 dicts_out = pp.parse_pubmed_caption(path) # return list of dictionary
 ```
 
-### Parse Pubmed OA Paragraph
+### Parse PubMed OA Paragraph
 
 For someone who might be interested in parsing the text surrounding a citation, the library also provides that functionality. You can use `parse_pubmed_paragraph` to parse text and reference PMIDs. This function will return a list of dictionaries, where each entry will have following keys:
 
@@ -97,7 +118,7 @@ This IDs can merge with output from `parse_pubmed_references` .
 dicts_out = pp.parse_pubmed_paragraph('data/6605965a.nxml', all_paragraph=False)
 ```
 
-### Parse Pubmed OA Table [WIP]
+### Parse PubMed OA Table [WIP]
 
 You can use `parse_pubmed_table` to parse table from XML file. This function will return list of dictionaries where each has following keys.
 
@@ -113,7 +134,7 @@ You can use `parse_pubmed_table` to parse table from XML file. This function wil
 dicts_out = pp.parse_pubmed_table('data/medline16n0902.xml.gz', return_xml=False)
 ```
 
-### Parse Medline NML XML
+### Parse MEDLINE NML XML
 
 Medline NML XML has a different XML format than PubMed Open Access. The structure of XML files can be found in MEDLINE/PubMed DTD [here](https://www.nlm.nih.gov/databases/dtd/). You can use the function `parse_medline_xml` to parse that format. This function will return list of dictionaries, where each element contains:
 
@@ -149,7 +170,7 @@ dicts_out = pp.parse_medline_xml('data/medline16n0902.xml.gz',
 
 To extract month and day information from PubDate, set `year_info_only=True`. We also allow parsing structured abstract and we can control display of each section or label by changing `nlm_category` argument.
 
-### Parse Medline Grant ID
+### Parse MEDLINE Grant ID
 
 Use `parse_medline_grant_id` in order to parse MEDLINE grant IDs from XML file. This will return a list of dictionaries, each containing
 
@@ -161,7 +182,7 @@ Use `parse_medline_grant_id` in order to parse MEDLINE grant IDs from XML file. 
 
 If no Grant ID is found, it will return `None`
 
-### Parse Medline XML from eutils website
+### Parse MEDLINE XML from eutils website
 
 You can use PubMed parser to parse XML file from [E-Utilities](http://www.ncbi.nlm.nih.gov/books/NBK25501/) using `parse_xml_web` . For this function, you can provide a single `pmid` as an input and get a dictionary with following keys
 
@@ -177,7 +198,7 @@ You can use PubMed parser to parse XML file from [E-Utilities](http://www.ncbi.n
 dict_out = pp.parse_xml_web(pmid, save_xml=False)
 ```
 
-### Parse Medline XML citations from website
+### Parse MEDLINE XML citations from website
 
 The function `parse_citation_web` allows you to get the citations to a given PubMed ID or PubMed Central ID. This will return a dictionary which contains the following keys
 
@@ -206,7 +227,7 @@ dict_out = pp.parse_outgoing_citation_web(doc_id, id_type='PMID')
 
 Identifiers should be passed as strings. PubMed Central ID's are default, and should be passed as strings *without* the 'PMC' prefix. If no citations are found, or if no article is found matching `doc_id` in the indicated database, it will return `None`.
 
-## Install package
+## Install Package
 
 Clone the repository and install using `pip` .
 
@@ -290,7 +311,7 @@ and [contributors](https://github.com/titipata/pubmed_parser/graphs/contributors
 
 If you use Pubmed Parser, please cite it as follows
 
-> Titipat Achakulvisut, Daniel E. Acuna (2015) "_Pubmed Parser: A Python Parser for Pubmed Open-Access XML Subset and MEDLINE XML Dataset_" [http://github.com/titipata/pubmed_parser](http://github.com/titipata/pubmed_parser). http://doi.org/10.5281/zenodo.159504
+> Titipat Achakulvisut, Daniel E. Acuna (2015) "_Pubmed Parser: A Python Parser for Pubmed Open-Access XML Subset and MEDLINE XML Dataset_" [http://github.com/titipata/pubmed_parser](http://github.com/titipata/pubmed_parser). doi:10.5281/zenodo.159504
 
 or using BibTex
 
