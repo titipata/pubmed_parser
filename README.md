@@ -215,6 +215,12 @@ git clone https://github.com/titipata/pubmed_parser
 pip install ./pubmed_parser
 ```
 
+or install directly from the repository
+
+``` bash
+pip install git+git://github.com/titipata/pubmed_parser.git
+```
+
 ## Example Usage for Pubmed OA
 
 An example usage is shown as follows
@@ -267,7 +273,7 @@ pubmed_oa_df_sel.write.parquet('pubmed_oa.parquet', mode='overwrite') # write da
 See [scripts](https://github.com/titipata/pubmed_parser/tree/master/scripts)
 folder for more information.
 
-## Members
+## Core Members
 
 * [Titipat Achakulvisut](http://titipata.github.io)
 * [Daniel E. Acuna](http://scienceofscience.org/about)
@@ -282,9 +288,25 @@ and [contributors](https://github.com/titipata/pubmed_parser/graphs/contributors
 
 ## Citation
 
-If you use this package, please cite it like this
+If you use Pubmed Parser, please cite it as follows
 
 > Titipat Achakulvisut, Daniel E. Acuna (2015) "_Pubmed Parser: A Python Parser for Pubmed Open-Access XML Subset and MEDLINE XML Dataset_" [http://github.com/titipata/pubmed_parser](http://github.com/titipata/pubmed_parser). http://doi.org/10.5281/zenodo.159504
+
+or using BibTex
+
+``` bib
+@misc{achakulvisut2015,
+  author = {Achakulvisut Titipat AND Acuna, Daniel},
+  title = {Pubmed Parser: A Python Parser for Pubmed Open-Access XML Subset and MEDLINE XML Dataset},
+  year = {2015},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{http://github.com/titipata/pubmed_parser}},
+  doi = {10.5281/zenodo.159504}
+}
+```
+
+We are submitting to [JOSS](https://joss.readthedocs.io/en/latest/) and we will update the citation section soon.
 
 ## Acknowledgement
 

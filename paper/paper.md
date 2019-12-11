@@ -8,8 +8,6 @@ authors:
   name: Daniel E. Acuna
 - affiliation: 3
   name: Ted Cybulski
-- affiliation: 4
-  name: Kevin Henner
 - affiliation: 1
   name: Konrad Kording
 date: "15 December 2019"
@@ -28,13 +26,11 @@ affiliations:
   name: Syracuse University
 - index: 3
   name: Northwestern University
-- index: 4
-  name: University of Washington
 ---
 
 # Summary
 
-Biomedical publications are increasing exponetially every year. If we had the ability to access, manipulate, and link this information, we could extract knowledge that is perhaps hidden within the figures, text, and citations. In particular, the repositories made avilable by [PubMed](https://pubmed.ncbi.nlm.nih.gov/) and [MEDLINE](https://www.nlm.nih.gov/bsd/medline.html) database enable these kinds of applications at an unprecendented level. Examples of applications that can be built from this dataset range from predicting novel drug-drug interactions, classifying biomedical text data, searching specific oncological profiles, disambiguating author names, or automaticly learning a biomedical ontology. Here, we propose `pubmed_parser`, a software to mine Pubmed and MEDLINE efficiently. `pubmed_parser` is built on top Python and can therefore be integrated into a myriad of tools for machine learning such as `scikit-learn` and deep learning such as `tensorflow` and `pytorch`.
+Biomedical publications are increasing exponetially every year. If we had the ability to access, manipulate, and link this information, we could extract knowledge that is perhaps hidden within the figures, text, and citations. In particular, the repositories made avilable by [PubMed](https://pubmed.ncbi.nlm.nih.gov/) and [MEDLINE](https://www.nlm.nih.gov/bsd/medline.html) database enable these kinds of applications at an unprecendented level. Examples of applications that can be built from this dataset range from predicting novel drug-drug interactions, classifying biomedical text data, searching specific oncological profiles, disambiguating author names, or automaticly learning a biomedical ontology. Here, we propose Pubmed Parser (`pubmed_parser`), a software to mine Pubmed and MEDLINE efficiently. Pubmed Parser is built on top Python and can therefore be integrated into a myriad of tools for machine learning such as `scikit-learn` and deep learning such as `tensorflow` and `pytorch`.
 
 Pubmed Parser has a capability to parse multiple refined information into structured dataset that former developed libraries such as [`medic`](https://github.com/fnl/medic) or [`MEDLINEXMLToJSON`](https://github.com/ldbib/MEDLINEXMLToJSON) do not have. It can parse multiple Pubmed MEDLINE data derivatives such as MEDLINE XML data, references from PubMed Open Access XML dataset, figure captions, paragraphs, and more. A core part of the package, parsing XML and HTML with Pubmed Parser is extremely fast, producting either dictionaries or JSON files that can easily be part of downstream pipelines. Moreover, the implemented functions can be scaled easily as part of other MapReduce-like infrastructure such as [PySpark](https://spark.apache.org/). This allows users to parse the most recently available corpus and customize the parsing to their needs.
 
