@@ -64,10 +64,12 @@ def parse_article_meta(tree):
     pub_id = pub_id_node.text if pub_id_node is not None else ''
     doi = doi_node.text if doi_node is not None else ''
 
-    dict_article_meta = {'pmid': pmid,
-                         'pmc': pmc,
-                         'doi': doi,
-                         'publisher_id': pub_id}
+    dict_article_meta = {
+        'pmid': pmid,
+        'pmc': pmc,
+        'doi': doi,
+        'publisher_id': pub_id
+    }
 
     return dict_article_meta
 
@@ -155,18 +157,20 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
             author_list.append(['', '', ref_id_list])
     author_list = flatten_zip_author(author_list)
 
-    dict_out = {'full_title': full_title.strip(),
-                'abstract': abstract,
-                'journal': journal,
-                'pmid': dict_article_meta['pmid'],
-                'pmc': dict_article_meta['pmc'],
-                'doi': dict_article_meta['doi'],
-                'publisher_id': dict_article_meta['publisher_id'],
-                'author_list': author_list,
-                'affiliation_list': affiliation_list,
-                'publication_year': pub_year,
-                'publication_date': '{}-{}-{}'.format(pub_day, pub_month, pub_year),
-                'subjects': subjects}
+    dict_out = {
+        'full_title': full_title.strip(),
+        'abstract': abstract,
+        'journal': journal,
+        'pmid': dict_article_meta['pmid'],
+        'pmc': dict_article_meta['pmc'],
+        'doi': dict_article_meta['doi'],
+        'publisher_id': dict_article_meta['publisher_id'],
+        'author_list': author_list,
+        'affiliation_list': affiliation_list,
+        'publication_year': pub_year,
+        'publication_date': '{}-{}-{}'.format(pub_day, pub_month, pub_year),
+        'subjects': subjects
+    }
     if include_path:
         dict_out['path_to_file'] = path
     return dict_out
@@ -236,16 +240,18 @@ def parse_pubmed_references(path):
                 else:
                     doi_cited = ''
                     pmid_cited = ''
-                dict_ref = {'pmid': pmid,
-                            'pmc': pmc,
-                            'ref_id': ref_id,
-                            'pmid_cited': pmid_cited,
-                            'doi_cited': doi_cited,
-                            'article_title': article_title,
-                            'name': '; '.join(names),
-                            'year': year,
-                            'journal': journal,
-                            'journal_type': journal_type}
+                dict_ref = {
+                    'pmid': pmid,
+                    'pmc': pmc,
+                    'ref_id': ref_id,
+                    'pmid_cited': pmid_cited,
+                    'doi_cited': doi_cited,
+                    'article_title': article_title,
+                    'name': '; '.join(names),
+                    'year': year,
+                    'journal': journal,
+                    'journal_type': journal_type
+                }
                 dict_refs.append(dict_ref)
     if len(dict_refs) == 0:
         dict_refs = None
@@ -279,11 +285,13 @@ def parse_pubmed_paragraph(path, all_paragraph=False):
                 ref_id = reference.attrib['rid']
                 ref_ids.append(ref_id)
 
-        dict_par = {'pmc': pmc,
-                    'pmid': pmid,
-                    'reference_ids': ref_ids,
-                    'section': section,
-                    'text': paragraph_text}
+        dict_par = {
+            'pmc': pmc,
+            'pmid': pmid,
+            'reference_ids': ref_ids,
+            'section': section,
+            'text': paragraph_text
+        }
         if len(ref_ids) >= 1 or all_paragraph:
             dict_pars.append(dict_par)
 
@@ -311,12 +319,14 @@ def parse_pubmed_caption(path):
             graphic = fig.find('graphic')
             if graphic is not None:
                 graphic_ref = graphic.attrib.values()[0]
-            dict_caption = {'pmid': pmid,
-                            'pmc': pmc,
-                            'fig_caption': caption,
-                            'fig_id': fig_id,
-                            'fig_label': fig_label,
-                            'graphic_ref': graphic_ref}
+            dict_caption = {
+                'pmid': pmid,
+                'pmc': pmc,
+                'fig_caption': caption,
+                'fig_id': fig_id,
+                'fig_label': fig_label,
+                'graphic_ref': graphic_ref
+            }
             dict_captions.append(dict_caption)
     if not dict_captions:
         dict_captions = None
@@ -391,12 +401,14 @@ def parse_pubmed_table(path, return_xml=True):
             table_xml = etree.tostring(table_tree)
             columns, row_values = table_to_df(table_xml)
             if row_values is not None:
-                table_dict = {'pmid': pmid,
-                              'pmc': pmc,
-                              'label': label,
-                              'caption': caption,
-                              'table_columns': columns,
-                              'table_values': row_values}
+                table_dict = {
+                    'pmid': pmid,
+                    'pmc': pmc,
+                    'label': label,
+                    'caption': caption,
+                    'table_columns': columns,
+                    'table_values': row_values
+                }
                 if return_xml:
                     table_dict['table_xml'] = table_xml
                 table_dicts.append(table_dict)

@@ -24,7 +24,7 @@ def load_xml(pmid, sleep=None):
     return a dictionary for given pmid and xml string from the site
     sleep: how much time we want to wait until requesting new xml
     """
-    link = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id=%s" % str(pmid)
+    link = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id={}".format(pmid)
     page = requests.get(link)
     tree = html.fromstring(page.content)
     if sleep is not None:
@@ -104,14 +104,16 @@ def parse_pubmed_web_tree(tree):
             if article_id.attrib.get('idtype') == 'doi':
                 doi = article_id.text
 
-    dict_out = {'title': title,
-                'abstract': abstract,
-                'journal': journal,
-                'affiliation': affiliations_text,
-                'authors': authors_text,
-                'keywords': keywords,
-                'doi': doi,
-                'year': year}
+    dict_out = {
+        'title': title,
+        'abstract': abstract,
+        'journal': journal,
+        'affiliation': affiliations_text,
+        'authors': authors_text,
+        'keywords': keywords,
+        'doi': doi,
+        'year': year
+    }
     return dict_out
 
 
@@ -156,9 +158,9 @@ def convert_document_id(doc_id, id_type='PMC'):
     if id_type == 'PMC':
         doc_id = 'PMC%s' % doc_id
         pmc = doc_id
-        convert_link = 'http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=my_tool&email=my_email@example.com&ids=%s' % doc_id
+        convert_link = 'http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=my_tool&email=my_email@example.com&ids={}'.format(doc_id)
     elif id_type in ['PMID', 'DOI', 'OTHER']:
-        convert_link = 'http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=my_tool&email=my_email@example.com&ids=%s' % doc_id
+        convert_link = 'http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=my_tool&email=my_email@example.com&ids={}'.format(doc_id)
     else:
         raise ValueError('Give id_type from PMC or PMID or DOI or OTHER')
 
@@ -172,9 +174,13 @@ def convert_document_id(doc_id, id_type='PMC'):
             pmc = record['pmcid']
         else:
             pmc = ''
-    return {'pmc': pmc,
-            'pmid': record['pmid'] if 'pmid' in record else '',
-            'doi': record['doi'] if 'doi' in record else ''}
+    pmid = record['pmid'] if 'pmid' in record else ''
+    doi = record['doi'] if 'doi' in record else ''
+    return {
+        'pmc': pmc,
+        'pmid': pmid,
+        'doi': doi
+    }
 
 
 def parse_citation_web(doc_id, id_type='PMC'):
@@ -198,7 +204,7 @@ def parse_citation_web(doc_id, id_type='PMC'):
 
     doc_id_dict = convert_document_id(doc_id, id_type=id_type)
     pmc = doc_id_dict['pmc']
-    link = "http://www.ncbi.nlm.nih.gov/pmc/articles/%s/citedby/" % pmc
+    link = "http://www.ncbi.nlm.nih.gov/pmc/articles/{}/citedby/".format(pmc)
     page = requests.get(link)
     tree = html.fromstring(page.content)
     n_citations = extract_citations(tree)
@@ -210,18 +216,20 @@ def parse_citation_web(doc_id, id_type='PMC'):
     pmc_cited_all.extend(pmc_cited)
     if n_pages >= 2:
         for i in range(2, n_pages+1):
-            link = "http://www.ncbi.nlm.nih.gov/pmc/articles/%s/citedby/?page=%s" % (pmc, str(i))
+            link = "http://www.ncbi.nlm.nih.gov/pmc/articles/{}/citedby/?page={}".format(pmc, i)
             page = requests.get(link)
             tree = html.fromstring(page.content)
             citations = tree.xpath('//div[@class="rprt"]/div[@class="title"]/a/@href')[1::]
             pmc_cited = list(map(extract_pmc, citations))
             pmc_cited_all.extend(pmc_cited)
     pmc_cited_all = [p for p in pmc_cited_all if p is not pmc]
-    dict_out = {'n_citations': n_citations,
-                'pmid': doc_id_dict['pmid'],
-                'pmc': re.sub('PMC', '', doc_id_dict['pmc']),
-                'doi': doc_id_dict['doi'],
-                'pmc_cited': pmc_cited_all}
+    dict_out = {
+        'n_citations': n_citations,
+        'pmid': doc_id_dict['pmid'],
+        'pmc': re.sub('PMC', '', doc_id_dict['pmc']),
+        'doi': doc_id_dict['doi'],
+        'pmc_cited': pmc_cited_all
+    }
     return dict_out
 
 
@@ -243,7 +251,7 @@ def parse_outgoing_citation_web(doc_id, id_type='PMC'):
         linkname = 'pubmed_pubmed_refs'
     else:
         raise ValueError('Unsupported id_type `%s`' % id_type)
-    link = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=%s&linkname=%s&id=%s' % (db, linkname, doc_id)
+    link = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom={}&linkname=%s&id={}'.format(db, linkname, doc_id)
 
     parser = etree.XMLParser()
     with urlopen(link) as f:
@@ -252,8 +260,10 @@ def parse_outgoing_citation_web(doc_id, id_type='PMC'):
     n_citations = len(pmid_cited_all)
     if not n_citations: # If there are no citations, likely a bad doc_id
         return None
-    dict_out = {'n_citations': n_citations,
-                'doc_id': doc_id,
-                'id_type': id_type,
-                'pmid_cited': pmid_cited_all}
+    dict_out = {
+        'n_citations': n_citations,
+        'doc_id': doc_id,
+        'id_type': id_type,
+        'pmid_cited': pmid_cited_all
+    }
     return dict_out
