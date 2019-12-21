@@ -60,7 +60,7 @@ def parse_doi(pubmed_article):
         article_ids = pubmed_article.find('PubmedData/ArticleIdList')
         if article_ids is not None:
             doi = article_ids.find('ArticleId[@IdType="doi"]')
-            doi = doi.text.strip() if doi is not None else ''
+            doi = (doi.text.strip() if doi.text is not None else '') if doi is not None else ''
         else:
             doi = ''
     return doi
@@ -405,7 +405,7 @@ def parse_references(pubmed_article, reference_list):
             citation = ref.find('Citation')
             citation = citation.text.strip() if citation is not None else ''
             article_ids = ref.find('ArticleIdList')
-            pmid = article_ids.find('ArticleId[@IdType="pubmed"]')
+            pmid = article_ids.find('ArticleId[@IdType="pubmed"]') if article_ids is not None else None
             pmid = pmid.text.strip() if pmid is not None else ''
             references.append({
                 'citation': citation,
