@@ -322,9 +322,13 @@ or using BibTex
 
 We are submitting to [JOSS](https://joss.readthedocs.io/en/latest/) and we will update the citation section soon.
 
+## Contributions
+
+We welcome contributions from anyone who would like to improve Pubmed Parser. You can create [GitHub issues](https://github.com/titipata/pubmed_parser/issues) to discuss questions or issues relating to the repository. We suggest you to see [Contributing Guidelines](https://github.com/titipata/pubmed_parser/blob/master/CONTRIBUTING.md) before creating issues, reporting bugs, and making a contribution to the repository.
+
 ## Acknowledgement
 
-Package is developed in [Konrad Kording's Lab](http://kordinglab.com/) at the University of Pennsylvania
+This package is developed in [Konrad Kording's Lab](http://kordinglab.com/) at the University of Pennsylvania. We thank [`koerding`](https://github.com/koerding) for his mentor support. We would like to thank all the great review from [`tleonardi`](https://github.com/tleonardi), [`timClicks`](https://github.com/timClicks), and [majensen](https://github.com/majensen) from [JOSS](https://joss.readthedocs.io/en/latest/).
 
 ## License
 
