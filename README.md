@@ -208,14 +208,14 @@ The function `parse_outgoing_citation_web` allows you to get the articles a give
 
 * `n_citations` : number of cited articles
 * `doc_id` : the document identifier given
-* `id_type` : the type of identifier given. Either 'PMID' or 'PMC'
+* `id_type` : the type of identifier given. Either `'PMID'` or `'PMC'`
 * `pmid_cited` : list of PMIDs cited by the article
 
 ``` python
 dict_out = pp.parse_outgoing_citation_web(doc_id, id_type='PMID')
 ```
 
-Identifiers should be passed as strings. PubMed Central ID's are default, and should be passed as strings *without* the 'PMC' prefix. If no citations are found, or if no article is found matching `doc_id` in the indicated database, it will return `None`.
+Identifiers should be passed as strings. PubMed Central ID's are default, and should be passed as strings *without* the `'PMC'` prefix. If no citations are found, or if no article is found matching `doc_id` in the indicated database, it will return `None`.
 
 ## Install Package
 
@@ -320,11 +320,11 @@ We are submitting to [JOSS](https://joss.readthedocs.io/en/latest/) and we will 
 
 ## Contributions
 
-We welcome contributions from anyone who would like to improve Pubmed Parser. You can create [GitHub issues](https://github.com/titipata/pubmed_parser/issues) to discuss questions or issues relating to the repository. We suggest you to see [Contributing Guidelines](https://github.com/titipata/pubmed_parser/blob/master/CONTRIBUTING.md) before creating issues, reporting bugs, and making a contribution to the repository.
+We welcome contributions from anyone who would like to improve Pubmed Parser. You can create [GitHub issues](https://github.com/titipata/pubmed_parser/issues) to discuss questions or issues relating to the repository. We suggest you to read our [Contributing Guidelines](https://github.com/titipata/pubmed_parser/blob/master/CONTRIBUTING.md) before creating issues, reporting bugs, or making a contribution to the repository.
 
 ## Acknowledgement
 
-This package is developed in [Konrad Kording's Lab](http://kordinglab.com/) at the University of Pennsylvania. We thank [`koerding`](https://github.com/koerding) for his mentor support. We would like to thank all the great review from [`tleonardi`](https://github.com/tleonardi), [`timClicks`](https://github.com/timClicks), and [majensen](https://github.com/majensen) from [JOSS](https://joss.readthedocs.io/en/latest/).
+This package is developed in [Konrad Kording's Lab](http://kordinglab.com/) at the University of Pennsylvania. We would like to thank reviewers and editor from [JOSS](https://joss.readthedocs.io/en/latest/) including [`tleonardi`](https://github.com/tleonardi), [`timClicks`](https://github.com/timClicks), and [`majensen`](https://github.com/majensen). They make the repository better.
 
 ## License
 
