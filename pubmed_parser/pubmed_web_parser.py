@@ -144,7 +144,7 @@ def extract_citations(tree):
 
 
 def extract_pmc(citation):
-    pmc_text = [c for c in citation.split('/') if c is not ''][-1]
+    pmc_text = [c for c in citation.split('/') if c != ''][-1]
     pmc = re.sub('PMC', '', pmc_text)
     return pmc
 
@@ -243,10 +243,10 @@ def parse_outgoing_citation_web(doc_id, id_type='PMC'):
         pmid_cited: list of papers cited by the document as PMIDs
     """
     doc_id = str(doc_id)
-    if id_type is 'PMC':
+    if id_type == 'PMC':
         db = 'pmc'
         linkname = 'pmc_refs_pubmed'
-    elif id_type is 'PMID':
+    elif id_type == 'PMID':
         db = 'pubmed'
         linkname = 'pubmed_pubmed_refs'
     else:
