@@ -320,7 +320,7 @@ We are submitting to [JOSS](https://joss.readthedocs.io/en/latest/) and we will 
 
 ## Acknowledgement
 
-Package is developed in [Konrad Kording's Lab](http://kordinglab.com/) at the University of Pennsylvania
+This package is developed in [Konrad Kording's Lab](http://kordinglab.com/) at the University of Pennsylvania. We thank [`koerding`](https://github.com/koerding) for his mentor support. We would like to thank all the great review from [`tleonardi`](https://github.com/tleonardi), [`timClicks`](https://github.com/timClicks), and [majensen](https://github.com/majensen) from [JOSS](https://joss.readthedocs.io/en/latest/).
 
 ## License
 
