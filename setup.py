@@ -11,7 +11,7 @@ if __name__ == "__main__":
         author='Titipat Achakulvisut',
         author_email='my.titipat@gmail.com',
         license='(c) 2015 - 2019 Titipat Achakulvisut, Daniel E. Acuna',
-        install_requires=['lxml', 'unidecode', 'requests'],
+        install_requires=['lxml', 'unidecode', 'requests', 'six', 'numpy'],
         packages=['pubmed_parser'],
         package_data={
             'pubmed_parser.data': ['*.xml.gz', '*.nxml', '*.txt'],
