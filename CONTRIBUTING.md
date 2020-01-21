@@ -38,7 +38,7 @@ See below if you want to contribute code for your idea as well.
 
 ### Contribute code and documentation 📝
 
-If you have been using `pubmed_parser` and see any errors that can be fixed, we are welcome to report an [issue](https://github.com/titipata/pubmed_parser/issues), comment if issue already exist, or contribute if you know where the bug occurs. We currently have a documentation for each function directly in the source code. You can contribute directly there.
+If you have been using `pubmed_parser` and see any errors that can be fixed, we are welcome to report an [issue](https://github.com/titipata/pubmed_parser/issues), comment if issue already exist, or contribute if you know where the bug occurs. We currently have documentation for each function directly in the source code. You can contribute directly there.
 
 ### Ask a private question
 
@@ -56,6 +56,6 @@ We follow the [GitHub flow](https://guides.github.com/introduction/flow/) for de
 4. Commit and push your changes
 5. Submit a [pull request](https://github.com/titipata/pubmed_parser/pulls) with your description.
 
-In your pull request, you can tag issues number relating to your pull request so that we can use it as a reference in the future. You can also give a short description on your pull request e.g. what is the improvement (code or documentation)? what error did you fix? etc.
+In your pull request, you can tag issue numbers relating to your pull request so that we can use it as a reference in the future. You can also give a short description on your pull request e.g. what is the improvement (code or documentation)? what error did you fix? etc.
 
-If you have see an inactivity of your pull request, please re-tag core maintainers so that they can take a look closely to your pull requests again. Core maintainers might be really busy by the time you make the pull request.
+If you see inactivity in your pull request, please re-tag core maintainers so that they can take a look closely to your pull requests again. Core maintainers might be really busy at the time you make the pull request.
