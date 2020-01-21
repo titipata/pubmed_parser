@@ -2,8 +2,8 @@
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/titipata/pubmed_parser/blob/master/LICENSE) [![DOI](https://zenodo.org/badge/31697087.svg)](https://zenodo.org/badge/latestdoi/31697087)
 
-Pubmed Parser is a Python library for parsing [PubMed Open-Access (OA) subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
- and [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/) repository. It parses a dataset to dictionary which can be easily used for research such as text mining or natural language processing pipeline. See
+Pubmed Parser is a Python library for parsing the [PubMed Open-Access (OA) subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
+ and [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/) repositories. It parses this information into a Python dictionary which can be easily used for research such in text mining and natural language processing pipelines. See
  [wiki page](https://github.com/titipata/pubmed_parser/wiki) on how to download and
  process dataset using the repository.
 
@@ -324,7 +324,7 @@ We welcome contributions from anyone who would like to improve Pubmed Parser. Yo
 
 ## Acknowledgement
 
-This package is developed in [Konrad Kording's Lab](http://kordinglab.com/) at the University of Pennsylvania. We would like to thank reviewers and editor from [JOSS](https://joss.readthedocs.io/en/latest/) including [`tleonardi`](https://github.com/tleonardi), [`timClicks`](https://github.com/timClicks), and [`majensen`](https://github.com/majensen). They make the repository better.
+This package is developed in [Konrad Kording's Lab](http://kordinglab.com/) at the University of Pennsylvania. We would like to thank reviewers and the editor from [JOSS](https://joss.readthedocs.io/en/latest/) including [`tleonardi`](https://github.com/tleonardi), [`timClicks`](https://github.com/timClicks), and [`majensen`](https://github.com/majensen). They made our repository much better!
 
 ## License
 
