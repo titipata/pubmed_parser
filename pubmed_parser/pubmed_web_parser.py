@@ -5,17 +5,14 @@ import requests
 from lxml import etree
 from lxml import html
 from unidecode import unidecode
+
 try:
     from urllib.request import urlopen
 except ImportError:
     from urllib2 import urlopen
 from .utils import stringify_children
 
-__all__ = [
-    'parse_xml_web',
-    'parse_citation_web',
-    'parse_outgoing_citation_web'
-]
+__all__ = ["parse_xml_web", "parse_citation_web", "parse_outgoing_citation_web"]
 
 
 def load_xml(pmid, sleep=None):
@@ -24,7 +21,9 @@ def load_xml(pmid, sleep=None):
     return a dictionary for given pmid and xml string from the site
     sleep: how much time we want to wait until requesting new xml
     """
-    link = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id={}".format(pmid)
+    link = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id={}".format(
+        pmid
+    )
     page = requests.get(link)
     tree = html.fromstring(page.content)
     if sleep is not None:
@@ -37,82 +36,92 @@ def parse_pubmed_web_tree(tree):
     Giving tree, return simple parsed information from the tree
     """
 
-    if len(tree.xpath('//articletitle')) != 0:
-        title = ' '.join([title.text for title in tree.xpath('//articletitle')])
-    elif len(tree.xpath('//booktitle')) != 0:
-        title = ' '.join([title.text for title in tree.xpath('//booktitle')])
+    if len(tree.xpath("//articletitle")) != 0:
+        title = " ".join([title.text for title in tree.xpath("//articletitle")])
+    elif len(tree.xpath("//booktitle")) != 0:
+        title = " ".join([title.text for title in tree.xpath("//booktitle")])
     else:
-        title = ''
+        title = ""
 
-    abstract_tree = tree.xpath('//abstract/abstracttext')
-    abstract = ' '.join([stringify_children(a).strip() for a in abstract_tree])
+    abstract_tree = tree.xpath("//abstract/abstracttext")
+    abstract = " ".join([stringify_children(a).strip() for a in abstract_tree])
 
-    if len(tree.xpath('//article//title')) != 0:
-        journal = ';'.join([t.text.strip() for t in tree.xpath('//article//title')])
+    if len(tree.xpath("//article//title")) != 0:
+        journal = ";".join([t.text.strip() for t in tree.xpath("//article//title")])
     else:
-        journal = ''
+        journal = ""
 
     pubdate = tree.xpath('//pubmeddata//history//pubmedpubdate[@pubstatus="medline"]')
-    pubdatebook = tree.xpath('//pubmedbookdata//history//pubmedpubdate[@pubstatus="medline"]')
-    if len(pubdate) >= 1 and pubdate[0].find('year') is not None:
-        year = pubdate[0].find('year').text
-    elif len(pubdatebook) >= 1 and pubdatebook[0].find('year') is not None:
-        year = pubdatebook[0].find('year').text
+    pubdatebook = tree.xpath(
+        '//pubmedbookdata//history//pubmedpubdate[@pubstatus="medline"]'
+    )
+    if len(pubdate) >= 1 and pubdate[0].find("year") is not None:
+        year = pubdate[0].find("year").text
+    elif len(pubdatebook) >= 1 and pubdatebook[0].find("year") is not None:
+        year = pubdatebook[0].find("year").text
     else:
-        year = ''
+        year = ""
 
     affiliations = list()
-    if tree.xpath('//affiliationinfo/affiliation') is not None:
-        for affil in tree.xpath('//affiliationinfo/affiliation'):
+    if tree.xpath("//affiliationinfo/affiliation") is not None:
+        for affil in tree.xpath("//affiliationinfo/affiliation"):
             affiliations.append(affil.text)
-    affiliations_text = '; '.join(affiliations)
+    affiliations_text = "; ".join(affiliations)
 
-    authors_tree = tree.xpath('//authorlist/author')
+    authors_tree = tree.xpath("//authorlist/author")
     authors = list()
     if authors_tree is not None:
         for a in authors_tree:
-            firstname = a.find('forename').text if a.find('forename') is not None else ''
-            lastname = a.find('lastname').text if a.find('forename') is not None else ''
-            fullname = (firstname + ' ' + lastname).strip()
-            if fullname == '':
-                fullname = a.find('collectivename').text if a.find('collectivename') is not None else ''
+            firstname = (
+                a.find("forename").text if a.find("forename") is not None else ""
+            )
+            lastname = a.find("lastname").text if a.find("forename") is not None else ""
+            fullname = (firstname + " " + lastname).strip()
+            if fullname == "":
+                fullname = (
+                    a.find("collectivename").text
+                    if a.find("collectivename") is not None
+                    else ""
+                )
             authors.append(fullname)
-        authors_text = '; '.join(authors)
+        authors_text = "; ".join(authors)
     else:
-        authors_text = ''
+        authors_text = ""
 
-    keywords = ''
-    keywords_mesh = tree.xpath('//meshheadinglist//meshheading')
-    keywords_book = tree.xpath('//keywordlist//keyword')
+    keywords = ""
+    keywords_mesh = tree.xpath("//meshheadinglist//meshheading")
+    keywords_book = tree.xpath("//keywordlist//keyword")
     if len(keywords_mesh) > 0:
         mesh_terms_list = []
         for m in keywords_mesh:
-            keyword = m.find('descriptorname').attrib.get('ui', '') + \
-                ":" + \
-                m.find('descriptorname').text
+            keyword = (
+                m.find("descriptorname").attrib.get("ui", "")
+                + ":"
+                + m.find("descriptorname").text
+            )
             mesh_terms_list.append(keyword)
-        keywords = ';'.join(mesh_terms_list)
+        keywords = ";".join(mesh_terms_list)
     elif len(keywords_book) > 0:
-        keywords = ';'.join([m.text or '' for m in keywords_book])
+        keywords = ";".join([m.text or "" for m in keywords_book])
     else:
-        keywords = ''
+        keywords = ""
 
-    doi = ''
-    article_ids = tree.xpath('//articleidlist//articleid')
+    doi = ""
+    article_ids = tree.xpath("//articleidlist//articleid")
     if len(article_ids) >= 1:
         for article_id in article_ids:
-            if article_id.attrib.get('idtype') == 'doi':
+            if article_id.attrib.get("idtype") == "doi":
                 doi = article_id.text
 
     dict_out = {
-        'title': title,
-        'abstract': abstract,
-        'journal': journal,
-        'affiliation': affiliations_text,
-        'authors': authors_text,
-        'keywords': keywords,
-        'doi': doi,
-        'year': year
+        "title": title,
+        "abstract": abstract,
+        "journal": journal,
+        "affiliation": affiliations_text,
+        "authors": authors_text,
+        "keywords": keywords,
+        "doi": doi,
+        "year": year,
     }
     return dict_out
 
@@ -124,9 +133,9 @@ def parse_xml_web(pmid, sleep=None, save_xml=False):
     """
     tree = load_xml(pmid, sleep=sleep)
     dict_out = parse_pubmed_web_tree(tree)
-    dict_out['pmid'] = str(pmid)
+    dict_out["pmid"] = str(pmid)
     if save_xml:
-        dict_out['xml'] = etree.tostring(tree)
+        dict_out["xml"] = etree.tostring(tree)
     return dict_out
 
 
@@ -135,7 +144,7 @@ def extract_citations(tree):
     Extract number of citations from given tree
     """
     citations_text = tree.xpath('//form/h2[@class="head"]/text()')[0]
-    n_citations = re.sub("Is Cited by the Following ", "", citations_text).split(' ')[0]
+    n_citations = re.sub("Is Cited by the Following ", "", citations_text).split(" ")[0]
     try:
         n_citations = int(n_citations)
     except:
@@ -144,46 +153,46 @@ def extract_citations(tree):
 
 
 def extract_pmc(citation):
-    pmc_text = [c for c in citation.split('/') if c != ''][-1]
-    pmc = re.sub('PMC', '', pmc_text)
+    pmc_text = [c for c in citation.split("/") if c != ""][-1]
+    pmc = re.sub("PMC", "", pmc_text)
     return pmc
 
 
-def convert_document_id(doc_id, id_type='PMC'):
+def convert_document_id(doc_id, id_type="PMC"):
     """
     Convert document id to dictionary of other id
     see: http://www.ncbi.nlm.nih.gov/pmc/tools/id-converter-api/ for more info
     """
     doc_id = str(doc_id)
-    if id_type == 'PMC':
-        doc_id = 'PMC%s' % doc_id
+    if id_type == "PMC":
+        doc_id = "PMC%s" % doc_id
         pmc = doc_id
-        convert_link = 'http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=my_tool&email=my_email@example.com&ids={}'.format(doc_id)
-    elif id_type in ['PMID', 'DOI', 'OTHER']:
-        convert_link = 'http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=my_tool&email=my_email@example.com&ids={}'.format(doc_id)
+        convert_link = "http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=my_tool&email=my_email@example.com&ids={}".format(
+            doc_id
+        )
+    elif id_type in ["PMID", "DOI", "OTHER"]:
+        convert_link = "http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=my_tool&email=my_email@example.com&ids={}".format(
+            doc_id
+        )
     else:
-        raise ValueError('Give id_type from PMC or PMID or DOI or OTHER')
+        raise ValueError("Give id_type from PMC or PMID or DOI or OTHER")
 
     convert_page = requests.get(convert_link)
     convert_tree = html.fromstring(convert_page.content)
-    record = convert_tree.find('record').attrib
-    if 'status' in record or 'pmcid' not in record:
-        raise ValueError('Cannot convert given document id to PMC')
-    if id_type in ['PMID', 'DOI', 'OTHER']:
-        if 'pmcid' in record:
-            pmc = record['pmcid']
+    record = convert_tree.find("record").attrib
+    if "status" in record or "pmcid" not in record:
+        raise ValueError("Cannot convert given document id to PMC")
+    if id_type in ["PMID", "DOI", "OTHER"]:
+        if "pmcid" in record:
+            pmc = record["pmcid"]
         else:
-            pmc = ''
-    pmid = record['pmid'] if 'pmid' in record else ''
-    doi = record['doi'] if 'doi' in record else ''
-    return {
-        'pmc': pmc,
-        'pmid': pmid,
-        'doi': doi
-    }
+            pmc = ""
+    pmid = record["pmid"] if "pmid" in record else ""
+    doi = record["doi"] if "doi" in record else ""
+    return {"pmc": pmc, "pmid": pmid, "doi": doi}
 
 
-def parse_citation_web(doc_id, id_type='PMC'):
+def parse_citation_web(doc_id, id_type="PMC"):
     """
     Parse citations from given document id
 
@@ -203,37 +212,41 @@ def parse_citation_web(doc_id, id_type='PMC'):
     """
 
     doc_id_dict = convert_document_id(doc_id, id_type=id_type)
-    pmc = doc_id_dict['pmc']
+    pmc = doc_id_dict["pmc"]
     link = "http://www.ncbi.nlm.nih.gov/pmc/articles/{}/citedby/".format(pmc)
     page = requests.get(link)
     tree = html.fromstring(page.content)
     n_citations = extract_citations(tree)
-    n_pages = int(n_citations/30) + 1
+    n_pages = int(n_citations / 30) + 1
 
-    pmc_cited_all = list() # all PMC cited
+    pmc_cited_all = list()  # all PMC cited
     citations = tree.xpath('//div[@class="rprt"]/div[@class="title"]/a/@href')[1::]
     pmc_cited = list(map(extract_pmc, citations))
     pmc_cited_all.extend(pmc_cited)
     if n_pages >= 2:
-        for i in range(2, n_pages+1):
-            link = "http://www.ncbi.nlm.nih.gov/pmc/articles/{}/citedby/?page={}".format(pmc, i)
+        for i in range(2, n_pages + 1):
+            link = "http://www.ncbi.nlm.nih.gov/pmc/articles/{}/citedby/?page={}".format(
+                pmc, i
+            )
             page = requests.get(link)
             tree = html.fromstring(page.content)
-            citations = tree.xpath('//div[@class="rprt"]/div[@class="title"]/a/@href')[1::]
+            citations = tree.xpath('//div[@class="rprt"]/div[@class="title"]/a/@href')[
+                1::
+            ]
             pmc_cited = list(map(extract_pmc, citations))
             pmc_cited_all.extend(pmc_cited)
     pmc_cited_all = [p for p in pmc_cited_all if p is not pmc]
     dict_out = {
-        'n_citations': n_citations,
-        'pmid': doc_id_dict['pmid'],
-        'pmc': re.sub('PMC', '', doc_id_dict['pmc']),
-        'doi': doc_id_dict['doi'],
-        'pmc_cited': pmc_cited_all
+        "n_citations": n_citations,
+        "pmid": doc_id_dict["pmid"],
+        "pmc": re.sub("PMC", "", doc_id_dict["pmc"]),
+        "doi": doc_id_dict["doi"],
+        "pmc_cited": pmc_cited_all,
     }
     return dict_out
 
 
-def parse_outgoing_citation_web(doc_id, id_type='PMC'):
+def parse_outgoing_citation_web(doc_id, id_type="PMC"):
     """
     Load citations from NCBI eutils API for a given document,
     return a dictionary containing:
@@ -243,27 +256,29 @@ def parse_outgoing_citation_web(doc_id, id_type='PMC'):
         pmid_cited: list of papers cited by the document as PMIDs
     """
     doc_id = str(doc_id)
-    if id_type == 'PMC':
-        db = 'pmc'
-        linkname = 'pmc_refs_pubmed'
-    elif id_type == 'PMID':
-        db = 'pubmed'
-        linkname = 'pubmed_pubmed_refs'
+    if id_type == "PMC":
+        db = "pmc"
+        linkname = "pmc_refs_pubmed"
+    elif id_type == "PMID":
+        db = "pubmed"
+        linkname = "pubmed_pubmed_refs"
     else:
-        raise ValueError('Unsupported id_type `%s`' % id_type)
-    link = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom={}&linkname=%s&id={}'.format(db, linkname, doc_id)
+        raise ValueError("Unsupported id_type `%s`" % id_type)
+    link = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom={}&linkname=%s&id={}".format(
+        db, linkname, doc_id
+    )
 
     parser = etree.XMLParser()
     with urlopen(link) as f:
         tree = etree.parse(f, parser)
-    pmid_cited_all = tree.xpath('/eLinkResult/LinkSet/LinkSetDb/Link/Id/text()')
+    pmid_cited_all = tree.xpath("/eLinkResult/LinkSet/LinkSetDb/Link/Id/text()")
     n_citations = len(pmid_cited_all)
-    if not n_citations: # If there are no citations, likely a bad doc_id
+    if not n_citations:  # If there are no citations, likely a bad doc_id
         return None
     dict_out = {
-        'n_citations': n_citations,
-        'doc_id': doc_id,
-        'id_type': id_type,
-        'pmid_cited': pmid_cited_all
+        "n_citations": n_citations,
+        "doc_id": doc_id,
+        "id_type": id_type,
+        "pmid_cited": pmid_cited_all,
     }
     return dict_out

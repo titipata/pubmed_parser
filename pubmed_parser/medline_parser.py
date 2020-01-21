@@ -4,10 +4,7 @@ from itertools import chain
 from collections import defaultdict
 from pubmed_parser.utils import read_xml, stringify_children, month_or_day_formater
 
-__all__ = [
-    'parse_medline_xml',
-    'parse_medline_grant_id'
-]
+__all__ = ["parse_medline_xml", "parse_medline_grant_id"]
 
 
 def parse_pmid(pubmed_article):
@@ -23,17 +20,17 @@ def parse_pmid(pubmed_article):
     pmid: str
         String version of the PubMed ID
     """
-    medline = pubmed_article.find('MedlineCitation')
-    if medline.find('PMID') is not None:
-        pmid = medline.find('PMID').text
+    medline = pubmed_article.find("MedlineCitation")
+    if medline.find("PMID") is not None:
+        pmid = medline.find("PMID").text
         return pmid
     else:
-        article_ids = pubmed_article.find('PubmedData/ArticleIdList')
+        article_ids = pubmed_article.find("PubmedData/ArticleIdList")
         if article_ids is not None:
             pmid = article_ids.find('ArticleId[@IdType="pmid"]')
-            pmid = pmid.text.strip() if pmid is not None else ''
+            pmid = pmid.text.strip() if pmid is not None else ""
         else:
-            pmid = ''
+            pmid = ""
     return pmid
 
 
@@ -49,20 +46,24 @@ def parse_doi(pubmed_article):
     -------
     doi: str, DOI from a given lxml node
     """
-    medline = pubmed_article.find('MedlineCitation')
-    article = medline.find('Article')
-    elocation_ids = article.findall('ELocationID')
+    medline = pubmed_article.find("MedlineCitation")
+    article = medline.find("Article")
+    elocation_ids = article.findall("ELocationID")
 
     if len(elocation_ids) > 0:
         for e in elocation_ids:
-            doi = e.text.strip() or '' if e.attrib.get('EIdType', '') == 'doi' else ''
+            doi = e.text.strip() or "" if e.attrib.get("EIdType", "") == "doi" else ""
     else:
-        article_ids = pubmed_article.find('PubmedData/ArticleIdList')
+        article_ids = pubmed_article.find("PubmedData/ArticleIdList")
         if article_ids is not None:
             doi = article_ids.find('ArticleId[@IdType="doi"]')
-            doi = (doi.text.strip() if doi.text is not None else '') if doi is not None else ''
+            doi = (
+                (doi.text.strip() if doi.text is not None else "")
+                if doi is not None
+                else ""
+            )
         else:
-            doi = ''
+            doi = ""
     return doi
 
 
@@ -80,16 +81,17 @@ def parse_mesh_terms(medline):
         String of semi-colon spearated MeSH (Medical Subject Headings)
         terms contained in the document.
     """
-    if medline.find('MeshHeadingList') is not None:
-        mesh = medline.find('MeshHeadingList')
+    if medline.find("MeshHeadingList") is not None:
+        mesh = medline.find("MeshHeadingList")
         mesh_terms_list = [
-            m.find('DescriptorName').attrib.get('UI', '') +
-            ":" +
-            m.find('DescriptorName').text for m in mesh.getchildren()
+            m.find("DescriptorName").attrib.get("UI", "")
+            + ":"
+            + m.find("DescriptorName").text
+            for m in mesh.getchildren()
         ]
-        mesh_terms = '; '.join(mesh_terms_list)
+        mesh_terms = "; ".join(mesh_terms_list)
     else:
-        mesh_terms = ''
+        mesh_terms = ""
     return mesh_terms
 
 
@@ -107,14 +109,16 @@ def parse_publication_types(medline):
         String of semi-colon spearated publication types
     """
     publication_types = []
-    publication_type_list = medline.find('Article/PublicationTypeList')
+    publication_type_list = medline.find("Article/PublicationTypeList")
     if publication_type_list is not None:
-        publication_type_list = publication_type_list.findall('PublicationType')
+        publication_type_list = publication_type_list.findall("PublicationType")
         for publication_type in publication_type_list:
             publication_types.append(
-                publication_type.attrib.get('UI', '') + ':' + (publication_type.text.strip() or '')
+                publication_type.attrib.get("UI", "")
+                + ":"
+                + (publication_type.text.strip() or "")
             )
-    publication_types = '; '.join(publication_types)
+    publication_types = "; ".join(publication_types)
     return publication_types
 
 
@@ -131,15 +135,15 @@ def parse_keywords(medline):
     keywords: str
         String of concatenated keywords.
     """
-    keyword_list = medline.find('KeywordList')
+    keyword_list = medline.find("KeywordList")
     keywords = list()
     if keyword_list is not None:
-        for k in keyword_list.findall('Keyword'):
+        for k in keyword_list.findall("Keyword"):
             if k.text is not None:
                 keywords.append(k.text)
-        keywords = '; '.join(keywords)
+        keywords = "; ".join(keywords)
     else:
-        keywords = ''
+        keywords = ""
     return keywords
 
 
@@ -157,14 +161,16 @@ def parse_chemical_list(medline):
         String of semi-colon spearated chemical list
     """
     chemical_list = []
-    chemicals  = medline.find('ChemicalList')
+    chemicals = medline.find("ChemicalList")
     if chemicals is not None:
-        for chemical in chemicals.findall('Chemical'):
-            substance_name = chemical.find('NameOfSubstance')
+        for chemical in chemicals.findall("Chemical"):
+            substance_name = chemical.find("NameOfSubstance")
             chemical_list.append(
-                substance_name.attrib.get('UI', '') + ':' + (substance_name.text.strip() or '')
+                substance_name.attrib.get("UI", "")
+                + ":"
+                + (substance_name.text.strip() or "")
             )
-    chemical_list = '; '.join(chemical_list)
+    chemical_list = "; ".join(chemical_list)
     return chemical_list
 
 
@@ -181,22 +187,19 @@ def parse_other_id(medline):
     other_id: str
         String of semi-colon separated Other IDs found in the document
     """
-    pmc = ''
+    pmc = ""
     other_id = list()
-    oids = medline.findall('OtherID')
+    oids = medline.findall("OtherID")
     if oids is not None:
         for oid in oids:
-            if 'PMC' in oid.text:
+            if "PMC" in oid.text:
                 pmc = oid.text
             else:
                 other_id.append(oid.text)
-        other_id = '; '.join(other_id)
+        other_id = "; ".join(other_id)
     else:
-        other_id = ''
-    return {
-        'pmc': pmc,
-        'other_id': other_id
-    }
+        other_id = ""
+    return {"pmc": pmc, "other_id": other_id}
 
 
 def parse_journal_info(medline):
@@ -214,33 +217,37 @@ def parse_journal_info(medline):
         `issn_linking` and `country`
 
     """
-    journal_info = medline.find('MedlineJournalInfo')
+    journal_info = medline.find("MedlineJournalInfo")
     if journal_info is not None:
-        if journal_info.find('MedlineTA') is not None:
-            medline_ta = journal_info.find('MedlineTA').text or '' # equivalent to Journal name
+        if journal_info.find("MedlineTA") is not None:
+            medline_ta = (
+                journal_info.find("MedlineTA").text or ""
+            )  # equivalent to Journal name
         else:
-            medline_ta = ''
-        if journal_info.find('NlmUniqueID') is not None:
-            nlm_unique_id = journal_info.find('NlmUniqueID').text or ''
+            medline_ta = ""
+        if journal_info.find("NlmUniqueID") is not None:
+            nlm_unique_id = journal_info.find("NlmUniqueID").text or ""
         else:
-            nlm_unique_id = ''
-        if journal_info.find('ISSNLinking') is not None:
-            issn_linking = journal_info.find('ISSNLinking').text
+            nlm_unique_id = ""
+        if journal_info.find("ISSNLinking") is not None:
+            issn_linking = journal_info.find("ISSNLinking").text
         else:
-            issn_linking = ''
-        if journal_info.find('Country') is not None:
-            country = journal_info.find('Country').text or ''
+            issn_linking = ""
+        if journal_info.find("Country") is not None:
+            country = journal_info.find("Country").text or ""
         else:
-            country = ''
+            country = ""
     else:
-        medline_ta = ''
-        nlm_unique_id = ''
-        issn_linking = ''
-        country = ''
-    dict_info = {'medline_ta': medline_ta.strip(),
-                 'nlm_unique_id': nlm_unique_id,
-                 'issn_linking': issn_linking,
-                 'country': country}
+        medline_ta = ""
+        nlm_unique_id = ""
+        issn_linking = ""
+        country = ""
+    dict_info = {
+        "medline_ta": medline_ta.strip(),
+        "nlm_unique_id": nlm_unique_id,
+        "issn_linking": issn_linking,
+        "country": country,
+    }
     return dict_info
 
 
@@ -259,40 +266,40 @@ def parse_grant_id(medline):
         entry in the dictionary contains the PubMed ID,
         grant ID, grant acronym, country, and agency.
     """
-    article = medline.find('Article')
+    article = medline.find("Article")
     pmid = parse_pmid(medline)
 
-    grants = article.find('GrantList')
+    grants = article.find("GrantList")
     grant_list = list()
     if grants is not None:
         grants_list = grants.getchildren()
         for grant in grants_list:
-            grant_country = grant.find('Country')
+            grant_country = grant.find("Country")
             if grant_country is not None:
                 country = grant_country.text
             else:
-                country = ''
-            grant_agency = grant.find('Agency')
+                country = ""
+            grant_agency = grant.find("Agency")
             if grant_agency is not None:
                 agency = grant_agency.text
             else:
-                agency = ''
-            grant_acronym = grant.find('Acronym')
+                agency = ""
+            grant_acronym = grant.find("Acronym")
             if grant_acronym is not None:
                 acronym = grant_acronym.text
             else:
-                acronym = ''
-            grant_id = grant.find('GrantID')
+                acronym = ""
+            grant_id = grant.find("GrantID")
             if grant_id is not None:
                 gid = grant_id.text
             else:
-                gid = ''
+                gid = ""
             grant_dict = {
-                'pmid': pmid,
-                'grant_id': gid,
-                'grant_acronym': acronym,
-                'country': country,
-                'agency': agency
+                "pmid": pmid,
+                "grant_id": gid,
+                "grant_acronym": acronym,
+                "country": country,
+                "agency": agency,
             }
             grant_list.append(grant_dict)
     return grant_list
@@ -312,35 +319,40 @@ def parse_author_affiliation(medline):
         List of authors and their corresponding affiliation in dictionary format
     """
     authors = []
-    article = medline.find('Article')
+    article = medline.find("Article")
     if article is not None:
-        author_list = article.find('AuthorList')
+        author_list = article.find("AuthorList")
         if author_list is not None:
-            authors_list = author_list.findall('Author')
+            authors_list = author_list.findall("Author")
             for author in authors_list:
-                if author.find('ForeName') is not None:
-                    forename = (author.find('ForeName').text or '').strip() or ''
+                if author.find("ForeName") is not None:
+                    forename = (author.find("ForeName").text or "").strip() or ""
                 else:
-                    forename = ''
-                if author.find('Initials') is not None:
-                    firstname = (author.find('Initials').text or '').strip() or ''
+                    forename = ""
+                if author.find("Initials") is not None:
+                    firstname = (author.find("Initials").text or "").strip() or ""
                 else:
-                    firstname = ''
-                if author.find('LastName') is not None:
-                    lastname = (author.find('LastName').text or '').strip() or ''
+                    firstname = ""
+                if author.find("LastName") is not None:
+                    lastname = (author.find("LastName").text or "").strip() or ""
                 else:
-                    lastname = ''
-                if author.find('AffiliationInfo/Affiliation') is not None:
-                    affiliation = author.find('AffiliationInfo/Affiliation').text or ''
-                    affiliation = affiliation.replace("For a full list of the authors' affiliations please see the Acknowledgements section.", '')
+                    lastname = ""
+                if author.find("AffiliationInfo/Affiliation") is not None:
+                    affiliation = author.find("AffiliationInfo/Affiliation").text or ""
+                    affiliation = affiliation.replace(
+                        "For a full list of the authors' affiliations please see the Acknowledgements section.",
+                        "",
+                    )
                 else:
-                    affiliation = ''
-                authors.append({
-                    'forename': forename,
-                    'firstname': firstname, 
-                    'lastname': lastname,
-                    'affiliation': affiliation
-                })
+                    affiliation = ""
+                authors.append(
+                    {
+                        "forename": forename,
+                        "firstname": firstname,
+                        "lastname": lastname,
+                        "affiliation": affiliation,
+                    }
+                )
     return authors
 
 
@@ -367,19 +379,19 @@ def date_extractor(journal, year_info_only):
     """
     day = None
     month = None
-    issue = journal.xpath('JournalIssue')[0]
-    issue_date = issue.find('PubDate')
+    issue = journal.xpath("JournalIssue")[0]
+    issue_date = issue.find("PubDate")
 
-    if issue_date.find('Year') is not None:
-        year = issue_date.find('Year').text
+    if issue_date.find("Year") is not None:
+        year = issue_date.find("Year").text
         if not year_info_only:
-            if issue_date.find('Month') is not None:
-                month = month_or_day_formater(issue_date.find('Month').text)
-                if issue_date.find('Day') is not None:
-                    day = month_or_day_formater(issue_date.find('Day').text)
-    elif issue_date.find('MedlineDate') is not None:
-        year_text = issue_date.find('MedlineDate').text
-        year = re.findall(r'\d{4}', year_text)
+            if issue_date.find("Month") is not None:
+                month = month_or_day_formater(issue_date.find("Month").text)
+                if issue_date.find("Day") is not None:
+                    day = month_or_day_formater(issue_date.find("Day").text)
+    elif issue_date.find("MedlineDate") is not None:
+        year_text = issue_date.find("MedlineDate").text
+        year = re.findall(r"\d{4}", year_text)
         if len(year) >= 1:
             year = year[0]
         else:
@@ -399,27 +411,32 @@ def parse_references(pubmed_article, reference_list):
     if reference_list is True, return list, if False return string
     """
     references = []
-    reference_list_data = pubmed_article.find('PubmedData/ReferenceList')
+    reference_list_data = pubmed_article.find("PubmedData/ReferenceList")
     if reference_list_data is not None:
-        for ref in reference_list_data.findall('Reference'):
-            citation = ref.find('Citation')
-            citation = citation.text.strip() if citation is not None else ''
-            article_ids = ref.find('ArticleIdList')
-            pmid = article_ids.find('ArticleId[@IdType="pubmed"]') if article_ids is not None else None
-            pmid = pmid.text.strip() if pmid is not None else ''
-            references.append({
-                'citation': citation,
-                'pmid': pmid
-            })
+        for ref in reference_list_data.findall("Reference"):
+            citation = ref.find("Citation")
+            citation = citation.text.strip() if citation is not None else ""
+            article_ids = ref.find("ArticleIdList")
+            pmid = (
+                article_ids.find('ArticleId[@IdType="pubmed"]')
+                if article_ids is not None
+                else None
+            )
+            pmid = pmid.text.strip() if pmid is not None else ""
+            references.append({"citation": citation, "pmid": pmid})
 
     if reference_list:
         return references
     else:
-        references = ';'.join([ref['pmid'] for ref in references if ref['pmid'] is not ''])
+        references = ";".join(
+            [ref["pmid"] for ref in references if ref["pmid"] is not ""]
+        )
         return references
 
 
-def parse_article_info(pubmed_article, year_info_only, nlm_category, author_list, reference_list):
+def parse_article_info(
+    pubmed_article, year_info_only, nlm_category, author_list, reference_list
+):
     """Parse article nodes from Medline dataset
 
     Parameters
@@ -442,44 +459,55 @@ def parse_article_info(pubmed_article, year_info_only, nlm_category, author_list
         `delete` is always `False` because this function parses
         articles that by definition are not deleted.
     """
-    medline = pubmed_article.find('MedlineCitation')
-    article = medline.find('Article')
+    medline = pubmed_article.find("MedlineCitation")
+    article = medline.find("Article")
 
-    if article.find('ArticleTitle') is not None:
-        title = stringify_children(article.find('ArticleTitle')).strip() or ''
+    if article.find("ArticleTitle") is not None:
+        title = stringify_children(article.find("ArticleTitle")).strip() or ""
     else:
-        title = ''
+        title = ""
 
-    category = 'NlmCategory' if nlm_category else 'Label'
-    if article.find('Abstract/AbstractText') is not None:
+    category = "NlmCategory" if nlm_category else "Label"
+    if article.find("Abstract/AbstractText") is not None:
         # parsing structured abstract
-        if len(article.findall('Abstract/AbstractText')) > 1:
+        if len(article.findall("Abstract/AbstractText")) > 1:
             abstract_list = list()
-            for abstract in article.findall('Abstract/AbstractText'):
-                section = abstract.attrib.get(category, '')
-                if section != 'UNASSIGNED':
-                    abstract_list.append('\n')
-                    abstract_list.append(abstract.attrib.get(category, ''))
+            for abstract in article.findall("Abstract/AbstractText"):
+                section = abstract.attrib.get(category, "")
+                if section != "UNASSIGNED":
+                    abstract_list.append("\n")
+                    abstract_list.append(abstract.attrib.get(category, ""))
                 section_text = stringify_children(abstract).strip()
                 abstract_list.append(section_text)
-            abstract = '\n'.join(abstract_list).strip()
+            abstract = "\n".join(abstract_list).strip()
         else:
-            abstract = stringify_children(article.find('Abstract/AbstractText')).strip() or ''
-    elif article.find('Abstract') is not None:
-        abstract = stringify_children(article.find('Abstract')).strip() or ''
+            abstract = (
+                stringify_children(article.find("Abstract/AbstractText")).strip() or ""
+            )
+    elif article.find("Abstract") is not None:
+        abstract = stringify_children(article.find("Abstract")).strip() or ""
     else:
-        abstract = ''
+        abstract = ""
 
     authors_dict = parse_author_affiliation(medline)
     if not author_list:
-        affiliations = ';'.join([author.get('affiliation', '') 
-                                for author in authors_dict if author.get('affiliation', '') is not ''])
-        authors = ';'.join([author.get('firstname', '') + ' ' + author.get('lastname', '')
-                            for author in authors_dict])
+        affiliations = ";".join(
+            [
+                author.get("affiliation", "")
+                for author in authors_dict
+                if author.get("affiliation", "") is not ""
+            ]
+        )
+        authors = ";".join(
+            [
+                author.get("firstname", "") + " " + author.get("lastname", "")
+                for author in authors_dict
+            ]
+        )
     else:
         authors = authors_dict
-    journal = article.find('Journal')
-    journal_name = ' '.join(journal.xpath('Title/text()'))
+    journal = article.find("Journal")
+    journal_name = " ".join(journal.xpath("Title/text()"))
 
     pmid = parse_pmid(pubmed_article)
     doi = parse_doi(pubmed_article)
@@ -492,29 +520,34 @@ def parse_article_info(pubmed_article, year_info_only, nlm_category, author_list
     other_id_dict = parse_other_id(medline)
     journal_info_dict = parse_journal_info(medline)
     dict_out = {
-        'title': title,
-        'abstract': abstract,
-        'journal': journal_name,
-        'authors': authors,
-        'pubdate': pubdate,
-        'pmid': pmid,
-        'mesh_terms': mesh_terms,
-        'publication_types': publication_types,
-        'chemical_list': chemical_list,
-        'keywords': keywords,
-        'doi': doi,
-        'references': references,
-        'delete': False
+        "title": title,
+        "abstract": abstract,
+        "journal": journal_name,
+        "authors": authors,
+        "pubdate": pubdate,
+        "pmid": pmid,
+        "mesh_terms": mesh_terms,
+        "publication_types": publication_types,
+        "chemical_list": chemical_list,
+        "keywords": keywords,
+        "doi": doi,
+        "references": references,
+        "delete": False,
     }
     if not author_list:
-        dict_out.update({'affiliations': affiliations})
+        dict_out.update({"affiliations": affiliations})
     dict_out.update(other_id_dict)
     dict_out.update(journal_info_dict)
     return dict_out
 
 
-def parse_medline_xml(path, year_info_only=True, nlm_category=False, 
-                      author_list=False, reference_list=False):
+def parse_medline_xml(
+    path,
+    year_info_only=True,
+    nlm_category=False,
+    author_list=False,
+    reference_list=False,
+):
     """Parse XML file from Medline XML format available at
     ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/
 
@@ -550,33 +583,43 @@ def parse_medline_xml(path, year_info_only=True, nlm_category=False,
         added with no information other than the field `delete` being `True`
     """
     tree = read_xml(path)
-    medline_citations = tree.findall('//MedlineCitationSet/MedlineCitation')
+    medline_citations = tree.findall("//MedlineCitationSet/MedlineCitation")
     if len(medline_citations) == 0:
-        medline_citations = tree.findall('//PubmedArticle')
-    article_list = list(map(lambda m: parse_article_info(m, year_info_only, nlm_category, author_list, reference_list), medline_citations))
-    delete_citations = tree.findall('//DeleteCitation/PMID')
-    dict_delete = [{
-        'title': np.nan,
-        'abstract': np.nan,
-        'journal': np.nan,
-        'authors': np.nan,
-        'affiliations': np.nan,
-        'pubdate': np.nan,
-        'pmid': p.text.strip(),
-        'doi': np.nan,
-        'other_id': np.nan,
-        'pmc': np.nan,
-        'mesh_terms': np.nan,
-        'keywords': np.nan,
-        'publication_types': np.nan, 
-        'chemical_list': np.nan,
-        'delete': True,
-        'medline_ta': np.nan,
-        'nlm_unique_id': np.nan,
-        'issn_linking': np.nan,
-        'country': np.nan,
-        'references': np.nan
-    } for p in delete_citations]
+        medline_citations = tree.findall("//PubmedArticle")
+    article_list = list(
+        map(
+            lambda m: parse_article_info(
+                m, year_info_only, nlm_category, author_list, reference_list
+            ),
+            medline_citations,
+        )
+    )
+    delete_citations = tree.findall("//DeleteCitation/PMID")
+    dict_delete = [
+        {
+            "title": np.nan,
+            "abstract": np.nan,
+            "journal": np.nan,
+            "authors": np.nan,
+            "affiliations": np.nan,
+            "pubdate": np.nan,
+            "pmid": p.text.strip(),
+            "doi": np.nan,
+            "other_id": np.nan,
+            "pmc": np.nan,
+            "mesh_terms": np.nan,
+            "keywords": np.nan,
+            "publication_types": np.nan,
+            "chemical_list": np.nan,
+            "delete": True,
+            "medline_ta": np.nan,
+            "nlm_unique_id": np.nan,
+            "issn_linking": np.nan,
+            "country": np.nan,
+            "references": np.nan,
+        }
+        for p in delete_citations
+    ]
     article_list.extend(dict_delete)
     return article_list
 
@@ -596,9 +639,9 @@ def parse_medline_grant_id(path):
         will have the information returned by `parse_grant_id`
     """
     tree = read_xml(path)
-    medline_citations = tree.findall('//MedlineCitationSet/MedlineCitation')
+    medline_citations = tree.findall("//MedlineCitationSet/MedlineCitation")
     if len(medline_citations) == 0:
-        medline_citations = tree.findall('//MedlineCitation')
+        medline_citations = tree.findall("//MedlineCitation")
     grant_id_list = list(map(parse_grant_id, medline_citations))
-    grant_id_list = list(chain(*grant_id_list)) # flatten list
+    grant_id_list = list(chain(*grant_id_list))  # flatten list
     return grant_id_list

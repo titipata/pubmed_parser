@@ -1,9 +1,9 @@
 language: python
 env:
-    - PYTHON=3.5
-    - PYTHON=3.6
-    - PYTHON=3.7
-    - PYTHON=3.8
+  - PYTHON=3.5
+  - PYTHON=3.6
+  - PYTHON=3.7
+  - PYTHON=3.8
 
 miniconda:
   - wget -q http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
@@ -22,4 +22,4 @@ script:
   - py.test --cov=pubmed_parser tests/ --verbose
 
 after_success:
-    - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash)

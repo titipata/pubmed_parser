@@ -232,6 +232,8 @@ git clone https://github.com/titipata/pubmed_parser
 pip install ./pubmed_parser
 ```
 
+You can test your installation by running `py.test --cov=pubmed_parser tests/ --verbose`
+
 ## Example snippet to parse PubMed OA dataset
 
 An example usage is shown as follows
