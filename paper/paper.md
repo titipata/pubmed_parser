@@ -6,8 +6,6 @@ authors:
   name: Titipat Achakulvisut
 - affiliation: 2
   name: Daniel E. Acuna
-- affiliation: 3
-  name: Ted Cybulski
 - affiliation: 1
   name: Konrad Kording
 date: "15 December 2019"
@@ -24,8 +22,6 @@ affiliations:
   name: University of Pennsylvania
 - index: 2
   name: Syracuse University
-- index: 3
-  name: Northwestern University
 ---
 
 # Summary

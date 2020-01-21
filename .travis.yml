@@ -1,9 +1,12 @@
 language: python
 env:
-  - "3.5"
-  - "3.6"
-  - "3.7"
-  - "3.8"
+  - 3.5
+  - 3.6
+  - 3.7
+  - 3.8
+
+notifications:
+  email: false
 
 before_install:
   - python --version
@@ -16,4 +19,4 @@ script:
   - pytest --cov=pubmed_parser tests/ --verbose
 
 after_success:
-  - codecov
+  - bash <(curl -s https://codecov.io/bash)
