@@ -1,9 +1,0 @@
-# Site settings
-title: Pubmed Parser
-tag_text:
-description:
-
-# Build settings
-markdown: kramdown
-
-exclude: ["README.md"]
