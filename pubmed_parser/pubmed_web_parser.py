@@ -33,9 +33,8 @@ def load_xml(pmid, sleep=None):
 
 def parse_pubmed_web_tree(tree):
     """
-    Giving tree, return simple parsed information from the tree
+    Giving a tree Element, return simple parsed information from the tree
     """
-
     if len(tree.xpath("//articletitle")) != 0:
         title = " ".join([title.text for title in tree.xpath("//articletitle")])
     elif len(tree.xpath("//booktitle")) != 0:
@@ -128,8 +127,18 @@ def parse_pubmed_web_tree(tree):
 
 def parse_xml_web(pmid, sleep=None, save_xml=False):
     """
-    Give pmid, load and parse xml from Pubmed eutils
-    if save_xml is True, save xml output in dictionary
+    Give an input PMID, load and parse XML using PubMed eutils
+
+    Parameters
+    ----------
+    pmid: str
+        A string of PMID which you want to parse from eutils    
+    sleep: int, default None
+        An integer of how long you want to wait after parsing one PMID from eutils
+    save_xml:
+        if it is True, save an XML output as a string in the key ``xml`` in an output dictionary.
+        It is good to check the information in 
+        if it is False, we won't save a full XML to an output
     """
     tree = load_xml(pmid, sleep=sleep)
     dict_out = parse_pubmed_web_tree(tree)
@@ -160,8 +169,11 @@ def extract_pmc(citation):
 
 def convert_document_id(doc_id, id_type="PMC"):
     """
-    Convert document id to dictionary of other id
-    see: http://www.ncbi.nlm.nih.gov/pmc/tools/id-converter-api/ for more info
+    Convert a given document id to dictionary of other id.
+    Please see http://www.ncbi.nlm.nih.gov/pmc/tools/id-converter-api/ for more info
+
+    doc_id
+
     """
     doc_id = str(doc_id)
     if id_type == "PMC":
@@ -198,18 +210,20 @@ def parse_citation_web(doc_id, id_type="PMC"):
 
     Parameters
     ----------
-    doc_id: str or int, document id
-    id_type: str from ['PMC', 'PMID', 'DOI', 'OTHER']
+    doc_id: (str, int)
+        document id
+    id_type: str,
+        corresponding type of doc_id. This can be a choice from this list ['PMC', 'PMID', 'DOI', 'OTHER']
 
     Returns
     -------
-    dict_out: dict, contains following keys
-        pmc: Pubmed Central ID
-        pmid: Pubmed ID
-        doi: DOI of the article
-        n_citations: number of citations for given articles
-        pmc_cited: list of PMCs that cite the given PMC
+    dict_out: dict,
+        output is a dictionary contains following keys
+        'pmc' (Pubmed Central ID), 'pmid' (Pubmed ID), 
+        'doi' (DOI of an article),  'n_citations' (number of citations for given articles),
+        'pmc_cited' (list of PMCs that cite the given PMC)
     """
+    assert id_type in ["PMC", "PMID", "DOI", "OTHER"]
 
     doc_id_dict = convert_document_id(doc_id, id_type=id_type)
     pmc = doc_id_dict["pmc"]

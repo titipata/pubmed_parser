@@ -34,7 +34,7 @@ def read_xml(path, nxml=False):
             )
             raise
     if ".nxml" in path or nxml:
-        remove_namespace(tree)  # strip namespace for
+        remove_namespace(tree)  # strip namespace when reading an XML file
     return tree
 
 

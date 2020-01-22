@@ -1,3 +1,6 @@
+"""
+Parsers for MEDLINE XML
+"""
 import re
 import numpy as np
 from itertools import chain
@@ -8,17 +11,18 @@ __all__ = ["parse_medline_xml", "parse_medline_grant_id"]
 
 
 def parse_pmid(pubmed_article):
-    """Parse PMID from a given Pubmed Article tree
+    """
+    A function to parse PMID from a given Pubmed Article tree
 
     Parameters
     ----------
-    medline: Element
+    pubmed_article: Element
         The lxml node pointing to a medline document
 
     Returns
     -------
     pmid: str
-        String version of the PubMed ID
+        A string of PubMed ID parsed from a given
     """
     medline = pubmed_article.find("MedlineCitation")
     if medline.find("PMID") is not None:
@@ -35,16 +39,18 @@ def parse_pmid(pubmed_article):
 
 
 def parse_doi(pubmed_article):
-    """Parse DOI from a given Pubmed Article tree
+    """
+    A function to parse DOI from a given Pubmed Article tree
 
     Parameters
     ----------
-    medline: Element
+    pubmed_article: Element
         The lxml node pointing to a medline document
 
     Returns
     -------
-    doi: str, DOI from a given lxml node
+    doi: str
+        A string of DOI parsed from a given ``pubmed_article``
     """
     medline = pubmed_article.find("MedlineCitation")
     article = medline.find("Article")
@@ -68,7 +74,8 @@ def parse_doi(pubmed_article):
 
 
 def parse_mesh_terms(medline):
-    """Parse MESH terms from article
+    """
+    A function to parse MESH terms from article
 
     Parameters
     ----------
@@ -78,7 +85,7 @@ def parse_mesh_terms(medline):
     Returns
     -------
     mesh_terms: str
-        String of semi-colon spearated MeSH (Medical Subject Headings)
+        String of semi-colon ``;`` spearated MeSH (Medical Subject Headings)
         terms contained in the document.
     """
     if medline.find("MeshHeadingList") is not None:
@@ -409,7 +416,20 @@ def date_extractor(journal, year_info_only):
 def parse_references(pubmed_article, reference_list):
     """Parse references from Pubmed Article
 
-    if reference_list is True, return list, if False return string
+    Parameter
+    ---------
+    pubmed_article: Element
+        The lxml element pointing to a medline document
+
+    reference_list: bool 
+        if it is True, return a list of dictionary
+        if it is False return a string of PMIDs seprated by semicolon ';'
+
+    Return
+    ------
+    references: (list, str)
+        if 'reference_list' is set to True, return a list of dictionary
+        if 'reference_list' is set to False return a string of PMIDs seprated by semicolon ';'
     """
     references = []
     reference_list_data = pubmed_article.find("PubmedData/ReferenceList")
@@ -442,14 +462,16 @@ def parse_article_info(
 
     Parameters
     ----------
-    medline: Element
-        The lxml node pointing to a medline document
+    pubmed_article: Element
+        The lxml element pointing to a medline document
     year_info_only: bool
-        see: date_extractor()
+        see more details in date_extractor()
     nlm_category: bool
-        see: parse_medline_xml()
-    author_list: bool, if True, return output as list, else
-    reference_list: bool, if True, parse reference list as an output
+        see more details in parse_medline_xml()
+    author_list: bool
+        if True, return output as list, else
+    reference_list: bool
+        if True, parse reference list as an output
 
     Returns
     -------
@@ -564,22 +586,25 @@ def parse_medline_xml(
         a date of the form 'YYYY-MM-DD' will be returned.
         NOTE: the resolution of PubDate information in the Medline(R) database varies
         between articles.
-        Defaults to True.
-    nlm_category: bool, default False
+        default: True
+    nlm_category: bool
         if True, this will parse structured abstract where each section if original Label
         if False, this will parse structured abstract where each section will be assigned to
         NLM category of each sections
-    author_list: bool, default False, 
+        default: False
+    author_list: bool 
         if True, return parsed author output as a list of authors
-        if False, return parsed author output as a string of authors concatenated with ;
-    reference_list: bool, default False
+        if False, return parsed author output as a string of authors concatenated with ``;``
+        default: False
+    reference_list: bool
         if True, parse reference list as an output
         if False, return string of PMIDs concatenated with ;
+        default: False
 
-    Returns
-    -------
+    Return
+    ------
     article_list: list
-        Dictionary containing information about articles in NLM format (see
+        A list of dictionary containing information about articles in NLM format (see
         `parse_article_info`). Articles that have been deleted will be
         added with no information other than the field `delete` being `True`
     """
@@ -633,11 +658,11 @@ def parse_medline_grant_id(path):
     path: str
         The path to the XML with the information
 
-    Returns
-    -------
+    Return
+    ------
     grant_id_list: list
-        List of dictionaries for all files in `path`. Each dictionary
-        will have the information returned by `parse_grant_id`
+        A list of dictionaries contains the grants in a given path. Each dictionary
+        has the keys of 'pmid', 'grant_id', 'grant_acronym', 'country', and 'agency'
     """
     tree = read_xml(path)
     medline_citations = tree.findall("//MedlineCitationSet/MedlineCitation")

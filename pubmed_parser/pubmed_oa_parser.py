@@ -1,3 +1,6 @@
+"""
+Parsers for PubMed XML
+"""
 import os
 from lxml import etree
 from itertools import chain
@@ -40,10 +43,11 @@ def list_xml_path(path_dir):
 
 def zip_author(author):
     """
-    Give a list of author and its affiliation keys
+    Give a list of author and its affiliation keys 
     in this following format
-    [first_name, last_name, [key1, key2]]
-    return [[first_name, last_name, key1], [first_name, last_name, key2]] instead
+        [first_name, last_name, [key1, key2]]
+    and return the output in 
+        [[first_name, last_name, key1], [first_name, last_name, key2]] instead
     """
     author_zipped = list(zip([[author[0], author[1]]] * len(author[-1]), author[-1]))
     return list(map(lambda x: x[0] + [x[-1]], author_zipped))
@@ -79,8 +83,30 @@ def parse_article_meta(tree):
 
 def parse_pubmed_xml(path, include_path=False, nxml=False):
     """
-    Given single xml path, extract information from xml file
-    and return parsed xml file in dictionary format.
+    Given an input XML path to PubMed XML file, extract information and metadata 
+    from a given XML file and return parsed XML file in dictionary format.
+    You can check ``ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/`` to list of available files to download 
+
+    Parameters
+    ----------
+    path: str
+        A path to a given PumMed XML file
+    include_path: bool
+        if True, include a key 'path_to_file' in an output dictionary
+        default: False
+    nxml: bool
+        if True, this will strip a namespace of an XML after reading a file
+        see https://stackoverflow.com/questions/18159221/remove-namespace-and-prefix-from-xml-in-python-using-lxml to 
+        default: False
+
+    Return
+    ------
+    dict_out: dict
+        A dictionary contains a following keys from a parsed XML path
+        'full_title', 'abstract', 'journal', 'pmid', 'pmc', 'doi',
+        'publisher_id', 'author_list', 'affiliation_list', 'publication_year',
+        'publication_date', 'subjects'
+    }
     """
     tree = read_xml(path, nxml)
 
@@ -187,6 +213,16 @@ def parse_pubmed_references(path):
     """
     Given path to xml file, parse references articles
     to list of dictionary
+
+    Parameters
+    ----------
+    path: str
+        A string to an XML path
+
+    Return
+    ------
+    dict_refs: list
+        A list contains dictionary for references made in a given file
     """
     tree = read_xml(path)
     dict_article_meta = parse_article_meta(tree)
@@ -309,8 +345,20 @@ def parse_pubmed_paragraph(path, all_paragraph=False):
 
 def parse_pubmed_caption(path):
     """
-    Given single xml path, extract figure caption and
+    Given single xml path, extract figure caption and 
     reference id back to that figure
+
+    Parameters
+    ----------
+    path: str
+        A string to an PubMed OA XML path
+
+    Return
+    ------
+    dict_captions: list
+        A list contains all dictionary of figure ID ('fig_id') with its metadata.
+        Metadata includes 'pmid', 'pmc', 'fig_caption' (figure's caption), 
+        'graphic_ref' (a file name corresponding to a figure file in OA bulk download)
     """
     tree = read_xml(path)
     dict_article_meta = parse_article_meta(tree)
@@ -344,8 +392,7 @@ def parse_pubmed_caption(path):
 
 def table_to_df(table_text):
     """
-    Function to transform plain xml text to list of row values and
-    columns
+    Function to transform an input table XML text to list of row values and columns
     """
     table_tree = etree.fromstring(table_text)
     columns = []
@@ -373,6 +420,21 @@ def table_to_df(table_text):
 def parse_pubmed_table(path, return_xml=True):
     """
     Parse table from given Pubmed Open-Access XML file
+
+    Parameters
+    ----------
+    path: str
+        A string to an PubMed OA XML path
+    return_xml: bool
+        if True, a dictionary (in an output list) 
+        will have a key 'table_xml' which is an XML string of a parsed table
+        default: True
+
+    Return
+    ------
+    table_dicts: list
+        A list contains all dictionary of table with its metadata.
+        Metadata includes 'pmid', 'pmc', 'label' (in a full text), 'caption'
     """
     tree = read_xml(path)
     dict_article_meta = parse_article_meta(tree)

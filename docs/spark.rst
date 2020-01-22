@@ -36,3 +36,5 @@ In Spark 2.1, `spark` in this case can use as `sparkContext` and has access to `
         appName("testing").\
         config(conf=conf).\
         getOrCreate()
+
+We will update these documentation soon on how to incorporate Pubmed Parser with `dask <https://dask.org/>`_.

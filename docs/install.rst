@@ -1,7 +1,7 @@
 Installation
 ============
 
-Install directly from the repository
+To install ``pubmed_parser``, you can install directly from the repository as follows
 
 .. code-block:: bash
     
