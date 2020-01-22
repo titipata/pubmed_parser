@@ -36,7 +36,7 @@ def test_parse_pubmed_references():
     references = pp.parse_pubmed_references(os.path.join("data", "pone.0046493.nxml"))
     assert isinstance(references, list)
     assert isinstance(references[0], dict)
-    assert len(references) == 29, "Expected references to have length of 29"
+    assert len(references) == 58, "Expected references to have length of 29"
 
 
 def test_parse_pubmed_():

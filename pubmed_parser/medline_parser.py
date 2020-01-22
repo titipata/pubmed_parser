@@ -251,12 +251,12 @@ def parse_journal_info(medline):
     return dict_info
 
 
-def parse_grant_id(medline):
+def parse_grant_id(pubmed_article):
     """Parse Grant ID and related information from a given MEDLINE tree
 
     Parameters
     ----------
-    medline: Element
+    pubmed_article: Element
         The lxml node pointing to a medline document
 
     Returns
@@ -266,8 +266,9 @@ def parse_grant_id(medline):
         entry in the dictionary contains the PubMed ID,
         grant ID, grant acronym, country, and agency.
     """
+    medline = pubmed_article.find("MedlineCitation")
     article = medline.find("Article")
-    pmid = parse_pmid(medline)
+    pmid = parse_pmid(pubmed_article)
 
     grants = article.find("GrantList")
     grant_list = list()
@@ -641,7 +642,7 @@ def parse_medline_grant_id(path):
     tree = read_xml(path)
     medline_citations = tree.findall("//MedlineCitationSet/MedlineCitation")
     if len(medline_citations) == 0:
-        medline_citations = tree.findall("//MedlineCitation")
+        medline_citations = tree.findall("//PubmedArticle")
     grant_id_list = list(map(parse_grant_id, medline_citations))
     grant_id_list = list(chain(*grant_id_list))  # flatten list
     return grant_id_list
