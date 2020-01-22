@@ -6,7 +6,7 @@ import pubmed_parser as pp
 
 def test_parse_pubmed_xml():
     """
-    Test parse captions and figure ID from an XML file
+    Test parsing metadata from a PubMed XML file
     """
     parsed_xml = pp.parse_pubmed_xml(os.path.join("data", "pone.0046493.nxml"))
     assert isinstance(parsed_xml, dict)
@@ -16,7 +16,7 @@ def test_parse_pubmed_xml():
     assert parsed_xml.get("doi") == "10.1371/journal.pone.0046493"
 
 
-def test_parse_pubmed_caption():
+def test_parse_pubmed_paragraph():
     """
     Test parsing captions and figure ID from a PubMed XML file
     """
@@ -39,9 +39,9 @@ def test_parse_pubmed_references():
     assert len(references) == 58, "Expected references to have length of 29"
 
 
-def test_parse_pubmed_():
+def test_parse_pubmed_caption():
     """
-    Test parsing figures and captions from a PubMed XML file
+    Test parsing captions and figure ID from a PubMed XML file
     """
     captions = pp.parse_pubmed_caption(os.path.join("data", "pone.0046493.nxml"))
     assert isinstance(captions, list)
