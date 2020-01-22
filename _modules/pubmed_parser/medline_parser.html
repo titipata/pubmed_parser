@@ -1,0 +1,842 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pubmed_parser.medline_parser &mdash; Pubmed Parser 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Pubmed Parser
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../spark.html">Setting up PySpark with Pubmed Parser</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Pubmed Parser</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pubmed_parser.medline_parser</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pubmed_parser.medline_parser</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">chain</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">pubmed_parser.utils</span> <span class="k">import</span> <span class="n">read_xml</span><span class="p">,</span> <span class="n">stringify_children</span><span class="p">,</span> <span class="n">month_or_day_formater</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;parse_medline_xml&quot;</span><span class="p">,</span> <span class="s2">&quot;parse_medline_grant_id&quot;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">parse_pmid</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse PMID from a given Pubmed Article tree</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    medline: Element</span>
+<span class="sd">        The lxml node pointing to a medline document</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pmid: str</span>
+<span class="sd">        String version of the PubMed ID</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">medline</span> <span class="o">=</span> <span class="n">pubmed_article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;MedlineCitation&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;PMID&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pmid</span> <span class="o">=</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;PMID&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">return</span> <span class="n">pmid</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">article_ids</span> <span class="o">=</span> <span class="n">pubmed_article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;PubmedData/ArticleIdList&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">article_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pmid</span> <span class="o">=</span> <span class="n">article_ids</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ArticleId[@IdType=&quot;pmid&quot;]&#39;</span><span class="p">)</span>
+            <span class="n">pmid</span> <span class="o">=</span> <span class="n">pmid</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">pmid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pmid</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">pmid</span>
+
+
+<span class="k">def</span> <span class="nf">parse_doi</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse DOI from a given Pubmed Article tree</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    medline: Element</span>
+<span class="sd">        The lxml node pointing to a medline document</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    doi: str, DOI from a given lxml node</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">medline</span> <span class="o">=</span> <span class="n">pubmed_article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;MedlineCitation&quot;</span><span class="p">)</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Article&quot;</span><span class="p">)</span>
+    <span class="n">elocation_ids</span> <span class="o">=</span> <span class="n">article</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;ELocationID&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elocation_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elocation_ids</span><span class="p">:</span>
+            <span class="n">doi</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;EIdType&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;doi&quot;</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">article_ids</span> <span class="o">=</span> <span class="n">pubmed_article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;PubmedData/ArticleIdList&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">article_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">doi</span> <span class="o">=</span> <span class="n">article_ids</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ArticleId[@IdType=&quot;doi&quot;]&#39;</span><span class="p">)</span>
+            <span class="n">doi</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">(</span><span class="n">doi</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">doi</span><span class="o">.</span><span class="n">text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">doi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">doi</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">doi</span>
+
+
+<span class="k">def</span> <span class="nf">parse_mesh_terms</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse MESH terms from article</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    medline: Element</span>
+<span class="sd">        The lxml node pointing to a medline document</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mesh_terms: str</span>
+<span class="sd">        String of semi-colon spearated MeSH (Medical Subject Headings)</span>
+<span class="sd">        terms contained in the document.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;MeshHeadingList&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mesh</span> <span class="o">=</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;MeshHeadingList&quot;</span><span class="p">)</span>
+        <span class="n">mesh_terms_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">m</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;DescriptorName&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;UI&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
+            <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;DescriptorName&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mesh</span><span class="o">.</span><span class="n">getchildren</span><span class="p">()</span>
+        <span class="p">]</span>
+        <span class="n">mesh_terms</span> <span class="o">=</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mesh_terms_list</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mesh_terms</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">mesh_terms</span>
+
+
+<span class="k">def</span> <span class="nf">parse_publication_types</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse Publication types from article</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    medline: Element</span>
+<span class="sd">        The lxml node pointing to a medline document</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    publication_types: str</span>
+<span class="sd">        String of semi-colon spearated publication types</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">publication_types</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">publication_type_list</span> <span class="o">=</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Article/PublicationTypeList&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">publication_type_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">publication_type_list</span> <span class="o">=</span> <span class="n">publication_type_list</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;PublicationType&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">publication_type</span> <span class="ow">in</span> <span class="n">publication_type_list</span><span class="p">:</span>
+            <span class="n">publication_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">publication_type</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;UI&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
+                <span class="o">+</span> <span class="p">(</span><span class="n">publication_type</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+    <span class="n">publication_types</span> <span class="o">=</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">publication_types</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">publication_types</span>
+
+
+<span class="k">def</span> <span class="nf">parse_keywords</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse keywords from article, separated by ;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    medline: Element</span>
+<span class="sd">        The lxml node pointing to a medline document</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    keywords: str</span>
+<span class="sd">        String of concatenated keywords.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">keyword_list</span> <span class="o">=</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;KeywordList&quot;</span><span class="p">)</span>
+    <span class="n">keywords</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">keyword_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keyword_list</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;Keyword&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">keywords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">keywords</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">keywords</span>
+
+
+<span class="k">def</span> <span class="nf">parse_chemical_list</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse chemical list from article</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    medline: Element</span>
+<span class="sd">        The lxml node pointing to a medline document</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    chemical_list: str</span>
+<span class="sd">        String of semi-colon spearated chemical list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chemical_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">chemicals</span> <span class="o">=</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;ChemicalList&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">chemicals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">chemical</span> <span class="ow">in</span> <span class="n">chemicals</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;Chemical&quot;</span><span class="p">):</span>
+            <span class="n">substance_name</span> <span class="o">=</span> <span class="n">chemical</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;NameOfSubstance&quot;</span><span class="p">)</span>
+            <span class="n">chemical_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">substance_name</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;UI&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
+                <span class="o">+</span> <span class="p">(</span><span class="n">substance_name</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+    <span class="n">chemical_list</span> <span class="o">=</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chemical_list</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">chemical_list</span>
+
+
+<span class="k">def</span> <span class="nf">parse_other_id</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse OtherID from article, each separated by ;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    medline: Element</span>
+<span class="sd">        The lxml node pointing to a medline document</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    other_id: str</span>
+<span class="sd">        String of semi-colon separated Other IDs found in the document</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pmc</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">other_id</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">oids</span> <span class="o">=</span> <span class="n">medline</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;OtherID&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">oids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">oid</span> <span class="ow">in</span> <span class="n">oids</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;PMC&quot;</span> <span class="ow">in</span> <span class="n">oid</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+                <span class="n">pmc</span> <span class="o">=</span> <span class="n">oid</span><span class="o">.</span><span class="n">text</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">other_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oid</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">other_id</span> <span class="o">=</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">other_id</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">other_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;pmc&quot;</span><span class="p">:</span> <span class="n">pmc</span><span class="p">,</span> <span class="s2">&quot;other_id&quot;</span><span class="p">:</span> <span class="n">other_id</span><span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">parse_journal_info</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse MEDLINE journal information</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    medline: Element</span>
+<span class="sd">        The lxml node pointing to a medline document</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict_out: dict</span>
+<span class="sd">        dictionary with keys including `medline_ta`, `nlm_unique_id`,</span>
+<span class="sd">        `issn_linking` and `country`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">journal_info</span> <span class="o">=</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;MedlineJournalInfo&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">journal_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">journal_info</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;MedlineTA&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">medline_ta</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">journal_info</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;MedlineTA&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span>  <span class="c1"># equivalent to Journal name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">medline_ta</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">journal_info</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;NlmUniqueID&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nlm_unique_id</span> <span class="o">=</span> <span class="n">journal_info</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;NlmUniqueID&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nlm_unique_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">journal_info</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;ISSNLinking&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">issn_linking</span> <span class="o">=</span> <span class="n">journal_info</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;ISSNLinking&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">issn_linking</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">journal_info</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Country&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">country</span> <span class="o">=</span> <span class="n">journal_info</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Country&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">country</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">medline_ta</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">nlm_unique_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">issn_linking</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">country</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">dict_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;medline_ta&quot;</span><span class="p">:</span> <span class="n">medline_ta</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+        <span class="s2">&quot;nlm_unique_id&quot;</span><span class="p">:</span> <span class="n">nlm_unique_id</span><span class="p">,</span>
+        <span class="s2">&quot;issn_linking&quot;</span><span class="p">:</span> <span class="n">issn_linking</span><span class="p">,</span>
+        <span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="n">country</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">dict_info</span>
+
+
+<span class="k">def</span> <span class="nf">parse_grant_id</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse Grant ID and related information from a given MEDLINE tree</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pubmed_article: Element</span>
+<span class="sd">        The lxml node pointing to a medline document</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    grant_list: list</span>
+<span class="sd">        List of grants acknowledged in the publications. Each</span>
+<span class="sd">        entry in the dictionary contains the PubMed ID,</span>
+<span class="sd">        grant ID, grant acronym, country, and agency.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">medline</span> <span class="o">=</span> <span class="n">pubmed_article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;MedlineCitation&quot;</span><span class="p">)</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Article&quot;</span><span class="p">)</span>
+    <span class="n">pmid</span> <span class="o">=</span> <span class="n">parse_pmid</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">)</span>
+
+    <span class="n">grants</span> <span class="o">=</span> <span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;GrantList&quot;</span><span class="p">)</span>
+    <span class="n">grant_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">grants</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">grants_list</span> <span class="o">=</span> <span class="n">grants</span><span class="o">.</span><span class="n">getchildren</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">grant</span> <span class="ow">in</span> <span class="n">grants_list</span><span class="p">:</span>
+            <span class="n">grant_country</span> <span class="o">=</span> <span class="n">grant</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Country&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">grant_country</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">country</span> <span class="o">=</span> <span class="n">grant_country</span><span class="o">.</span><span class="n">text</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">country</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">grant_agency</span> <span class="o">=</span> <span class="n">grant</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Agency&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">grant_agency</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">agency</span> <span class="o">=</span> <span class="n">grant_agency</span><span class="o">.</span><span class="n">text</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">agency</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">grant_acronym</span> <span class="o">=</span> <span class="n">grant</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Acronym&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">grant_acronym</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">acronym</span> <span class="o">=</span> <span class="n">grant_acronym</span><span class="o">.</span><span class="n">text</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">acronym</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">grant_id</span> <span class="o">=</span> <span class="n">grant</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;GrantID&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">grant_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">gid</span> <span class="o">=</span> <span class="n">grant_id</span><span class="o">.</span><span class="n">text</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">gid</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">grant_dict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">pmid</span><span class="p">,</span>
+                <span class="s2">&quot;grant_id&quot;</span><span class="p">:</span> <span class="n">gid</span><span class="p">,</span>
+                <span class="s2">&quot;grant_acronym&quot;</span><span class="p">:</span> <span class="n">acronym</span><span class="p">,</span>
+                <span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="n">country</span><span class="p">,</span>
+                <span class="s2">&quot;agency&quot;</span><span class="p">:</span> <span class="n">agency</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">grant_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grant_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">grant_list</span>
+
+
+<span class="k">def</span> <span class="nf">parse_author_affiliation</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse MEDLINE authors and their corresponding affiliations</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    medline: Element</span>
+<span class="sd">        The lxml node pointing to a medline document</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    authors: list</span>
+<span class="sd">        List of authors and their corresponding affiliation in dictionary format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">authors</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Article&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">article</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">author_list</span> <span class="o">=</span> <span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;AuthorList&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">author_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">authors_list</span> <span class="o">=</span> <span class="n">author_list</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;Author&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">author</span> <span class="ow">in</span> <span class="n">authors_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;ForeName&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">forename</span> <span class="o">=</span> <span class="p">(</span><span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;ForeName&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">forename</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">if</span> <span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Initials&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">firstname</span> <span class="o">=</span> <span class="p">(</span><span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Initials&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">firstname</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">if</span> <span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;LastName&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">lastname</span> <span class="o">=</span> <span class="p">(</span><span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;LastName&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lastname</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">if</span> <span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;AffiliationInfo/Affiliation&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">affiliation</span> <span class="o">=</span> <span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;AffiliationInfo/Affiliation&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                    <span class="n">affiliation</span> <span class="o">=</span> <span class="n">affiliation</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                        <span class="s2">&quot;For a full list of the authors&#39; affiliations please see the Acknowledgements section.&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">affiliation</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">authors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;forename&quot;</span><span class="p">:</span> <span class="n">forename</span><span class="p">,</span>
+                        <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="n">firstname</span><span class="p">,</span>
+                        <span class="s2">&quot;lastname&quot;</span><span class="p">:</span> <span class="n">lastname</span><span class="p">,</span>
+                        <span class="s2">&quot;affiliation&quot;</span><span class="p">:</span> <span class="n">affiliation</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+    <span class="k">return</span> <span class="n">authors</span>
+
+
+<span class="k">def</span> <span class="nf">date_extractor</span><span class="p">(</span><span class="n">journal</span><span class="p">,</span> <span class="n">year_info_only</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extract PubDate information from an Article in the Medline dataset.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    journal: Element</span>
+<span class="sd">        The &#39;Journal&#39; field in the Medline dataset</span>
+<span class="sd">    year_info_only: bool</span>
+<span class="sd">        if True, this tool will only attempt to extract year information from PubDate.</span>
+<span class="sd">        if False, an attempt will be made to harvest all available PubDate information.</span>
+<span class="sd">        If only year and month information is available, this will yield a date of</span>
+<span class="sd">        the form &#39;YYYY-MM&#39;. If year, month and day information is available,</span>
+<span class="sd">        a date of the form &#39;YYYY-MM-DD&#39; will be returned.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    PubDate: str</span>
+<span class="sd">        PubDate extracted from an article.</span>
+<span class="sd">        Note: If year_info_only is False and a month could not be</span>
+<span class="sd">        extracted this falls back to year automatically.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">day</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">month</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">issue</span> <span class="o">=</span> <span class="n">journal</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;JournalIssue&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">issue_date</span> <span class="o">=</span> <span class="n">issue</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;PubDate&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">issue_date</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Year&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="n">issue_date</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Year&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">year_info_only</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">issue_date</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Month&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">month</span> <span class="o">=</span> <span class="n">month_or_day_formater</span><span class="p">(</span><span class="n">issue_date</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Month&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">issue_date</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Day&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">day</span> <span class="o">=</span> <span class="n">month_or_day_formater</span><span class="p">(</span><span class="n">issue_date</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Day&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">issue_date</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;MedlineDate&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">year_text</span> <span class="o">=</span> <span class="n">issue_date</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;MedlineDate&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d</span><span class="si">{4}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">year_text</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">year</span> <span class="o">=</span> <span class="n">year</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">year</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">year_info_only</span> <span class="ow">or</span> <span class="n">month</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">year</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">]))</span>
+
+
+<span class="k">def</span> <span class="nf">parse_references</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">,</span> <span class="n">reference_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse references from Pubmed Article</span>
+
+<span class="sd">    if reference_list is True, return list, if False return string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">references</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">reference_list_data</span> <span class="o">=</span> <span class="n">pubmed_article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;PubmedData/ReferenceList&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">reference_list_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">reference_list_data</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;Reference&quot;</span><span class="p">):</span>
+            <span class="n">citation</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Citation&quot;</span><span class="p">)</span>
+            <span class="n">citation</span> <span class="o">=</span> <span class="n">citation</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">citation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">article_ids</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;ArticleIdList&quot;</span><span class="p">)</span>
+            <span class="n">pmid</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">article_ids</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ArticleId[@IdType=&quot;pubmed&quot;]&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">article_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="n">pmid</span> <span class="o">=</span> <span class="n">pmid</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">pmid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">references</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;citation&quot;</span><span class="p">:</span> <span class="n">citation</span><span class="p">,</span> <span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">pmid</span><span class="p">})</span>
+
+    <span class="k">if</span> <span class="n">reference_list</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">references</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">references</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">ref</span><span class="p">[</span><span class="s2">&quot;pmid&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">references</span> <span class="k">if</span> <span class="n">ref</span><span class="p">[</span><span class="s2">&quot;pmid&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">references</span>
+
+
+<span class="k">def</span> <span class="nf">parse_article_info</span><span class="p">(</span>
+    <span class="n">pubmed_article</span><span class="p">,</span> <span class="n">year_info_only</span><span class="p">,</span> <span class="n">nlm_category</span><span class="p">,</span> <span class="n">author_list</span><span class="p">,</span> <span class="n">reference_list</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse article nodes from Medline dataset</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    medline: Element</span>
+<span class="sd">        The lxml node pointing to a medline document</span>
+<span class="sd">    year_info_only: bool</span>
+<span class="sd">        see: date_extractor()</span>
+<span class="sd">    nlm_category: bool</span>
+<span class="sd">        see: parse_medline_xml()</span>
+<span class="sd">    author_list: bool, if True, return output as list, else</span>
+<span class="sd">    reference_list: bool, if True, parse reference list as an output</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    article: dict</span>
+<span class="sd">        Dictionary containing information about the article, including</span>
+<span class="sd">        `title`, `abstract`, `journal`, `authors`, `affiliations`, `pubdate`,</span>
+<span class="sd">        `pmid`, `other_id`, `mesh_terms`, and `keywords`. The field</span>
+<span class="sd">        `delete` is always `False` because this function parses</span>
+<span class="sd">        articles that by definition are not deleted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">medline</span> <span class="o">=</span> <span class="n">pubmed_article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;MedlineCitation&quot;</span><span class="p">)</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Article&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;ArticleTitle&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">stringify_children</span><span class="p">(</span><span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;ArticleTitle&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;NlmCategory&quot;</span> <span class="k">if</span> <span class="n">nlm_category</span> <span class="k">else</span> <span class="s2">&quot;Label&quot;</span>
+    <span class="k">if</span> <span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Abstract/AbstractText&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># parsing structured abstract</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">article</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;Abstract/AbstractText&quot;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">abstract_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">abstract</span> <span class="ow">in</span> <span class="n">article</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;Abstract/AbstractText&quot;</span><span class="p">):</span>
+                <span class="n">section</span> <span class="o">=</span> <span class="n">abstract</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">section</span> <span class="o">!=</span> <span class="s2">&quot;UNASSIGNED&quot;</span><span class="p">:</span>
+                    <span class="n">abstract_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">abstract_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">abstract</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+                <span class="n">section_text</span> <span class="o">=</span> <span class="n">stringify_children</span><span class="p">(</span><span class="n">abstract</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">abstract_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">section_text</span><span class="p">)</span>
+            <span class="n">abstract</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">abstract_list</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">abstract</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">stringify_children</span><span class="p">(</span><span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Abstract/AbstractText&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Abstract&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">abstract</span> <span class="o">=</span> <span class="n">stringify_children</span><span class="p">(</span><span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Abstract&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">abstract</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">authors_dict</span> <span class="o">=</span> <span class="n">parse_author_affiliation</span><span class="p">(</span><span class="n">medline</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">author_list</span><span class="p">:</span>
+        <span class="n">affiliations</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">author</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;affiliation&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">author</span> <span class="ow">in</span> <span class="n">authors_dict</span>
+                <span class="k">if</span> <span class="n">author</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;affiliation&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">authors</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">author</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;firstname&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">author</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lastname&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">author</span> <span class="ow">in</span> <span class="n">authors_dict</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">authors</span> <span class="o">=</span> <span class="n">authors_dict</span>
+    <span class="n">journal</span> <span class="o">=</span> <span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Journal&quot;</span><span class="p">)</span>
+    <span class="n">journal_name</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">journal</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;Title/text()&quot;</span><span class="p">))</span>
+
+    <span class="n">pmid</span> <span class="o">=</span> <span class="n">parse_pmid</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">)</span>
+    <span class="n">doi</span> <span class="o">=</span> <span class="n">parse_doi</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">)</span>
+    <span class="n">references</span> <span class="o">=</span> <span class="n">parse_references</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">,</span> <span class="n">reference_list</span><span class="p">)</span>
+    <span class="n">pubdate</span> <span class="o">=</span> <span class="n">date_extractor</span><span class="p">(</span><span class="n">journal</span><span class="p">,</span> <span class="n">year_info_only</span><span class="p">)</span>
+    <span class="n">mesh_terms</span> <span class="o">=</span> <span class="n">parse_mesh_terms</span><span class="p">(</span><span class="n">medline</span><span class="p">)</span>
+    <span class="n">publication_types</span> <span class="o">=</span> <span class="n">parse_publication_types</span><span class="p">(</span><span class="n">medline</span><span class="p">)</span>
+    <span class="n">chemical_list</span> <span class="o">=</span> <span class="n">parse_chemical_list</span><span class="p">(</span><span class="n">medline</span><span class="p">)</span>
+    <span class="n">keywords</span> <span class="o">=</span> <span class="n">parse_keywords</span><span class="p">(</span><span class="n">medline</span><span class="p">)</span>
+    <span class="n">other_id_dict</span> <span class="o">=</span> <span class="n">parse_other_id</span><span class="p">(</span><span class="n">medline</span><span class="p">)</span>
+    <span class="n">journal_info_dict</span> <span class="o">=</span> <span class="n">parse_journal_info</span><span class="p">(</span><span class="n">medline</span><span class="p">)</span>
+    <span class="n">dict_out</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+        <span class="s2">&quot;abstract&quot;</span><span class="p">:</span> <span class="n">abstract</span><span class="p">,</span>
+        <span class="s2">&quot;journal&quot;</span><span class="p">:</span> <span class="n">journal_name</span><span class="p">,</span>
+        <span class="s2">&quot;authors&quot;</span><span class="p">:</span> <span class="n">authors</span><span class="p">,</span>
+        <span class="s2">&quot;pubdate&quot;</span><span class="p">:</span> <span class="n">pubdate</span><span class="p">,</span>
+        <span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">pmid</span><span class="p">,</span>
+        <span class="s2">&quot;mesh_terms&quot;</span><span class="p">:</span> <span class="n">mesh_terms</span><span class="p">,</span>
+        <span class="s2">&quot;publication_types&quot;</span><span class="p">:</span> <span class="n">publication_types</span><span class="p">,</span>
+        <span class="s2">&quot;chemical_list&quot;</span><span class="p">:</span> <span class="n">chemical_list</span><span class="p">,</span>
+        <span class="s2">&quot;keywords&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="p">,</span>
+        <span class="s2">&quot;doi&quot;</span><span class="p">:</span> <span class="n">doi</span><span class="p">,</span>
+        <span class="s2">&quot;references&quot;</span><span class="p">:</span> <span class="n">references</span><span class="p">,</span>
+        <span class="s2">&quot;delete&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">author_list</span><span class="p">:</span>
+        <span class="n">dict_out</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;affiliations&quot;</span><span class="p">:</span> <span class="n">affiliations</span><span class="p">})</span>
+    <span class="n">dict_out</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other_id_dict</span><span class="p">)</span>
+    <span class="n">dict_out</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">journal_info_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dict_out</span>
+
+
+<div class="viewcode-block" id="parse_medline_xml"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_medline_xml">[docs]</a><span class="k">def</span> <span class="nf">parse_medline_xml</span><span class="p">(</span>
+    <span class="n">path</span><span class="p">,</span>
+    <span class="n">year_info_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">nlm_category</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">author_list</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">reference_list</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse XML file from Medline XML format available at</span>
+<span class="sd">    ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path: str</span>
+<span class="sd">        The path</span>
+<span class="sd">    year_info_only: bool</span>
+<span class="sd">        if True, this tool will only attempt to extract year information from PubDate.</span>
+<span class="sd">        if False, an attempt will be made to harvest all available PubDate information.</span>
+<span class="sd">        If only year and month information is available, this will yield a date of</span>
+<span class="sd">        the form &#39;YYYY-MM&#39;. If year, month and day information is available,</span>
+<span class="sd">        a date of the form &#39;YYYY-MM-DD&#39; will be returned.</span>
+<span class="sd">        NOTE: the resolution of PubDate information in the Medline(R) database varies</span>
+<span class="sd">        between articles.</span>
+<span class="sd">        Defaults to True.</span>
+<span class="sd">    nlm_category: bool, default False</span>
+<span class="sd">        if True, this will parse structured abstract where each section if original Label</span>
+<span class="sd">        if False, this will parse structured abstract where each section will be assigned to</span>
+<span class="sd">        NLM category of each sections</span>
+<span class="sd">    author_list: bool, default False, </span>
+<span class="sd">        if True, return parsed author output as a list of authors</span>
+<span class="sd">        if False, return parsed author output as a string of authors concatenated with ;</span>
+<span class="sd">    reference_list: bool, default False</span>
+<span class="sd">        if True, parse reference list as an output</span>
+<span class="sd">        if False, return string of PMIDs concatenated with ;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    article_list: list</span>
+<span class="sd">        Dictionary containing information about articles in NLM format (see</span>
+<span class="sd">        `parse_article_info`). Articles that have been deleted will be</span>
+<span class="sd">        added with no information other than the field `delete` being `True`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">medline_citations</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;//MedlineCitationSet/MedlineCitation&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">medline_citations</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">medline_citations</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;//PubmedArticle&quot;</span><span class="p">)</span>
+    <span class="n">article_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="nb">map</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">parse_article_info</span><span class="p">(</span>
+                <span class="n">m</span><span class="p">,</span> <span class="n">year_info_only</span><span class="p">,</span> <span class="n">nlm_category</span><span class="p">,</span> <span class="n">author_list</span><span class="p">,</span> <span class="n">reference_list</span>
+            <span class="p">),</span>
+            <span class="n">medline_citations</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">delete_citations</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;//DeleteCitation/PMID&quot;</span><span class="p">)</span>
+    <span class="n">dict_delete</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;abstract&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;journal&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;authors&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;affiliations&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;pubdate&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+            <span class="s2">&quot;doi&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;other_id&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;pmc&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;mesh_terms&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;keywords&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;publication_types&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;chemical_list&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;delete&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;medline_ta&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;nlm_unique_id&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;issn_linking&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;references&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">delete_citations</span>
+    <span class="p">]</span>
+    <span class="n">article_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">dict_delete</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">article_list</span></div>
+
+
+<div class="viewcode-block" id="parse_medline_grant_id"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_medline_grant_id">[docs]</a><span class="k">def</span> <span class="nf">parse_medline_grant_id</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse grant id from Medline XML file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path: str</span>
+<span class="sd">        The path to the XML with the information</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    grant_id_list: list</span>
+<span class="sd">        List of dictionaries for all files in `path`. Each dictionary</span>
+<span class="sd">        will have the information returned by `parse_grant_id`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">medline_citations</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;//MedlineCitationSet/MedlineCitation&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">medline_citations</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">medline_citations</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;//PubmedArticle&quot;</span><span class="p">)</span>
+    <span class="n">grant_id_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">parse_grant_id</span><span class="p">,</span> <span class="n">medline_citations</span><span class="p">))</span>
+    <span class="n">grant_id_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">grant_id_list</span><span class="p">))</span>  <span class="c1"># flatten list</span>
+    <span class="k">return</span> <span class="n">grant_id_list</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Titipat Achakulvisut
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

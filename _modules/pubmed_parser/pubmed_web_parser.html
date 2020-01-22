@@ -1,0 +1,478 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pubmed_parser.pubmed_web_parser &mdash; Pubmed Parser 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Pubmed Parser
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../spark.html">Setting up PySpark with Pubmed Parser</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Pubmed Parser</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pubmed_parser.pubmed_web_parser</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pubmed_parser.pubmed_web_parser</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="k">import</span> <span class="n">etree</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="k">import</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">unidecode</span> <span class="k">import</span> <span class="n">unidecode</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">urllib.request</span> <span class="k">import</span> <span class="n">urlopen</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">urllib2</span> <span class="k">import</span> <span class="n">urlopen</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">stringify_children</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;parse_xml_web&quot;</span><span class="p">,</span> <span class="s2">&quot;parse_citation_web&quot;</span><span class="p">,</span> <span class="s2">&quot;parse_outgoing_citation_web&quot;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">load_xml</span><span class="p">(</span><span class="n">pmid</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load XML file from given pmid from eutils site</span>
+<span class="sd">    return a dictionary for given pmid and xml string from the site</span>
+<span class="sd">    sleep: how much time we want to wait until requesting new xml</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">link</span> <span class="o">=</span> <span class="s2">&quot;https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&amp;retmode=xml&amp;id=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">pmid</span>
+    <span class="p">)</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">page</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sleep</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">sleep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tree</span>
+
+
+<span class="k">def</span> <span class="nf">parse_pubmed_web_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Giving tree, return simple parsed information from the tree</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//articletitle&quot;</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">title</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">title</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//articletitle&quot;</span><span class="p">)])</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//booktitle&quot;</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">title</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">title</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//booktitle&quot;</span><span class="p">)])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">abstract_tree</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//abstract/abstracttext&quot;</span><span class="p">)</span>
+    <span class="n">abstract</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">stringify_children</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">abstract_tree</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//article//title&quot;</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">journal</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//article//title&quot;</span><span class="p">)])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">journal</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">pubdate</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//pubmeddata//history//pubmedpubdate[@pubstatus=&quot;medline&quot;]&#39;</span><span class="p">)</span>
+    <span class="n">pubdatebook</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span>
+        <span class="s1">&#39;//pubmedbookdata//history//pubmedpubdate[@pubstatus=&quot;medline&quot;]&#39;</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pubdate</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">pubdate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="n">pubdate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">pubdatebook</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">pubdatebook</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="n">pubdatebook</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">affiliations</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//affiliationinfo/affiliation&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">affil</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//affiliationinfo/affiliation&quot;</span><span class="p">):</span>
+            <span class="n">affiliations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">affil</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">affiliations_text</span> <span class="o">=</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">affiliations</span><span class="p">)</span>
+
+    <span class="n">authors_tree</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//authorlist/author&quot;</span><span class="p">)</span>
+    <span class="n">authors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">authors_tree</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">authors_tree</span><span class="p">:</span>
+            <span class="n">firstname</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">a</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;forename&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;forename&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span>
+            <span class="n">lastname</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;lastname&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;forename&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">fullname</span> <span class="o">=</span> <span class="p">(</span><span class="n">firstname</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">lastname</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">fullname</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">fullname</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">a</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;collectivename&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                    <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;collectivename&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+                <span class="p">)</span>
+            <span class="n">authors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fullname</span><span class="p">)</span>
+        <span class="n">authors_text</span> <span class="o">=</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">authors</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">authors_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">keywords_mesh</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//meshheadinglist//meshheading&quot;</span><span class="p">)</span>
+    <span class="n">keywords_book</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//keywordlist//keyword&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keywords_mesh</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">mesh_terms_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">keywords_mesh</span><span class="p">:</span>
+            <span class="n">keyword</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">m</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;descriptorname&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ui&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
+                <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;descriptorname&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+            <span class="p">)</span>
+            <span class="n">mesh_terms_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">keyword</span><span class="p">)</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mesh_terms_list</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">keywords_book</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">m</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">keywords_book</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">doi</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">article_ids</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//articleidlist//articleid&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">article_ids</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">article_id</span> <span class="ow">in</span> <span class="n">article_ids</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">article_id</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;idtype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;doi&quot;</span><span class="p">:</span>
+                <span class="n">doi</span> <span class="o">=</span> <span class="n">article_id</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="n">dict_out</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+        <span class="s2">&quot;abstract&quot;</span><span class="p">:</span> <span class="n">abstract</span><span class="p">,</span>
+        <span class="s2">&quot;journal&quot;</span><span class="p">:</span> <span class="n">journal</span><span class="p">,</span>
+        <span class="s2">&quot;affiliation&quot;</span><span class="p">:</span> <span class="n">affiliations_text</span><span class="p">,</span>
+        <span class="s2">&quot;authors&quot;</span><span class="p">:</span> <span class="n">authors_text</span><span class="p">,</span>
+        <span class="s2">&quot;keywords&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="p">,</span>
+        <span class="s2">&quot;doi&quot;</span><span class="p">:</span> <span class="n">doi</span><span class="p">,</span>
+        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="n">year</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">dict_out</span>
+
+
+<div class="viewcode-block" id="parse_xml_web"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_xml_web">[docs]</a><span class="k">def</span> <span class="nf">parse_xml_web</span><span class="p">(</span><span class="n">pmid</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_xml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Give pmid, load and parse xml from Pubmed eutils</span>
+<span class="sd">    if save_xml is True, save xml output in dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">load_xml</span><span class="p">(</span><span class="n">pmid</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="n">sleep</span><span class="p">)</span>
+    <span class="n">dict_out</span> <span class="o">=</span> <span class="n">parse_pubmed_web_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+    <span class="n">dict_out</span><span class="p">[</span><span class="s2">&quot;pmid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pmid</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">save_xml</span><span class="p">:</span>
+        <span class="n">dict_out</span><span class="p">[</span><span class="s2">&quot;xml&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dict_out</span></div>
+
+
+<span class="k">def</span> <span class="nf">extract_citations</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract number of citations from given tree</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">citations_text</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//form/h2[@class=&quot;head&quot;]/text()&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">n_citations</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;Is Cited by the Following &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">citations_text</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">n_citations</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_citations</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">n_citations</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">n_citations</span>
+
+
+<span class="k">def</span> <span class="nf">extract_pmc</span><span class="p">(</span><span class="n">citation</span><span class="p">):</span>
+    <span class="n">pmc_text</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">citation</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">pmc</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;PMC&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">pmc_text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pmc</span>
+
+
+<span class="k">def</span> <span class="nf">convert_document_id</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert document id to dictionary of other id</span>
+<span class="sd">    see: http://www.ncbi.nlm.nih.gov/pmc/tools/id-converter-api/ for more info</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">doc_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">doc_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">id_type</span> <span class="o">==</span> <span class="s2">&quot;PMC&quot;</span><span class="p">:</span>
+        <span class="n">doc_id</span> <span class="o">=</span> <span class="s2">&quot;PMC</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">doc_id</span>
+        <span class="n">pmc</span> <span class="o">=</span> <span class="n">doc_id</span>
+        <span class="n">convert_link</span> <span class="o">=</span> <span class="s2">&quot;http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=my_tool&amp;email=my_email@example.com&amp;ids=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">doc_id</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">id_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;PMID&quot;</span><span class="p">,</span> <span class="s2">&quot;DOI&quot;</span><span class="p">,</span> <span class="s2">&quot;OTHER&quot;</span><span class="p">]:</span>
+        <span class="n">convert_link</span> <span class="o">=</span> <span class="s2">&quot;http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=my_tool&amp;email=my_email@example.com&amp;ids=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">doc_id</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Give id_type from PMC or PMID or DOI or OTHER&quot;</span><span class="p">)</span>
+
+    <span class="n">convert_page</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">convert_link</span><span class="p">)</span>
+    <span class="n">convert_tree</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">convert_page</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">record</span> <span class="o">=</span> <span class="n">convert_tree</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;record&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">attrib</span>
+    <span class="k">if</span> <span class="s2">&quot;status&quot;</span> <span class="ow">in</span> <span class="n">record</span> <span class="ow">or</span> <span class="s2">&quot;pmcid&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">record</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot convert given document id to PMC&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">id_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;PMID&quot;</span><span class="p">,</span> <span class="s2">&quot;DOI&quot;</span><span class="p">,</span> <span class="s2">&quot;OTHER&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="s2">&quot;pmcid&quot;</span> <span class="ow">in</span> <span class="n">record</span><span class="p">:</span>
+            <span class="n">pmc</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;pmcid&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pmc</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">pmid</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;pmid&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;pmid&quot;</span> <span class="ow">in</span> <span class="n">record</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">doi</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;doi&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;doi&quot;</span> <span class="ow">in</span> <span class="n">record</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;pmc&quot;</span><span class="p">:</span> <span class="n">pmc</span><span class="p">,</span> <span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">pmid</span><span class="p">,</span> <span class="s2">&quot;doi&quot;</span><span class="p">:</span> <span class="n">doi</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="parse_citation_web"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_citation_web">[docs]</a><span class="k">def</span> <span class="nf">parse_citation_web</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse citations from given document id</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    doc_id: str or int, document id</span>
+<span class="sd">    id_type: str from [&#39;PMC&#39;, &#39;PMID&#39;, &#39;DOI&#39;, &#39;OTHER&#39;]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict_out: dict, contains following keys</span>
+<span class="sd">        pmc: Pubmed Central ID</span>
+<span class="sd">        pmid: Pubmed ID</span>
+<span class="sd">        doi: DOI of the article</span>
+<span class="sd">        n_citations: number of citations for given articles</span>
+<span class="sd">        pmc_cited: list of PMCs that cite the given PMC</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">doc_id_dict</span> <span class="o">=</span> <span class="n">convert_document_id</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="n">id_type</span><span class="p">)</span>
+    <span class="n">pmc</span> <span class="o">=</span> <span class="n">doc_id_dict</span><span class="p">[</span><span class="s2">&quot;pmc&quot;</span><span class="p">]</span>
+    <span class="n">link</span> <span class="o">=</span> <span class="s2">&quot;http://www.ncbi.nlm.nih.gov/pmc/articles/</span><span class="si">{}</span><span class="s2">/citedby/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pmc</span><span class="p">)</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">page</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">n_citations</span> <span class="o">=</span> <span class="n">extract_citations</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+    <span class="n">n_pages</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_citations</span> <span class="o">/</span> <span class="mi">30</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="n">pmc_cited_all</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>  <span class="c1"># all PMC cited</span>
+    <span class="n">citations</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//div[@class=&quot;rprt&quot;]/div[@class=&quot;title&quot;]/a/@href&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">::]</span>
+    <span class="n">pmc_cited</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">extract_pmc</span><span class="p">,</span> <span class="n">citations</span><span class="p">))</span>
+    <span class="n">pmc_cited_all</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">pmc_cited</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_pages</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_pages</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">link</span> <span class="o">=</span> <span class="s2">&quot;http://www.ncbi.nlm.nih.gov/pmc/articles/</span><span class="si">{}</span><span class="s2">/citedby/?page=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">pmc</span><span class="p">,</span> <span class="n">i</span>
+            <span class="p">)</span>
+            <span class="n">page</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
+            <span class="n">tree</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">page</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="n">citations</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//div[@class=&quot;rprt&quot;]/div[@class=&quot;title&quot;]/a/@href&#39;</span><span class="p">)[</span>
+                <span class="mi">1</span><span class="p">::</span>
+            <span class="p">]</span>
+            <span class="n">pmc_cited</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">extract_pmc</span><span class="p">,</span> <span class="n">citations</span><span class="p">))</span>
+            <span class="n">pmc_cited_all</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">pmc_cited</span><span class="p">)</span>
+    <span class="n">pmc_cited_all</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pmc_cited_all</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">pmc</span><span class="p">]</span>
+    <span class="n">dict_out</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;n_citations&quot;</span><span class="p">:</span> <span class="n">n_citations</span><span class="p">,</span>
+        <span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">doc_id_dict</span><span class="p">[</span><span class="s2">&quot;pmid&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;pmc&quot;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;PMC&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">doc_id_dict</span><span class="p">[</span><span class="s2">&quot;pmc&quot;</span><span class="p">]),</span>
+        <span class="s2">&quot;doi&quot;</span><span class="p">:</span> <span class="n">doc_id_dict</span><span class="p">[</span><span class="s2">&quot;doi&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;pmc_cited&quot;</span><span class="p">:</span> <span class="n">pmc_cited_all</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">dict_out</span></div>
+
+
+<div class="viewcode-block" id="parse_outgoing_citation_web"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_outgoing_citation_web">[docs]</a><span class="k">def</span> <span class="nf">parse_outgoing_citation_web</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load citations from NCBI eutils API for a given document,</span>
+<span class="sd">    return a dictionary containing:</span>
+<span class="sd">        n_citations: number of citations for that article</span>
+<span class="sd">        doc_id: the document ID number</span>
+<span class="sd">        id_type: the type of document ID provided (PMCID or PMID)</span>
+<span class="sd">        pmid_cited: list of papers cited by the document as PMIDs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">doc_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">doc_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">id_type</span> <span class="o">==</span> <span class="s2">&quot;PMC&quot;</span><span class="p">:</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="s2">&quot;pmc&quot;</span>
+        <span class="n">linkname</span> <span class="o">=</span> <span class="s2">&quot;pmc_refs_pubmed&quot;</span>
+    <span class="k">elif</span> <span class="n">id_type</span> <span class="o">==</span> <span class="s2">&quot;PMID&quot;</span><span class="p">:</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="s2">&quot;pubmed&quot;</span>
+        <span class="n">linkname</span> <span class="o">=</span> <span class="s2">&quot;pubmed_pubmed_refs&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported id_type `</span><span class="si">%s</span><span class="s2">`&quot;</span> <span class="o">%</span> <span class="n">id_type</span><span class="p">)</span>
+    <span class="n">link</span> <span class="o">=</span> <span class="s2">&quot;https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=</span><span class="si">{}</span><span class="s2">&amp;linkname=</span><span class="si">%s</span><span class="s2">&amp;id=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">db</span><span class="p">,</span> <span class="n">linkname</span><span class="p">,</span> <span class="n">doc_id</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">XMLParser</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">link</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">parser</span><span class="p">)</span>
+    <span class="n">pmid_cited_all</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;/eLinkResult/LinkSet/LinkSetDb/Link/Id/text()&quot;</span><span class="p">)</span>
+    <span class="n">n_citations</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pmid_cited_all</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">n_citations</span><span class="p">:</span>  <span class="c1"># If there are no citations, likely a bad doc_id</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">dict_out</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;n_citations&quot;</span><span class="p">:</span> <span class="n">n_citations</span><span class="p">,</span>
+        <span class="s2">&quot;doc_id&quot;</span><span class="p">:</span> <span class="n">doc_id</span><span class="p">,</span>
+        <span class="s2">&quot;id_type&quot;</span><span class="p">:</span> <span class="n">id_type</span><span class="p">,</span>
+        <span class="s2">&quot;pmid_cited&quot;</span><span class="p">:</span> <span class="n">pmid_cited_all</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">dict_out</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Titipat Achakulvisut
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

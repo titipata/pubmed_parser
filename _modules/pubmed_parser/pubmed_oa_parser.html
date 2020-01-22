@@ -1,0 +1,623 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pubmed_parser.pubmed_oa_parser &mdash; Pubmed Parser 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Pubmed Parser
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../spark.html">Setting up PySpark with Pubmed Parser</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Pubmed Parser</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pubmed_parser.pubmed_oa_parser</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pubmed_parser.pubmed_oa_parser</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="k">import</span> <span class="n">etree</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">chain</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">unidecode</span> <span class="k">import</span> <span class="n">unidecode</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;list_xml_path&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parse_pubmed_xml&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parse_pubmed_paragraph&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parse_pubmed_references&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parse_pubmed_caption&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">list_xml_path</span><span class="p">(</span><span class="n">path_dir</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List full xml path under given directory</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path_dir: str, path to directory that contains xml or nxml file</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    path_list: list, list of xml or nxml file from given path</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fullpath</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dp</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">path_dir</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fn</span>
+    <span class="p">]</span>
+    <span class="n">path_list</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">folder</span>
+        <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">fullpath</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">folder</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;.nxml&quot;</span><span class="p">,</span> <span class="s2">&quot;.xml&quot;</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">path_list</span>
+
+
+<span class="k">def</span> <span class="nf">zip_author</span><span class="p">(</span><span class="n">author</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Give a list of author and its affiliation keys</span>
+<span class="sd">    in this following format</span>
+<span class="sd">    [first_name, last_name, [key1, key2]]</span>
+<span class="sd">    return [[first_name, last_name, key1], [first_name, last_name, key2]] instead</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">author_zipped</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">([[</span><span class="n">author</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">author</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">author</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">author</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">author_zipped</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">flatten_zip_author</span><span class="p">(</span><span class="n">author_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply zip_author to author_list and flatten it</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">author_zipped_list</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">zip_author</span><span class="p">,</span> <span class="n">author_list</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">author_zipped_list</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">parse_article_meta</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse PMID, PMC and DOI from given article tree</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">article_meta</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.//article-meta&quot;</span><span class="p">)</span>
+    <span class="n">pmid_node</span> <span class="o">=</span> <span class="n">article_meta</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;article-id[@pub-id-type=&quot;pmid&quot;]&#39;</span><span class="p">)</span>
+    <span class="n">pmc_node</span> <span class="o">=</span> <span class="n">article_meta</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;article-id[@pub-id-type=&quot;pmc&quot;]&#39;</span><span class="p">)</span>
+    <span class="n">pub_id_node</span> <span class="o">=</span> <span class="n">article_meta</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;article-id[@pub-id-type=&quot;publisher-id&quot;]&#39;</span><span class="p">)</span>
+    <span class="n">doi_node</span> <span class="o">=</span> <span class="n">article_meta</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;article-id[@pub-id-type=&quot;doi&quot;]&#39;</span><span class="p">)</span>
+
+    <span class="n">pmid</span> <span class="o">=</span> <span class="n">pmid_node</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">pmid_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">pmc</span> <span class="o">=</span> <span class="n">pmc_node</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">pmc_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">pub_id</span> <span class="o">=</span> <span class="n">pub_id_node</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">pub_id_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">doi</span> <span class="o">=</span> <span class="n">doi_node</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">doi_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">dict_article_meta</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">pmid</span><span class="p">,</span> <span class="s2">&quot;pmc&quot;</span><span class="p">:</span> <span class="n">pmc</span><span class="p">,</span> <span class="s2">&quot;doi&quot;</span><span class="p">:</span> <span class="n">doi</span><span class="p">,</span> <span class="s2">&quot;publisher_id&quot;</span><span class="p">:</span> <span class="n">pub_id</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">dict_article_meta</span>
+
+
+<div class="viewcode-block" id="parse_pubmed_xml"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_xml">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_xml</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">include_path</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nxml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given single xml path, extract information from xml file</span>
+<span class="sd">    and return parsed xml file in dictionary format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">nxml</span><span class="p">)</span>
+
+    <span class="n">tree_title</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.//title-group/article-title&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tree_title</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tree_title</span><span class="o">.</span><span class="n">itertext</span><span class="p">()]</span>
+        <span class="n">sub_title</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;.//title-group/subtitle/text()&quot;</span><span class="p">)</span>
+        <span class="n">title</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">sub_title</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">title</span><span class="p">]</span>
+        <span class="n">full_title</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">full_title</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">abstracts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">abstract_tree</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//abstract&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">abstract_tree</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">a</span><span class="o">.</span><span class="n">itertext</span><span class="p">():</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">abstracts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">abstract</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">abstracts</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">abstract</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">journal_node</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//journal-title&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">journal_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">journal</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">j</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">journal_node</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">journal</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">dict_article_meta</span> <span class="o">=</span> <span class="n">parse_article_meta</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+    <span class="n">pub_year_node</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.//pub-date/year&quot;</span><span class="p">)</span>
+    <span class="n">pub_year</span> <span class="o">=</span> <span class="n">pub_year_node</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">pub_year_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">pub_month_node</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.//pub-date/month&quot;</span><span class="p">)</span>
+    <span class="n">pub_month</span> <span class="o">=</span> <span class="n">pub_month_node</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">pub_month_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;01&quot;</span>
+    <span class="n">pub_day_node</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.//pub-date/day&quot;</span><span class="p">)</span>
+    <span class="n">pub_day</span> <span class="o">=</span> <span class="n">pub_day_node</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">pub_day_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;01&quot;</span>
+
+    <span class="n">subjects_node</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//article-categories.//subj-group/subject&quot;</span><span class="p">)</span>
+    <span class="n">subjects</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">subjects_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">subjects_node</span><span class="p">:</span>
+            <span class="n">subject</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">s_</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s_</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">itertext</span><span class="p">()])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">subjects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+        <span class="n">subjects</span> <span class="o">=</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subjects</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">subjects</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="c1"># create affiliation dictionary</span>
+    <span class="n">affil_id</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;.//aff[@id]/@id&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">affil_id</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">affil_id</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">affil_id</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">affil_id</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>  <span class="c1"># replace id with empty list</span>
+
+    <span class="n">affil_name</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;.//aff[@id]&quot;</span><span class="p">)</span>
+    <span class="n">affil_name_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">affil_name</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">stringify_affiliation_rec</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">affil_name_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">affiliation_list</span> <span class="o">=</span> <span class="p">[[</span><span class="n">idx</span><span class="p">,</span> <span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">affil_id</span><span class="p">,</span> <span class="n">affil_name_list</span><span class="p">)]</span>
+
+    <span class="n">tree_author</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;.//contrib-group/contrib[@contrib-type=&quot;author&quot;]&#39;</span><span class="p">)</span>
+    <span class="n">author_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">author</span> <span class="ow">in</span> <span class="n">tree_author</span><span class="p">:</span>
+        <span class="n">author_aff</span> <span class="o">=</span> <span class="n">author</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;xref[@ref-type=&quot;aff&quot;]&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ref_id_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;rid&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">author_aff</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">ref_id_list</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">author_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;name/surname&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                    <span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;name/given-names&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                    <span class="n">ref_id_list</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">author_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">ref_id_list</span><span class="p">])</span>
+    <span class="n">author_list</span> <span class="o">=</span> <span class="n">flatten_zip_author</span><span class="p">(</span><span class="n">author_list</span><span class="p">)</span>
+
+    <span class="n">dict_out</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;full_title&quot;</span><span class="p">:</span> <span class="n">full_title</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+        <span class="s2">&quot;abstract&quot;</span><span class="p">:</span> <span class="n">abstract</span><span class="p">,</span>
+        <span class="s2">&quot;journal&quot;</span><span class="p">:</span> <span class="n">journal</span><span class="p">,</span>
+        <span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">dict_article_meta</span><span class="p">[</span><span class="s2">&quot;pmid&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;pmc&quot;</span><span class="p">:</span> <span class="n">dict_article_meta</span><span class="p">[</span><span class="s2">&quot;pmc&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;doi&quot;</span><span class="p">:</span> <span class="n">dict_article_meta</span><span class="p">[</span><span class="s2">&quot;doi&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;publisher_id&quot;</span><span class="p">:</span> <span class="n">dict_article_meta</span><span class="p">[</span><span class="s2">&quot;publisher_id&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;author_list&quot;</span><span class="p">:</span> <span class="n">author_list</span><span class="p">,</span>
+        <span class="s2">&quot;affiliation_list&quot;</span><span class="p">:</span> <span class="n">affiliation_list</span><span class="p">,</span>
+        <span class="s2">&quot;publication_year&quot;</span><span class="p">:</span> <span class="n">pub_year</span><span class="p">,</span>
+        <span class="s2">&quot;publication_date&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">-</span><span class="si">{}</span><span class="s2">-</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pub_day</span><span class="p">,</span> <span class="n">pub_month</span><span class="p">,</span> <span class="n">pub_year</span><span class="p">),</span>
+        <span class="s2">&quot;subjects&quot;</span><span class="p">:</span> <span class="n">subjects</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">include_path</span><span class="p">:</span>
+        <span class="n">dict_out</span><span class="p">[</span><span class="s2">&quot;path_to_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
+    <span class="k">return</span> <span class="n">dict_out</span></div>
+
+
+<div class="viewcode-block" id="parse_pubmed_references"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_references">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_references</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given path to xml file, parse references articles</span>
+<span class="sd">    to list of dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">dict_article_meta</span> <span class="o">=</span> <span class="n">parse_article_meta</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+    <span class="n">pmid</span> <span class="o">=</span> <span class="n">dict_article_meta</span><span class="p">[</span><span class="s2">&quot;pmid&quot;</span><span class="p">]</span>
+    <span class="n">pmc</span> <span class="o">=</span> <span class="n">dict_article_meta</span><span class="p">[</span><span class="s2">&quot;pmc&quot;</span><span class="p">]</span>
+
+    <span class="n">references</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;.//ref-list/ref[@id]&quot;</span><span class="p">)</span>
+    <span class="n">dict_refs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">reference</span> <span class="ow">in</span> <span class="n">references</span><span class="p">:</span>
+        <span class="n">ref_id</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">reference</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;mixed-citation&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ref</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;mixed-citation&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">reference</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;element-citation&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ref</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;element-citation&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ref</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">ref</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;publication-type&quot;</span> <span class="ow">in</span> <span class="n">ref</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="n">ref</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">journal_type</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">values</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">journal_type</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">ref</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">):</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">n</span><span class="o">.</span><span class="n">getchildren</span><span class="p">()][::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">ref</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;person-group&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">ref</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;person-group&quot;</span><span class="p">):</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                            <span class="n">n</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;given-names/text()&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">n</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;surname/text()&quot;</span><span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;article-title&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">article_title</span> <span class="o">=</span> <span class="n">stringify_children</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;article-title&quot;</span><span class="p">))</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                    <span class="n">article_title</span> <span class="o">=</span> <span class="n">article_title</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="n">article_title</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">journal</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">journal</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">year</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">year</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;pub-id&quot;</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">pubid</span> <span class="ow">in</span> <span class="n">ref</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;pub-id&quot;</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="s2">&quot;doi&quot;</span> <span class="ow">in</span> <span class="n">pubid</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                            <span class="n">doi_cited</span> <span class="o">=</span> <span class="n">pubid</span><span class="o">.</span><span class="n">text</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">doi_cited</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                        <span class="k">if</span> <span class="s2">&quot;pmid&quot;</span> <span class="ow">in</span> <span class="n">pubid</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                            <span class="n">pmid_cited</span> <span class="o">=</span> <span class="n">pubid</span><span class="o">.</span><span class="n">text</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">pmid_cited</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">doi_cited</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                    <span class="n">pmid_cited</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">dict_ref</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">pmid</span><span class="p">,</span>
+                    <span class="s2">&quot;pmc&quot;</span><span class="p">:</span> <span class="n">pmc</span><span class="p">,</span>
+                    <span class="s2">&quot;ref_id&quot;</span><span class="p">:</span> <span class="n">ref_id</span><span class="p">,</span>
+                    <span class="s2">&quot;pmid_cited&quot;</span><span class="p">:</span> <span class="n">pmid_cited</span><span class="p">,</span>
+                    <span class="s2">&quot;doi_cited&quot;</span><span class="p">:</span> <span class="n">doi_cited</span><span class="p">,</span>
+                    <span class="s2">&quot;article_title&quot;</span><span class="p">:</span> <span class="n">article_title</span><span class="p">,</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">names</span><span class="p">),</span>
+                    <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="n">year</span><span class="p">,</span>
+                    <span class="s2">&quot;journal&quot;</span><span class="p">:</span> <span class="n">journal</span><span class="p">,</span>
+                    <span class="s2">&quot;journal_type&quot;</span><span class="p">:</span> <span class="n">journal_type</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="n">dict_refs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dict_ref</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dict_refs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">dict_refs</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">dict_refs</span></div>
+
+
+<div class="viewcode-block" id="parse_pubmed_paragraph"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_paragraph">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_paragraph</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">all_paragraph</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Give tree and reference dictionary</span>
+<span class="sd">    return dictionary of referenced paragraph, section that it belongs to,</span>
+<span class="sd">    and its cited PMID</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">dict_article_meta</span> <span class="o">=</span> <span class="n">parse_article_meta</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+    <span class="n">pmid</span> <span class="o">=</span> <span class="n">dict_article_meta</span><span class="p">[</span><span class="s2">&quot;pmid&quot;</span><span class="p">]</span>
+    <span class="n">pmc</span> <span class="o">=</span> <span class="n">dict_article_meta</span><span class="p">[</span><span class="s2">&quot;pmc&quot;</span><span class="p">]</span>
+
+    <span class="n">paragraphs</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//body//p&quot;</span><span class="p">)</span>
+    <span class="n">dict_pars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">paragraph</span> <span class="ow">in</span> <span class="n">paragraphs</span><span class="p">:</span>
+        <span class="n">paragraph_text</span> <span class="o">=</span> <span class="n">stringify_children</span><span class="p">(</span><span class="n">paragraph</span><span class="p">)</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="n">paragraph</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;../title&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">section</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">section</span> <span class="o">=</span> <span class="n">stringify_children</span><span class="p">(</span><span class="n">section</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">section</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">ref_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">reference</span> <span class="ow">in</span> <span class="n">paragraph</span><span class="o">.</span><span class="n">getchildren</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;rid&quot;</span> <span class="ow">in</span> <span class="n">reference</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">ref_id</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;rid&quot;</span><span class="p">]</span>
+                <span class="n">ref_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ref_id</span><span class="p">)</span>
+
+        <span class="n">dict_par</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;pmc&quot;</span><span class="p">:</span> <span class="n">pmc</span><span class="p">,</span>
+            <span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">pmid</span><span class="p">,</span>
+            <span class="s2">&quot;reference_ids&quot;</span><span class="p">:</span> <span class="n">ref_ids</span><span class="p">,</span>
+            <span class="s2">&quot;section&quot;</span><span class="p">:</span> <span class="n">section</span><span class="p">,</span>
+            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">paragraph_text</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_ids</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">all_paragraph</span><span class="p">:</span>
+            <span class="n">dict_pars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dict_par</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dict_pars</span></div>
+
+
+<div class="viewcode-block" id="parse_pubmed_caption"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_caption">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_caption</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given single xml path, extract figure caption and</span>
+<span class="sd">    reference id back to that figure</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">dict_article_meta</span> <span class="o">=</span> <span class="n">parse_article_meta</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+    <span class="n">pmid</span> <span class="o">=</span> <span class="n">dict_article_meta</span><span class="p">[</span><span class="s2">&quot;pmid&quot;</span><span class="p">]</span>
+    <span class="n">pmc</span> <span class="o">=</span> <span class="n">dict_article_meta</span><span class="p">[</span><span class="s2">&quot;pmc&quot;</span><span class="p">]</span>
+
+    <span class="n">figs</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//fig&quot;</span><span class="p">)</span>
+    <span class="n">dict_captions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">figs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">fig</span> <span class="ow">in</span> <span class="n">figs</span><span class="p">:</span>
+            <span class="n">fig_id</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+            <span class="n">fig_label</span> <span class="o">=</span> <span class="n">stringify_children</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">))</span>
+            <span class="n">fig_captions</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;caption&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">getchildren</span><span class="p">()</span>
+            <span class="n">caption</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">stringify_children</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">fig_captions</span><span class="p">])</span>
+            <span class="n">graphic</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;graphic&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">graphic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">graphic_ref</span> <span class="o">=</span> <span class="n">graphic</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">values</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">dict_caption</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">pmid</span><span class="p">,</span>
+                <span class="s2">&quot;pmc&quot;</span><span class="p">:</span> <span class="n">pmc</span><span class="p">,</span>
+                <span class="s2">&quot;fig_caption&quot;</span><span class="p">:</span> <span class="n">caption</span><span class="p">,</span>
+                <span class="s2">&quot;fig_id&quot;</span><span class="p">:</span> <span class="n">fig_id</span><span class="p">,</span>
+                <span class="s2">&quot;fig_label&quot;</span><span class="p">:</span> <span class="n">fig_label</span><span class="p">,</span>
+                <span class="s2">&quot;graphic_ref&quot;</span><span class="p">:</span> <span class="n">graphic_ref</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">dict_captions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dict_caption</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dict_captions</span><span class="p">:</span>
+        <span class="n">dict_captions</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">dict_captions</span></div>
+
+
+<span class="k">def</span> <span class="nf">table_to_df</span><span class="p">(</span><span class="n">table_text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to transform plain xml text to list of row values and</span>
+<span class="sd">    columns</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">table_tree</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">table_text</span><span class="p">)</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">table_tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;thead/tr&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">tr</span><span class="o">.</span><span class="n">getchildren</span><span class="p">():</span>
+            <span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unidecode</span><span class="p">(</span><span class="n">stringify_children</span><span class="p">(</span><span class="n">c</span><span class="p">)))</span>
+
+    <span class="n">row_values</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">len_rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">table_tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;tbody/tr&quot;</span><span class="p">):</span>
+        <span class="n">es</span> <span class="o">=</span> <span class="n">tr</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;td&quot;</span><span class="p">)</span>
+        <span class="n">row_value</span> <span class="o">=</span> <span class="p">[</span><span class="n">unidecode</span><span class="p">(</span><span class="n">stringify_children</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">es</span><span class="p">]</span>
+        <span class="n">len_rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">es</span><span class="p">))</span>
+        <span class="n">row_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">len_rows</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">len_row</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">len_rows</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">len_rows</span><span class="o">.</span><span class="n">count</span><span class="p">)</span>
+        <span class="n">row_values</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">row_values</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">==</span> <span class="n">len_row</span>
+        <span class="p">]</span>  <span class="c1"># remove row with different length</span>
+        <span class="k">return</span> <span class="n">columns</span><span class="p">,</span> <span class="n">row_values</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="parse_pubmed_table"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_table">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_table</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">return_xml</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse table from given Pubmed Open-Access XML file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">dict_article_meta</span> <span class="o">=</span> <span class="n">parse_article_meta</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+    <span class="n">pmid</span> <span class="o">=</span> <span class="n">dict_article_meta</span><span class="p">[</span><span class="s2">&quot;pmid&quot;</span><span class="p">]</span>
+    <span class="n">pmc</span> <span class="o">=</span> <span class="n">dict_article_meta</span><span class="p">[</span><span class="s2">&quot;pmc&quot;</span><span class="p">]</span>
+
+    <span class="c1"># parse table</span>
+    <span class="n">tables</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;.//body.//sec.//table-wrap&quot;</span><span class="p">)</span>
+    <span class="n">table_dicts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">table</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">unidecode</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># table caption</span>
+        <span class="k">if</span> <span class="n">table</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;caption/p&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">caption_node</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;caption/p&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">table</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;caption/title&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">caption_node</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;caption/title&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">caption_node</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">caption_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">caption</span> <span class="o">=</span> <span class="n">unidecode</span><span class="p">(</span><span class="n">stringify_children</span><span class="p">(</span><span class="n">caption_node</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">caption</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># table content</span>
+        <span class="k">if</span> <span class="n">table</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;table&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">table_tree</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;table&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">table</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;alternatives/table&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">table_tree</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;alternatives/table&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">table_tree</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">table_tree</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">table_xml</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">table_tree</span><span class="p">)</span>
+            <span class="n">columns</span><span class="p">,</span> <span class="n">row_values</span> <span class="o">=</span> <span class="n">table_to_df</span><span class="p">(</span><span class="n">table_xml</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">row_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">table_dict</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">pmid</span><span class="p">,</span>
+                    <span class="s2">&quot;pmc&quot;</span><span class="p">:</span> <span class="n">pmc</span><span class="p">,</span>
+                    <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
+                    <span class="s2">&quot;caption&quot;</span><span class="p">:</span> <span class="n">caption</span><span class="p">,</span>
+                    <span class="s2">&quot;table_columns&quot;</span><span class="p">:</span> <span class="n">columns</span><span class="p">,</span>
+                    <span class="s2">&quot;table_values&quot;</span><span class="p">:</span> <span class="n">row_values</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="n">return_xml</span><span class="p">:</span>
+                    <span class="n">table_dict</span><span class="p">[</span><span class="s2">&quot;table_xml&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table_xml</span>
+                <span class="n">table_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table_dict</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">table_dicts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">table_dicts</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Titipat Achakulvisut
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

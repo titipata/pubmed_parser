@@ -1,0 +1,248 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Resources &mdash; Pubmed Parser 0.2.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Setting up PySpark with Pubmed Parser" href="spark.html" />
+    <link rel="prev" title="API Documentation" href="api.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Pubmed Parser
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#links-to-download-pubmed-and-medline-dataset">Links to download Pubmed and MEDLINE dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#download-pubmed-oa-figures">Download PubMed OA figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pmc-copyright-notice">PMC Copyright Notice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#alternative-implementation-of-medline-parsers">Alternative implementation of MEDLINE parsers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="spark.html">Setting up PySpark with Pubmed Parser</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pubmed Parser</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Resources</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/resources.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="resources">
+<h1>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h1>
+<p>Here are some useful resources for downloading data.</p>
+<div class="section" id="links-to-download-pubmed-and-medline-dataset">
+<h2>Links to download Pubmed and MEDLINE dataset<a class="headerlink" href="#links-to-download-pubmed-and-medline-dataset" title="Permalink to this headline">¶</a></h2>
+<p>Here are links for downloading PubMed OA and MEDLINE data</p>
+<ul class="simple">
+<li><p>PubMed Open-Access (OA) dataset is available at <code class="docutils literal notranslate"><span class="pre">http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/</span></code>. Here is the <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/pub/pmc//">FTP link</a> for downloading the bulk of dataset.</p></li>
+<li><p>the MEDLINE XMLs are available here <code class="docutils literal notranslate"><span class="pre">ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/</span></code></p></li>
+<li><p>the MEDLINE XMLs weekly updates are available here <code class="docutils literal notranslate"><span class="pre">ftp://ftp.nlm.nih.gov/nlmdata/.medlease/gz/</span></code></p></li>
+<li><p>MEDLINE Document Type Definitions (DTDs) file is available at this <a class="reference external" href="linkhttps://www.nlm.nih.gov/databases/dtd//">linkhttps://www.nlm.nih.gov/databases/dtd//</a>. We can use it to see available tags from a given MEDLINE XML.</p></li>
+</ul>
+</div>
+<div class="section" id="download-pubmed-oa-figures">
+<h2>Download PubMed OA figures<a class="headerlink" href="#download-pubmed-oa-figures" title="Permalink to this headline">¶</a></h2>
+<p>Here, we explain how to download PubMed OA figures corresponded to the parsed information</p>
+<ul class="simple">
+<li><p>In <cite>pubmed_parser</cite>, you can use <code class="docutils literal notranslate"><span class="pre">parse_pubmed_caption</span></code> to parse figures (to be specific <cite>figure_id</cite>) and captions corresponding to a manuscript.</p></li>
+<li><p>To download the images corresponding to a given <code class="docutils literal notranslate"><span class="pre">PMC</span></code> or <code class="docutils literal notranslate"><span class="pre">PMID</span></code>, you can download a CSV file from <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_file_list.csv/">&lt;ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_file_list.csv</a> first. - The file will have columns <code class="docutils literal notranslate"><span class="pre">PMID</span></code>, <code class="docutils literal notranslate"><span class="pre">Accession</span> <span class="pre">ID</span></code> (<code class="docutils literal notranslate"><span class="pre">PMC</span></code>), and <code class="docutils literal notranslate"><span class="pre">File</span></code> where it looks something like <code class="docutils literal notranslate"><span class="pre">oa_package/08/e0/PMC13900.tar.gz</span></code>.</p></li>
+<li><p>You can then download a tar file for a given <code class="docutils literal notranslate"><span class="pre">PMID</span></code> or <code class="docutils literal notranslate"><span class="pre">PMC</span></code> from <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_package/08/e0/PMC13900.tar.gz/">ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_package/08/e0/PMC13900.tar.gz</a>. You can check out <cite>ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_package/</cite> to get all the access for tar files.</p></li>
+</ul>
+</div>
+<div class="section" id="pmc-copyright-notice">
+<h2>PMC Copyright Notice<a class="headerlink" href="#pmc-copyright-notice" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Please see copyright notice when you scrape data from website <a class="reference external" href="herehttps://www.ncbi.nlm.nih.gov/pmc/about/copyright/#copy-PMC/">herehttps://www.ncbi.nlm.nih.gov/pmc/about/copyright/#copy-PMC/</a></p></li>
+</ul>
+</div>
+<div class="section" id="alternative-implementation-of-medline-parsers">
+<h2>Alternative implementation of MEDLINE parsers<a class="headerlink" href="#alternative-implementation-of-medline-parsers" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="MEDLINEKung-Fuhttp://fnl.es/medline-kung-fu.html/">MEDLINEKung-Fuhttp://fnl.es/medline-kung-fu.html/</a> which uses <a class="reference external" href="medichttps://github.com/fnl/medic/">medichttps://github.com/fnl/medic/</a> to parse MEDLINE to database</p></li>
+<li><p><a class="reference external" href="MEDLINEXMLToJSONhttps://github.com/ldbib/MEDLINEXMLToJSON/">MEDLINEXMLToJSONhttps://github.com/ldbib/MEDLINEXMLToJSON/</a> implemented in JavaScript</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="spark.html" class="btn btn-neutral float-right" title="Setting up PySpark with Pubmed Parser" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="api.html" class="btn btn-neutral float-left" title="API Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Titipat Achakulvisut
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
