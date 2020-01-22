@@ -16,7 +16,7 @@
 import sys
 import os
 import sphinx
-import pubmed_parser as pp
+import pubmed_parser
 import sphinx_gallery
 
 
@@ -26,6 +26,8 @@ project = 'Pubmed Parser'
 copyright = '2020, Titipat Achakulvisut'
 author = 'Titipat Achakulvisut'
 
+version = pubmed_parser.__version__
+release = pubmed_parser.__version__
 
 # -- General configuration ---------------------------------------------------
 
@@ -60,9 +62,3 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-
-
-sphinx_gallery_conf = {
-    'examples_dirs': '../examples',
-    'gallery_dirs': 'auto_examples'
-}
