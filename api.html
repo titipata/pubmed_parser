@@ -88,7 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Documentation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#parse-medline-xml">Parse MEDLINE XML</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#parse-pubmed-xml">Parse PubMed XML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parse-pubmed-oa-xml">Parse PubMed OA XML</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#parse-from-website">Parse from Website</a></li>
 </ul>
 </li>
@@ -160,6 +160,9 @@
             
   <div class="section" id="api-documentation">
 <h1>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
+<p>The core functionality of Pubmed Parse can be divided into 3 main parts based on the source of the data we use an as input.
+Input source can be either from MEDLINE XML, PubMed Open Access subset (PubMed OA), or Website (using eutils).
+Below, we list the core APIs implemented in Pubmed Parser</p>
 <div class="section" id="parse-medline-xml">
 <h2>Parse MEDLINE XML<a class="headerlink" href="#parse-medline-xml" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
@@ -177,21 +180,24 @@ the form ‘YYYY-MM’. If year, month and day information is available,
 a date of the form ‘YYYY-MM-DD’ will be returned.
 NOTE: the resolution of PubDate information in the Medline(R) database varies
 between articles.
-Defaults to True.</p>
+default: True</p>
 </dd>
-<dt>nlm_category: bool, default False</dt><dd><p>if True, this will parse structured abstract where each section if original Label
+<dt>nlm_category: bool</dt><dd><p>if True, this will parse structured abstract where each section if original Label
 if False, this will parse structured abstract where each section will be assigned to
-NLM category of each sections</p>
+NLM category of each sections
+default: False</p>
 </dd>
-<dt>author_list: bool, default False, </dt><dd><p>if True, return parsed author output as a list of authors
-if False, return parsed author output as a string of authors concatenated with ;</p>
+<dt>author_list: bool </dt><dd><p>if True, return parsed author output as a list of authors
+if False, return parsed author output as a string of authors concatenated with <code class="docutils literal notranslate"><span class="pre">;</span></code>
+default: False</p>
 </dd>
-<dt>reference_list: bool, default False</dt><dd><p>if True, parse reference list as an output
-if False, return string of PMIDs concatenated with ;</p>
+<dt>reference_list: bool</dt><dd><p>if True, parse reference list as an output
+if False, return string of PMIDs concatenated with ;
+default: False</p>
 </dd>
 </dl>
 <dl class="simple">
-<dt>article_list: list</dt><dd><p>Dictionary containing information about articles in NLM format (see
+<dt>article_list: list</dt><dd><p>A list of dictionary containing information about articles in NLM format (see
 <cite>parse_article_info</cite>). Articles that have been deleted will be
 added with no information other than the field <cite>delete</cite> being <cite>True</cite></p>
 </dd>
@@ -207,20 +213,40 @@ added with no information other than the field <cite>delete</cite> being <cite>T
 </dd>
 </dl>
 <dl class="simple">
-<dt>grant_id_list: list</dt><dd><p>List of dictionaries for all files in <cite>path</cite>. Each dictionary
-will have the information returned by <cite>parse_grant_id</cite></p>
+<dt>grant_id_list: list</dt><dd><p>A list of dictionaries contains the grants in a given path. Each dictionary
+has the keys of ‘pmid’, ‘grant_id’, ‘grant_acronym’, ‘country’, and ‘agency’</p>
 </dd>
 </dl>
 </dd></dl>
 
 </div>
-<div class="section" id="parse-pubmed-xml">
-<h2>Parse PubMed XML<a class="headerlink" href="#parse-pubmed-xml" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="parse-pubmed-oa-xml">
+<h2>Parse PubMed OA XML<a class="headerlink" href="#parse-pubmed-oa-xml" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="pubmed_parser.parse_pubmed_xml">
 <code class="sig-prename descclassname">pubmed_parser.</code><code class="sig-name descname">parse_pubmed_xml</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">include_path=False</em>, <em class="sig-param">nxml=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_oa_parser.html#parse_pubmed_xml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pubmed_parser.parse_pubmed_xml" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given single xml path, extract information from xml file
-and return parsed xml file in dictionary format.</p>
+<dd><p>Given an input XML path to PubMed XML file, extract information and metadata 
+from a given XML file and return parsed XML file in dictionary format.
+You can check <code class="docutils literal notranslate"><span class="pre">ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/</span></code> to list of available files to download</p>
+<dl class="simple">
+<dt>path: str</dt><dd><p>A path to a given PumMed XML file</p>
+</dd>
+<dt>include_path: bool</dt><dd><p>if True, include a key ‘path_to_file’ in an output dictionary
+default: False</p>
+</dd>
+<dt>nxml: bool</dt><dd><p>if True, this will strip a namespace of an XML after reading a file
+see <a class="reference external" href="https://stackoverflow.com/questions/18159221/remove-namespace-and-prefix-from-xml-in-python-using-lxml">https://stackoverflow.com/questions/18159221/remove-namespace-and-prefix-from-xml-in-python-using-lxml</a> to 
+default: False</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>dict_out: dict</dt><dd><p>A dictionary contains a following keys from a parsed XML path
+‘full_title’, ‘abstract’, ‘journal’, ‘pmid’, ‘pmc’, ‘doi’,
+‘publisher_id’, ‘author_list’, ‘affiliation_list’, ‘publication_year’,
+‘publication_date’, ‘subjects’</p>
+</dd>
+</dl>
+<p>}</p>
 </dd></dl>
 
 <dl class="function">
@@ -228,27 +254,66 @@ and return parsed xml file in dictionary format.</p>
 <code class="sig-prename descclassname">pubmed_parser.</code><code class="sig-name descname">parse_pubmed_references</code><span class="sig-paren">(</span><em class="sig-param">path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_oa_parser.html#parse_pubmed_references"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pubmed_parser.parse_pubmed_references" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given path to xml file, parse references articles
 to list of dictionary</p>
+<dl class="simple">
+<dt>path: str</dt><dd><p>A string to an XML path.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>dict_refs: list</dt><dd><p>A list contains dictionary for references made in a given file.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="pubmed_parser.parse_pubmed_paragraph">
 <code class="sig-prename descclassname">pubmed_parser.</code><code class="sig-name descname">parse_pubmed_paragraph</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">all_paragraph=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_oa_parser.html#parse_pubmed_paragraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pubmed_parser.parse_pubmed_paragraph" title="Permalink to this definition">¶</a></dt>
-<dd><p>Give tree and reference dictionary
-return dictionary of referenced paragraph, section that it belongs to,
-and its cited PMID</p>
+<dd><p>Give path to a given PubMed OA file, parse and return 
+a dictionary of all paragraphs, section that it belongs to,
+and a list of reference made in each paragraph as a list of PMIDs</p>
+<dl class="simple">
+<dt>path: str</dt><dd><p>A string to an XML path.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>dict_pars: list</dt><dd><p>A list contains dictionary for paragraph text and its metadata.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="pubmed_parser.parse_pubmed_caption">
 <code class="sig-prename descclassname">pubmed_parser.</code><code class="sig-name descname">parse_pubmed_caption</code><span class="sig-paren">(</span><em class="sig-param">path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_oa_parser.html#parse_pubmed_caption"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pubmed_parser.parse_pubmed_caption" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given single xml path, extract figure caption and
+<dd><p>Given single xml path, extract figure caption and 
 reference id back to that figure</p>
+<dl class="simple">
+<dt>path: str</dt><dd><p>A string to an PubMed OA XML path</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>dict_captions: list</dt><dd><p>A list contains all dictionary of figure ID (‘fig_id’) with its metadata.
+Metadata includes ‘pmid’, ‘pmc’, ‘fig_caption’ (figure’s caption), 
+‘graphic_ref’ (a file name corresponding to a figure file in OA bulk download)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="pubmed_parser.parse_pubmed_table">
 <code class="sig-prename descclassname">pubmed_parser.</code><code class="sig-name descname">parse_pubmed_table</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">return_xml=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_oa_parser.html#parse_pubmed_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pubmed_parser.parse_pubmed_table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse table from given Pubmed Open-Access XML file</p>
+<dl class="simple">
+<dt>path: str</dt><dd><p>A string to an PubMed OA XML path</p>
+</dd>
+<dt>return_xml: bool</dt><dd><p>if True, a dictionary (in an output list) 
+will have a key ‘table_xml’ which is an XML string of a parsed table
+default: True</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>table_dicts: list</dt><dd><p>A list contains all dictionary of table with its metadata.
+Metadata includes ‘pmid’, ‘pmc’, ‘label’ (in a full text), ‘caption’</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -257,22 +322,40 @@ reference id back to that figure</p>
 <dl class="function">
 <dt id="pubmed_parser.parse_xml_web">
 <code class="sig-prename descclassname">pubmed_parser.</code><code class="sig-name descname">parse_xml_web</code><span class="sig-paren">(</span><em class="sig-param">pmid</em>, <em class="sig-param">sleep=None</em>, <em class="sig-param">save_xml=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_web_parser.html#parse_xml_web"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pubmed_parser.parse_xml_web" title="Permalink to this definition">¶</a></dt>
-<dd><p>Give pmid, load and parse xml from Pubmed eutils
-if save_xml is True, save xml output in dictionary</p>
+<dd><p>Give an input PMID, load and parse XML using PubMed eutils</p>
+<dl class="simple">
+<dt>pmid: str</dt><dd><p>A string of PMID which you want to parse from eutils</p>
+</dd>
+<dt>sleep: int</dt><dd><p>An integer of how long you want to wait after parsing one PMID from eutils
+default: None</p>
+</dd>
+<dt>save_xml: bool</dt><dd><p>if it is True, save an XML output as a string in the key <code class="docutils literal notranslate"><span class="pre">xml</span></code> in an output dictionary.
+It is good to check the information in 
+if it is False, we won’t save a full XML to an output
+default: False</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>dict_out: dict</dt><dd><p>A dictionary contains information of parsed XML from a given PMID</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="pubmed_parser.parse_citation_web">
 <code class="sig-prename descclassname">pubmed_parser.</code><code class="sig-name descname">parse_citation_web</code><span class="sig-paren">(</span><em class="sig-param">doc_id</em>, <em class="sig-param">id_type='PMC'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_web_parser.html#parse_citation_web"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pubmed_parser.parse_citation_web" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse citations from given document id</p>
-<p>doc_id: str or int, document id
-id_type: str from [‘PMC’, ‘PMID’, ‘DOI’, ‘OTHER’]</p>
 <dl class="simple">
-<dt>dict_out: dict, contains following keys</dt><dd><p>pmc: Pubmed Central ID
-pmid: Pubmed ID
-doi: DOI of the article
-n_citations: number of citations for given articles
-pmc_cited: list of PMCs that cite the given PMC</p>
+<dt>doc_id: (str, int)</dt><dd><p>document id</p>
+</dd>
+<dt>id_type: str</dt><dd><p>corresponding type of doc_id. This can be a choice from the following [‘PMC’, ‘PMID’, ‘DOI’, ‘OTHER’]</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>dict_out: dict</dt><dd><p>output is a dictionary contains following keys
+‘pmc’ (Pubmed Central ID), ‘pmid’ (Pubmed ID), 
+‘doi’ (DOI of an article),  ‘n_citations’ (number of citations for given articles),
+‘pmc_cited’ (list of PMCs that cite the given PMC)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -280,14 +363,19 @@ pmc_cited: list of PMCs that cite the given PMC</p>
 <dl class="function">
 <dt id="pubmed_parser.parse_outgoing_citation_web">
 <code class="sig-prename descclassname">pubmed_parser.</code><code class="sig-name descname">parse_outgoing_citation_web</code><span class="sig-paren">(</span><em class="sig-param">doc_id</em>, <em class="sig-param">id_type='PMC'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_web_parser.html#parse_outgoing_citation_web"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pubmed_parser.parse_outgoing_citation_web" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load citations from NCBI eutils API for a given document,
-return a dictionary containing:</p>
-<blockquote>
-<div><p>n_citations: number of citations for that article
-doc_id: the document ID number
-id_type: the type of document ID provided (PMCID or PMID)
-pmid_cited: list of papers cited by the document as PMIDs</p>
-</div></blockquote>
+<dd><p>Load citations from NCBI eutils API for a given document,</p>
+<dl class="simple">
+<dt>doc_id: str</dt><dd><p>The document ID</p>
+</dd>
+<dt>id_type: str</dt><dd><p>A type of provided document ID, can be either ‘PMC’ or ‘PMID’</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>dict_out: dict</dt><dd><p>a dictionary containing the following keys ‘n_citations’ (number of citations for that article),
+‘doc_id’ (the document ID number), ‘id_type’ (the type of document ID provided (PMCID or PMID)),
+‘pmid_cited’ (a list of papers cited by the document as PMIDs)</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

@@ -150,7 +150,10 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pubmed_parser.pubmed_oa_parser</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Parsers for PubMed XML</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">lxml</span> <span class="k">import</span> <span class="n">etree</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">chain</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="o">*</span>
@@ -192,10 +195,11 @@
 
 <span class="k">def</span> <span class="nf">zip_author</span><span class="p">(</span><span class="n">author</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Give a list of author and its affiliation keys</span>
+<span class="sd">    Give a list of author and its affiliation keys </span>
 <span class="sd">    in this following format</span>
-<span class="sd">    [first_name, last_name, [key1, key2]]</span>
-<span class="sd">    return [[first_name, last_name, key1], [first_name, last_name, key2]] instead</span>
+<span class="sd">        [first_name, last_name, [key1, key2]]</span>
+<span class="sd">    and return the output in </span>
+<span class="sd">        [[first_name, last_name, key1], [first_name, last_name, key2]] instead</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">author_zipped</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">([[</span><span class="n">author</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">author</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">author</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">author</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">author_zipped</span><span class="p">))</span>
@@ -231,8 +235,30 @@
 
 <div class="viewcode-block" id="parse_pubmed_xml"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_xml">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_xml</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">include_path</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nxml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Given single xml path, extract information from xml file</span>
-<span class="sd">    and return parsed xml file in dictionary format.</span>
+<span class="sd">    Given an input XML path to PubMed XML file, extract information and metadata </span>
+<span class="sd">    from a given XML file and return parsed XML file in dictionary format.</span>
+<span class="sd">    You can check ``ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/`` to list of available files to download </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path: str</span>
+<span class="sd">        A path to a given PumMed XML file</span>
+<span class="sd">    include_path: bool</span>
+<span class="sd">        if True, include a key &#39;path_to_file&#39; in an output dictionary</span>
+<span class="sd">        default: False</span>
+<span class="sd">    nxml: bool</span>
+<span class="sd">        if True, this will strip a namespace of an XML after reading a file</span>
+<span class="sd">        see https://stackoverflow.com/questions/18159221/remove-namespace-and-prefix-from-xml-in-python-using-lxml to </span>
+<span class="sd">        default: False</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict_out: dict</span>
+<span class="sd">        A dictionary contains a following keys from a parsed XML path</span>
+<span class="sd">        &#39;full_title&#39;, &#39;abstract&#39;, &#39;journal&#39;, &#39;pmid&#39;, &#39;pmc&#39;, &#39;doi&#39;,</span>
+<span class="sd">        &#39;publisher_id&#39;, &#39;author_list&#39;, &#39;affiliation_list&#39;, &#39;publication_year&#39;,</span>
+<span class="sd">        &#39;publication_date&#39;, &#39;subjects&#39;</span>
+<span class="sd">    }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">nxml</span><span class="p">)</span>
 
@@ -339,6 +365,16 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given path to xml file, parse references articles</span>
 <span class="sd">    to list of dictionary</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path: str</span>
+<span class="sd">        A string to an XML path.</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict_refs: list</span>
+<span class="sd">        A list contains dictionary for references made in a given file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">dict_article_meta</span> <span class="o">=</span> <span class="n">parse_article_meta</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
@@ -421,9 +457,19 @@
 
 <div class="viewcode-block" id="parse_pubmed_paragraph"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_paragraph">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_paragraph</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">all_paragraph</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Give tree and reference dictionary</span>
-<span class="sd">    return dictionary of referenced paragraph, section that it belongs to,</span>
-<span class="sd">    and its cited PMID</span>
+<span class="sd">    Give path to a given PubMed OA file, parse and return </span>
+<span class="sd">    a dictionary of all paragraphs, section that it belongs to,</span>
+<span class="sd">    and a list of reference made in each paragraph as a list of PMIDs</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path: str</span>
+<span class="sd">        A string to an XML path.</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict_pars: list</span>
+<span class="sd">        A list contains dictionary for paragraph text and its metadata.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">dict_article_meta</span> <span class="o">=</span> <span class="n">parse_article_meta</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
@@ -461,8 +507,20 @@
 
 <div class="viewcode-block" id="parse_pubmed_caption"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_caption">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_caption</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Given single xml path, extract figure caption and</span>
+<span class="sd">    Given single xml path, extract figure caption and </span>
 <span class="sd">    reference id back to that figure</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path: str</span>
+<span class="sd">        A string to an PubMed OA XML path</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict_captions: list</span>
+<span class="sd">        A list contains all dictionary of figure ID (&#39;fig_id&#39;) with its metadata.</span>
+<span class="sd">        Metadata includes &#39;pmid&#39;, &#39;pmc&#39;, &#39;fig_caption&#39; (figure&#39;s caption), </span>
+<span class="sd">        &#39;graphic_ref&#39; (a file name corresponding to a figure file in OA bulk download)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">dict_article_meta</span> <span class="o">=</span> <span class="n">parse_article_meta</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
@@ -496,8 +554,7 @@
 
 <span class="k">def</span> <span class="nf">table_to_df</span><span class="p">(</span><span class="n">table_text</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Function to transform plain xml text to list of row values and</span>
-<span class="sd">    columns</span>
+<span class="sd">    Function to transform an input table XML text to list of row values and columns</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">table_tree</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">table_text</span><span class="p">)</span>
     <span class="n">columns</span> <span class="o">=</span> <span class="p">[]</span>
@@ -525,6 +582,21 @@
 <div class="viewcode-block" id="parse_pubmed_table"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_table">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_table</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">return_xml</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse table from given Pubmed Open-Access XML file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path: str</span>
+<span class="sd">        A string to an PubMed OA XML path</span>
+<span class="sd">    return_xml: bool</span>
+<span class="sd">        if True, a dictionary (in an output list) </span>
+<span class="sd">        will have a key &#39;table_xml&#39; which is an XML string of a parsed table</span>
+<span class="sd">        default: True</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    table_dicts: list</span>
+<span class="sd">        A list contains all dictionary of table with its metadata.</span>
+<span class="sd">        Metadata includes &#39;pmid&#39;, &#39;pmc&#39;, &#39;label&#39; (in a full text), &#39;caption&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">dict_article_meta</span> <span class="o">=</span> <span class="n">parse_article_meta</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>

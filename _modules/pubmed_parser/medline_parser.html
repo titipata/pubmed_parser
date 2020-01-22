@@ -150,7 +150,10 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pubmed_parser.medline_parser</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Parsers for MEDLINE XML</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">chain</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
@@ -160,17 +163,18 @@
 
 
 <span class="k">def</span> <span class="nf">parse_pmid</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Parse PMID from a given Pubmed Article tree</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A function to parse PMID from a given Pubmed Article tree</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    medline: Element</span>
+<span class="sd">    pubmed_article: Element</span>
 <span class="sd">        The lxml node pointing to a medline document</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    pmid: str</span>
-<span class="sd">        String version of the PubMed ID</span>
+<span class="sd">        A string of PubMed ID parsed from a given</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">medline</span> <span class="o">=</span> <span class="n">pubmed_article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;MedlineCitation&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;PMID&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -187,16 +191,18 @@
 
 
 <span class="k">def</span> <span class="nf">parse_doi</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Parse DOI from a given Pubmed Article tree</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A function to parse DOI from a given Pubmed Article tree</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    medline: Element</span>
+<span class="sd">    pubmed_article: Element</span>
 <span class="sd">        The lxml node pointing to a medline document</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    doi: str, DOI from a given lxml node</span>
+<span class="sd">    doi: str</span>
+<span class="sd">        A string of DOI parsed from a given ``pubmed_article``</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">medline</span> <span class="o">=</span> <span class="n">pubmed_article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;MedlineCitation&quot;</span><span class="p">)</span>
     <span class="n">article</span> <span class="o">=</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Article&quot;</span><span class="p">)</span>
@@ -220,7 +226,8 @@
 
 
 <span class="k">def</span> <span class="nf">parse_mesh_terms</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Parse MESH terms from article</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A function to parse MESH terms from article</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -230,7 +237,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    mesh_terms: str</span>
-<span class="sd">        String of semi-colon spearated MeSH (Medical Subject Headings)</span>
+<span class="sd">        String of semi-colon ``;`` spearated MeSH (Medical Subject Headings)</span>
 <span class="sd">        terms contained in the document.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;MeshHeadingList&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -561,7 +568,20 @@
 <span class="k">def</span> <span class="nf">parse_references</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">,</span> <span class="n">reference_list</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Parse references from Pubmed Article</span>
 
-<span class="sd">    if reference_list is True, return list, if False return string</span>
+<span class="sd">    Parameter</span>
+<span class="sd">    ---------</span>
+<span class="sd">    pubmed_article: Element</span>
+<span class="sd">        The lxml element pointing to a medline document</span>
+
+<span class="sd">    reference_list: bool </span>
+<span class="sd">        if it is True, return a list of dictionary</span>
+<span class="sd">        if it is False return a string of PMIDs seprated by semicolon &#39;;&#39;</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    references: (list, str)</span>
+<span class="sd">        if &#39;reference_list&#39; is set to True, return a list of dictionary</span>
+<span class="sd">        if &#39;reference_list&#39; is set to False return a string of PMIDs seprated by semicolon &#39;;&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">references</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">reference_list_data</span> <span class="o">=</span> <span class="n">pubmed_article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;PubmedData/ReferenceList&quot;</span><span class="p">)</span>
@@ -594,14 +614,16 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    medline: Element</span>
-<span class="sd">        The lxml node pointing to a medline document</span>
+<span class="sd">    pubmed_article: Element</span>
+<span class="sd">        The lxml element pointing to a medline document</span>
 <span class="sd">    year_info_only: bool</span>
-<span class="sd">        see: date_extractor()</span>
+<span class="sd">        see more details in date_extractor()</span>
 <span class="sd">    nlm_category: bool</span>
-<span class="sd">        see: parse_medline_xml()</span>
-<span class="sd">    author_list: bool, if True, return output as list, else</span>
-<span class="sd">    reference_list: bool, if True, parse reference list as an output</span>
+<span class="sd">        see more details in parse_medline_xml()</span>
+<span class="sd">    author_list: bool</span>
+<span class="sd">        if True, return output as list, else</span>
+<span class="sd">    reference_list: bool</span>
+<span class="sd">        if True, parse reference list as an output</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -716,22 +738,25 @@
 <span class="sd">        a date of the form &#39;YYYY-MM-DD&#39; will be returned.</span>
 <span class="sd">        NOTE: the resolution of PubDate information in the Medline(R) database varies</span>
 <span class="sd">        between articles.</span>
-<span class="sd">        Defaults to True.</span>
-<span class="sd">    nlm_category: bool, default False</span>
+<span class="sd">        default: True</span>
+<span class="sd">    nlm_category: bool</span>
 <span class="sd">        if True, this will parse structured abstract where each section if original Label</span>
 <span class="sd">        if False, this will parse structured abstract where each section will be assigned to</span>
 <span class="sd">        NLM category of each sections</span>
-<span class="sd">    author_list: bool, default False, </span>
+<span class="sd">        default: False</span>
+<span class="sd">    author_list: bool </span>
 <span class="sd">        if True, return parsed author output as a list of authors</span>
-<span class="sd">        if False, return parsed author output as a string of authors concatenated with ;</span>
-<span class="sd">    reference_list: bool, default False</span>
+<span class="sd">        if False, return parsed author output as a string of authors concatenated with ``;``</span>
+<span class="sd">        default: False</span>
+<span class="sd">    reference_list: bool</span>
 <span class="sd">        if True, parse reference list as an output</span>
 <span class="sd">        if False, return string of PMIDs concatenated with ;</span>
+<span class="sd">        default: False</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
 <span class="sd">    article_list: list</span>
-<span class="sd">        Dictionary containing information about articles in NLM format (see</span>
+<span class="sd">        A list of dictionary containing information about articles in NLM format (see</span>
 <span class="sd">        `parse_article_info`). Articles that have been deleted will be</span>
 <span class="sd">        added with no information other than the field `delete` being `True`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -785,11 +810,11 @@
 <span class="sd">    path: str</span>
 <span class="sd">        The path to the XML with the information</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
 <span class="sd">    grant_id_list: list</span>
-<span class="sd">        List of dictionaries for all files in `path`. Each dictionary</span>
-<span class="sd">        will have the information returned by `parse_grant_id`</span>
+<span class="sd">        A list of dictionaries contains the grants in a given path. Each dictionary</span>
+<span class="sd">        has the keys of &#39;pmid&#39;, &#39;grant_id&#39;, &#39;grant_acronym&#39;, &#39;country&#39;, and &#39;agency&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">medline_citations</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;//MedlineCitationSet/MedlineCitation&quot;</span><span class="p">)</span>

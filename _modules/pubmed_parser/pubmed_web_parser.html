@@ -171,7 +171,19 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load XML file from given pmid from eutils site</span>
 <span class="sd">    return a dictionary for given pmid and xml string from the site</span>
-<span class="sd">    sleep: how much time we want to wait until requesting new xml</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pmid: (int, str)</span>
+<span class="sd">        String of integer of a PMID</span>
+
+<span class="sd">    sleep: int</span>
+<span class="sd">        how much time we want to wait until requesting new xml</span>
+<span class="sd">        default: None</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    tree: Element</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">link</span> <span class="o">=</span> <span class="s2">&quot;https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&amp;retmode=xml&amp;id=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="n">pmid</span>
@@ -185,9 +197,8 @@
 
 <span class="k">def</span> <span class="nf">parse_pubmed_web_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Giving tree, return simple parsed information from the tree</span>
+<span class="sd">    Giving a tree Element, return simple parsed information from the tree</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//articletitle&quot;</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">title</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">title</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//articletitle&quot;</span><span class="p">)])</span>
     <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//booktitle&quot;</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
@@ -280,8 +291,25 @@
 
 <div class="viewcode-block" id="parse_xml_web"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_xml_web">[docs]</a><span class="k">def</span> <span class="nf">parse_xml_web</span><span class="p">(</span><span class="n">pmid</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_xml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Give pmid, load and parse xml from Pubmed eutils</span>
-<span class="sd">    if save_xml is True, save xml output in dictionary</span>
+<span class="sd">    Give an input PMID, load and parse XML using PubMed eutils</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pmid: str</span>
+<span class="sd">        A string of PMID which you want to parse from eutils    </span>
+<span class="sd">    sleep: int</span>
+<span class="sd">        An integer of how long you want to wait after parsing one PMID from eutils</span>
+<span class="sd">        default: None</span>
+<span class="sd">    save_xml: bool</span>
+<span class="sd">        if it is True, save an XML output as a string in the key ``xml`` in an output dictionary.</span>
+<span class="sd">        It is good to check the information in </span>
+<span class="sd">        if it is False, we won&#39;t save a full XML to an output</span>
+<span class="sd">        default: False</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict_out: dict</span>
+<span class="sd">        A dictionary contains information of parsed XML from a given PMID</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tree</span> <span class="o">=</span> <span class="n">load_xml</span><span class="p">(</span><span class="n">pmid</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="n">sleep</span><span class="p">)</span>
     <span class="n">dict_out</span> <span class="o">=</span> <span class="n">parse_pubmed_web_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
@@ -312,8 +340,22 @@
 
 <span class="k">def</span> <span class="nf">convert_document_id</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert document id to dictionary of other id</span>
-<span class="sd">    see: http://www.ncbi.nlm.nih.gov/pmc/tools/id-converter-api/ for more info</span>
+<span class="sd">    Convert a given document id to dictionary of other id.</span>
+<span class="sd">    Please see http://www.ncbi.nlm.nih.gov/pmc/tools/id-converter-api/ for more info</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    doc_id: (int, str)</span>
+<span class="sd">        A string or integer of document ID</span>
+<span class="sd">    id_type: str</span>
+<span class="sd">        A document ID type corresponding to an input ``doc_id``</span>
+<span class="sd">        default: &#39;PMC&#39;</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    output_dict: dict</span>
+<span class="sd">        A dictionary contains possible mapping of a given document ID including &#39;pmc&#39;, &#39;pmid&#39;, and &#39;doi&#39;.</span>
+<span class="sd">        If the document ID cannot be found, this will return empty string instead</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">doc_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">doc_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">id_type</span> <span class="o">==</span> <span class="s2">&quot;PMC&quot;</span><span class="p">:</span>
@@ -350,18 +392,20 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    doc_id: str or int, document id</span>
-<span class="sd">    id_type: str from [&#39;PMC&#39;, &#39;PMID&#39;, &#39;DOI&#39;, &#39;OTHER&#39;]</span>
+<span class="sd">    doc_id: (str, int)</span>
+<span class="sd">        document id</span>
+<span class="sd">    id_type: str</span>
+<span class="sd">        corresponding type of doc_id. This can be a choice from the following [&#39;PMC&#39;, &#39;PMID&#39;, &#39;DOI&#39;, &#39;OTHER&#39;]</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict_out: dict, contains following keys</span>
-<span class="sd">        pmc: Pubmed Central ID</span>
-<span class="sd">        pmid: Pubmed ID</span>
-<span class="sd">        doi: DOI of the article</span>
-<span class="sd">        n_citations: number of citations for given articles</span>
-<span class="sd">        pmc_cited: list of PMCs that cite the given PMC</span>
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict_out: dict</span>
+<span class="sd">        output is a dictionary contains following keys</span>
+<span class="sd">        &#39;pmc&#39; (Pubmed Central ID), &#39;pmid&#39; (Pubmed ID), </span>
+<span class="sd">        &#39;doi&#39; (DOI of an article),  &#39;n_citations&#39; (number of citations for given articles),</span>
+<span class="sd">        &#39;pmc_cited&#39; (list of PMCs that cite the given PMC)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">id_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;PMC&quot;</span><span class="p">,</span> <span class="s2">&quot;PMID&quot;</span><span class="p">,</span> <span class="s2">&quot;DOI&quot;</span><span class="p">,</span> <span class="s2">&quot;OTHER&quot;</span><span class="p">]</span>
 
     <span class="n">doc_id_dict</span> <span class="o">=</span> <span class="n">convert_document_id</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="n">id_type</span><span class="p">)</span>
     <span class="n">pmc</span> <span class="o">=</span> <span class="n">doc_id_dict</span><span class="p">[</span><span class="s2">&quot;pmc&quot;</span><span class="p">]</span>
@@ -401,11 +445,20 @@
 <div class="viewcode-block" id="parse_outgoing_citation_web"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_outgoing_citation_web">[docs]</a><span class="k">def</span> <span class="nf">parse_outgoing_citation_web</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load citations from NCBI eutils API for a given document,</span>
-<span class="sd">    return a dictionary containing:</span>
-<span class="sd">        n_citations: number of citations for that article</span>
-<span class="sd">        doc_id: the document ID number</span>
-<span class="sd">        id_type: the type of document ID provided (PMCID or PMID)</span>
-<span class="sd">        pmid_cited: list of papers cited by the document as PMIDs</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    doc_id: str</span>
+<span class="sd">        The document ID</span>
+<span class="sd">    id_type: str</span>
+<span class="sd">        A type of provided document ID, can be either &#39;PMC&#39; or &#39;PMID&#39;</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict_out: dict</span>
+<span class="sd">        a dictionary containing the following keys &#39;n_citations&#39; (number of citations for that article),</span>
+<span class="sd">        &#39;doc_id&#39; (the document ID number), &#39;id_type&#39; (the type of document ID provided (PMCID or PMID)),</span>
+<span class="sd">        &#39;pmid_cited&#39; (a list of papers cited by the document as PMIDs)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">doc_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">doc_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">id_type</span> <span class="o">==</span> <span class="s2">&quot;PMC&quot;</span><span class="p">:</span>

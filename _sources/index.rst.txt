@@ -7,11 +7,10 @@ Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML
 ========================================================================================
 
 
-Pubmed Parser is a Python library for parsing the `PubMed Open-Access (OA) subset <http://www.ncbi.nlm.nih.gov/pmc/tools/ftp//>`_
-and `MEDLINE XML <https://www.nlm.nih.gov/bsd/licensee//>`_ repositories. 
+Pubmed Parser is a Python library for parsing the `PubMed Open-Access (OA) subset <http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/>`_
+and `MEDLINE XML <https://www.nlm.nih.gov/bsd/licensee/>`_ repositories. 
 It parses this information into a Python dictionary which can be easily used for research such in text mining and natural language processing pipelines. 
-See `wiki page <https://github.com/titipata/pubmed_parser/wiki/>`_ on how to download and process dataset using the repository.
-
+See our `Wiki page <https://github.com/titipata/pubmed_parser/wiki/>`_ or this documentation on how to download and process dataset using the repository.
 
 
 Contents
@@ -24,3 +23,9 @@ Contents
    api
    resources
    spark
+
+
+Questions / Contributions / Bugs
+================================
+
+We provide an information for you for all above in our `Contribution Guidelines <https://github.com/titipata/pubmed_parser/blob/master/CONTRIBUTING.md>`_.

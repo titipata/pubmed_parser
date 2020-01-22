@@ -166,32 +166,32 @@
 <h2>Links to download Pubmed and MEDLINE dataset<a class="headerlink" href="#links-to-download-pubmed-and-medline-dataset" title="Permalink to this headline">¶</a></h2>
 <p>Here are links for downloading PubMed OA and MEDLINE data</p>
 <ul class="simple">
-<li><p>PubMed Open-Access (OA) dataset is available at <code class="docutils literal notranslate"><span class="pre">http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/</span></code>. Here is the <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/pub/pmc//">FTP link</a> for downloading the bulk of dataset.</p></li>
+<li><p>PubMed Open-Access (OA) dataset is available at <code class="docutils literal notranslate"><span class="pre">http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/</span></code>. Here is the <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/">FTP link</a> for downloading the bulk of dataset. You can check <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk//">oa_bulk folder</a> to see the full tar files.</p></li>
 <li><p>the MEDLINE XMLs are available here <code class="docutils literal notranslate"><span class="pre">ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/</span></code></p></li>
 <li><p>the MEDLINE XMLs weekly updates are available here <code class="docutils literal notranslate"><span class="pre">ftp://ftp.nlm.nih.gov/nlmdata/.medlease/gz/</span></code></p></li>
-<li><p>MEDLINE Document Type Definitions (DTDs) file is available at this <a class="reference external" href="linkhttps://www.nlm.nih.gov/databases/dtd//">linkhttps://www.nlm.nih.gov/databases/dtd//</a>. We can use it to see available tags from a given MEDLINE XML.</p></li>
+<li><p>MEDLINE Document Type Definitions (DTDs) file is available at this <a class="reference external" href="https://www.nlm.nih.gov/databases/dtd/">link</a>. We can use it to see available tags from a given MEDLINE XML.</p></li>
 </ul>
 </div>
 <div class="section" id="download-pubmed-oa-figures">
 <h2>Download PubMed OA figures<a class="headerlink" href="#download-pubmed-oa-figures" title="Permalink to this headline">¶</a></h2>
 <p>Here, we explain how to download PubMed OA figures corresponded to the parsed information</p>
 <ul class="simple">
-<li><p>In <cite>pubmed_parser</cite>, you can use <code class="docutils literal notranslate"><span class="pre">parse_pubmed_caption</span></code> to parse figures (to be specific <cite>figure_id</cite>) and captions corresponding to a manuscript.</p></li>
-<li><p>To download the images corresponding to a given <code class="docutils literal notranslate"><span class="pre">PMC</span></code> or <code class="docutils literal notranslate"><span class="pre">PMID</span></code>, you can download a CSV file from <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_file_list.csv/">&lt;ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_file_list.csv</a> first. - The file will have columns <code class="docutils literal notranslate"><span class="pre">PMID</span></code>, <code class="docutils literal notranslate"><span class="pre">Accession</span> <span class="pre">ID</span></code> (<code class="docutils literal notranslate"><span class="pre">PMC</span></code>), and <code class="docutils literal notranslate"><span class="pre">File</span></code> where it looks something like <code class="docutils literal notranslate"><span class="pre">oa_package/08/e0/PMC13900.tar.gz</span></code>.</p></li>
-<li><p>You can then download a tar file for a given <code class="docutils literal notranslate"><span class="pre">PMID</span></code> or <code class="docutils literal notranslate"><span class="pre">PMC</span></code> from <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_package/08/e0/PMC13900.tar.gz/">ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_package/08/e0/PMC13900.tar.gz</a>. You can check out <cite>ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_package/</cite> to get all the access for tar files.</p></li>
+<li><p>In <code class="docutils literal notranslate"><span class="pre">pubmed_parser</span></code>, you can use <code class="docutils literal notranslate"><span class="pre">parse_pubmed_caption</span></code> to parse figures (to be specific <code class="docutils literal notranslate"><span class="pre">figure_id</span></code>) and captions corresponding to a manuscript.</p></li>
+<li><p>To download the images corresponding to a given <code class="docutils literal notranslate"><span class="pre">PMC</span></code> or <code class="docutils literal notranslate"><span class="pre">PMID</span></code>, you can download a CSV file from <code class="docutils literal notranslate"><span class="pre">ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_file_list.csv</span></code> first. - The file will have columns <code class="docutils literal notranslate"><span class="pre">PMID</span></code>, <code class="docutils literal notranslate"><span class="pre">Accession</span> <span class="pre">ID</span></code> (<code class="docutils literal notranslate"><span class="pre">PMC</span></code>), and <code class="docutils literal notranslate"><span class="pre">File</span></code> where it looks something like <code class="docutils literal notranslate"><span class="pre">oa_package/08/e0/PMC13900.tar.gz</span></code>.</p></li>
+<li><p>You can then download a tar file for a given <code class="docutils literal notranslate"><span class="pre">PMID</span></code> or <code class="docutils literal notranslate"><span class="pre">PMC</span></code> from <code class="docutils literal notranslate"><span class="pre">ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_package/08/e0/PMC13900.tar.gz</span></code>. You can check out <code class="docutils literal notranslate"><span class="pre">ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_package/</span></code> to get all the access for tar files.</p></li>
 </ul>
 </div>
 <div class="section" id="pmc-copyright-notice">
 <h2>PMC Copyright Notice<a class="headerlink" href="#pmc-copyright-notice" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>Please see copyright notice when you scrape data from website <a class="reference external" href="herehttps://www.ncbi.nlm.nih.gov/pmc/about/copyright/#copy-PMC/">herehttps://www.ncbi.nlm.nih.gov/pmc/about/copyright/#copy-PMC/</a></p></li>
-</ul>
+<p>Wehn you use Pubmed Parser to parse information from the website, do not download them as a bulk. Your IP might get banned from doing it.
+Please see copyright notice when you scrape data from website <a class="reference external" href="https://www.ncbi.nlm.nih.gov/pmc/about/copyright/#copy-PMC/">here</a>.</p>
 </div>
 <div class="section" id="alternative-implementation-of-medline-parsers">
 <h2>Alternative implementation of MEDLINE parsers<a class="headerlink" href="#alternative-implementation-of-medline-parsers" title="Permalink to this headline">¶</a></h2>
+<p>There are a few implementation to parse MEDLINE dataset. You can see below if you are interested to these alternative implementations.</p>
 <ul class="simple">
-<li><p><a class="reference external" href="MEDLINEKung-Fuhttp://fnl.es/medline-kung-fu.html/">MEDLINEKung-Fuhttp://fnl.es/medline-kung-fu.html/</a> which uses <a class="reference external" href="medichttps://github.com/fnl/medic/">medichttps://github.com/fnl/medic/</a> to parse MEDLINE to database</p></li>
-<li><p><a class="reference external" href="MEDLINEXMLToJSONhttps://github.com/ldbib/MEDLINEXMLToJSON/">MEDLINEXMLToJSONhttps://github.com/ldbib/MEDLINEXMLToJSON/</a> implemented in JavaScript</p></li>
+<li><p><a class="reference external" href="http://fnl.es/medline-kung-fu.html/">MEDLINE Kung-Fu</a> which uses <a class="reference external" href="https://github.com/fnl/medic/">medic</a> to parse MEDLINE to database</p></li>
+<li><p><a class="reference external" href="https://github.com/ldbib/MEDLINEXMLToJSON/">MEDLINEXMLToJSON</a> implemented in JavaScript</p></li>
 </ul>
 </div>
 </div>
