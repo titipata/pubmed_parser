@@ -19,7 +19,19 @@ def load_xml(pmid, sleep=None):
     """
     Load XML file from given pmid from eutils site
     return a dictionary for given pmid and xml string from the site
-    sleep: how much time we want to wait until requesting new xml
+
+    Parameters
+    ----------
+    pmid: (int, str)
+        String of integer of a PMID
+
+    sleep: int
+        how much time we want to wait until requesting new xml
+        default: None
+
+    Return
+    ------
+    tree: Element
     """
     link = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id={}".format(
         pmid
@@ -133,12 +145,19 @@ def parse_xml_web(pmid, sleep=None, save_xml=False):
     ----------
     pmid: str
         A string of PMID which you want to parse from eutils    
-    sleep: int, default None
+    sleep: int
         An integer of how long you want to wait after parsing one PMID from eutils
-    save_xml:
+        default: None
+    save_xml: bool
         if it is True, save an XML output as a string in the key ``xml`` in an output dictionary.
         It is good to check the information in 
         if it is False, we won't save a full XML to an output
+        default: False
+
+    Return
+    ------
+    dict_out: dict
+        A dictionary contains information of parsed XML from a given PMID
     """
     tree = load_xml(pmid, sleep=sleep)
     dict_out = parse_pubmed_web_tree(tree)
@@ -172,8 +191,19 @@ def convert_document_id(doc_id, id_type="PMC"):
     Convert a given document id to dictionary of other id.
     Please see http://www.ncbi.nlm.nih.gov/pmc/tools/id-converter-api/ for more info
 
-    doc_id
+    Parameters
+    ----------
+    doc_id: (int, str)
+        A string or integer of document ID
+    id_type: str
+        A document ID type corresponding to an input ``doc_id``
+        default: 'PMC'
 
+    Return
+    ------
+    output_dict: dict
+        A dictionary contains possible mapping of a given document ID including 'pmc', 'pmid', and 'doi'.
+        If the document ID cannot be found, this will return empty string instead
     """
     doc_id = str(doc_id)
     if id_type == "PMC":
@@ -212,12 +242,12 @@ def parse_citation_web(doc_id, id_type="PMC"):
     ----------
     doc_id: (str, int)
         document id
-    id_type: str,
-        corresponding type of doc_id. This can be a choice from this list ['PMC', 'PMID', 'DOI', 'OTHER']
+    id_type: str
+        corresponding type of doc_id. This can be a choice from the following ['PMC', 'PMID', 'DOI', 'OTHER']
 
-    Returns
-    -------
-    dict_out: dict,
+    Return
+    ------
+    dict_out: dict
         output is a dictionary contains following keys
         'pmc' (Pubmed Central ID), 'pmid' (Pubmed ID), 
         'doi' (DOI of an article),  'n_citations' (number of citations for given articles),
@@ -263,11 +293,20 @@ def parse_citation_web(doc_id, id_type="PMC"):
 def parse_outgoing_citation_web(doc_id, id_type="PMC"):
     """
     Load citations from NCBI eutils API for a given document,
-    return a dictionary containing:
-        n_citations: number of citations for that article
-        doc_id: the document ID number
-        id_type: the type of document ID provided (PMCID or PMID)
-        pmid_cited: list of papers cited by the document as PMIDs
+
+    Parameters
+    ----------
+    doc_id: str
+        The document ID
+    id_type: str
+        A type of provided document ID, can be either 'PMC' or 'PMID'
+
+    Return
+    ------
+    dict_out: dict
+        a dictionary containing the following keys 'n_citations' (number of citations for that article),
+        'doc_id' (the document ID number), 'id_type' (the type of document ID provided (PMCID or PMID)),
+        'pmid_cited' (a list of papers cited by the document as PMIDs)
     """
     doc_id = str(doc_id)
     if id_type == "PMC":

@@ -217,12 +217,12 @@ def parse_pubmed_references(path):
     Parameters
     ----------
     path: str
-        A string to an XML path
+        A string to an XML path.
 
     Return
     ------
     dict_refs: list
-        A list contains dictionary for references made in a given file
+        A list contains dictionary for references made in a given file.
     """
     tree = read_xml(path)
     dict_article_meta = parse_article_meta(tree)
@@ -305,9 +305,19 @@ def parse_pubmed_references(path):
 
 def parse_pubmed_paragraph(path, all_paragraph=False):
     """
-    Give tree and reference dictionary
-    return dictionary of referenced paragraph, section that it belongs to,
-    and its cited PMID
+    Give path to a given PubMed OA file, parse and return 
+    a dictionary of all paragraphs, section that it belongs to,
+    and a list of reference made in each paragraph as a list of PMIDs
+
+    Parameters
+    ----------
+    path: str
+        A string to an XML path.
+
+    Return
+    ------
+    dict_pars: list
+        A list contains dictionary for paragraph text and its metadata.
     """
     tree = read_xml(path)
     dict_article_meta = parse_article_meta(tree)
