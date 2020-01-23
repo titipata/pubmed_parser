@@ -18,7 +18,7 @@ install:
 
 script:
   - pytest --cov=pubmed_parser tests/ --verbose
-  - make html
+  - cd docs && make html
   - touch _build/html/.nojekyll
 
 deploy:
