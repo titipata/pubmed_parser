@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Setting up PySpark with Pubmed Parser &mdash; Pubmed Parser 0.2.1 documentation</title>
+  <title>Setting up Pubmed Parser with PySpark &mdash; Pubmed Parser 0.2.1 documentation</title>
   
 
   
@@ -87,7 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="resources.html">Resources</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Setting up PySpark with Pubmed Parser</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Setting up Pubmed Parser with PySpark</a></li>
 </ul>
 
             
@@ -133,7 +133,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Setting up PySpark with Pubmed Parser</li>
+      <li>Setting up Pubmed Parser with PySpark</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,16 +152,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="setting-up-pyspark-with-pubmed-parser">
-<h1>Setting up PySpark with Pubmed Parser<a class="headerlink" href="#setting-up-pyspark-with-pubmed-parser" title="Permalink to this headline">¶</a></h1>
-<p>We put small snippet to setup Spark 2.1 on Jupyter Notebook here for initializing the notebook.
-We use Spark workflow to process MEDLINE XML data to Spark dataframe. <strong>Note</strong> that the path to downloaded Spark might be different.</p>
+  <div class="section" id="setting-up-pubmed-parser-with-pyspark">
+<h1>Setting up Pubmed Parser with PySpark<a class="headerlink" href="#setting-up-pubmed-parser-with-pyspark" title="Permalink to this headline">¶</a></h1>
+<p>Below, we put a small snippet to setup <code class="docutils literal notranslate"><span class="pre">Spark</span> <span class="pre">2.1</span></code> on Jupyter Notebook.
+We can use PySpark as a workflow to process MEDLINE XML data to Spark dataframe.
+Using PySpark can reduce parsing time of more than 25 million documents to less than 10 minutes when you have multiple core processors.</p>
+<p><strong>Note</strong> that the <code class="docutils literal notranslate"><span class="pre">spark_home</span></code> path to downloaded Spark might be different.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">findspark</span>
 <span class="n">findspark</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">spark_home</span><span class="o">=</span><span class="s2">&quot;/opt/spark-2.1.0-bin-cdh5.9.0/&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In Spark 2.1, <cite>spark</cite> in this case can use as <cite>sparkContext</cite> and has access to <cite>parallelize</cite> or <cite>createDataFrame</cite> already.</p>
+<p>In Spark 2.1, <code class="docutils literal notranslate"><span class="pre">spark</span></code> in this case can use as <code class="docutils literal notranslate"><span class="pre">sparkContext</span></code> which has access to <code class="docutils literal notranslate"><span class="pre">parallelize</span></code> or <code class="docutils literal notranslate"><span class="pre">createDataFrame</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
 <span class="kn">from</span> <span class="nn">pyspark.conf</span> <span class="kn">import</span> <span class="n">SparkConf</span>
 
@@ -184,7 +186,8 @@ We use Spark workflow to process MEDLINE XML data to Spark dataframe. <strong>No
     <span class="n">getOrCreate</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>We will update these documentation soon on how to incorporate Pubmed Parser with <a class="reference external" href="https://dask.org/">dask</a>.</p>
+<p>Please see the full implementation details in <a class="reference external" href="https://github.com/titipata/pubmed_parser/tree/master/scripts">scripts</a> folder on the repository.</p>
+<p>We will update the documentation on how to incorporate Pubmed Parser with <a class="reference external" href="https://dask.org/">dask</a> soon.</p>
 </div>
 
 

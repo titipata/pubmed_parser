@@ -88,7 +88,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="resources.html">Resources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spark.html">Setting up PySpark with Pubmed Parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spark.html">Setting up Pubmed Parser with PySpark</a></li>
 </ul>
 
             
@@ -164,7 +164,16 @@
 pip install ./pubmed_parser
 </pre></div>
 </div>
-<p>You can test your installation by running <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">--cov=pubmed_parser</span> <span class="pre">tests/</span> <span class="pre">--verbose</span></code></p>
+<p>You can test your installation by running</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest --cov<span class="o">=</span>pubmed_parser tests/ --verbose
+</pre></div>
+</div>
+<p>To build a documentation page, change directory to <code class="docutils literal notranslate"><span class="pre">docs</span></code> folder and then run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make html
+</pre></div>
+</div>
+<p>This will build a page in <code class="docutils literal notranslate"><span class="pre">_build/html</span></code> which you can open via regular browser.
+You need <code class="docutils literal notranslate"><span class="pre">sphinx</span></code> and <code class="docutils literal notranslate"><span class="pre">sphinx-gallery</span></code> to build a documentation page.</p>
 </div>
 
 
