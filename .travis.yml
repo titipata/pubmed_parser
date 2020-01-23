@@ -1,5 +1,4 @@
 language: python
-python: "3.7"
 
 notifications:
   email: false
@@ -12,6 +11,11 @@ before_install:
 jobs:
   include:
     - stage: test
+      env:
+        - 3.5
+        - 3.6
+        - 3.7
+        - 3.8
       script:
         - pytest --cov=pubmed_parser tests/ --verbose
       after_success:
