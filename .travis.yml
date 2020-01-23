@@ -18,5 +18,19 @@ install:
 script:
   - pytest --cov=pubmed_parser tests/ --verbose
 
+build_documentation:
+  - make html
+  - touch _build/html/.nojekyll
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN  # Set in travis-ci.org dashboard, marked secure
+  keep-history: true
+  on:
+    branch: master
+  local_dir: _build/html/
+
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)
