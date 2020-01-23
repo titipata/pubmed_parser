@@ -14,12 +14,10 @@ before_install:
 
 install:
   - python setup.py install
+  - pip install -r docs/doc_requirements.txt
 
 script:
   - pytest --cov=pubmed_parser tests/ --verbose
-
-build_documentation:
-  - pip install -r docs/doc_requirements.txt
   - make html
   - touch _build/html/.nojekyll
 
