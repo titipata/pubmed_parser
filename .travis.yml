@@ -15,11 +15,14 @@ before_install:
 jobs:
   include:
     - stage: test
-      install: python setup.py install
-      script: pytest --cov=pubmed_parser tests/ --verbose
+      install:
+        - python setup.py install
+      script:
+        - pytest --cov=pubmed_parser tests/ --verbose
     - stage: "Build Documentation"
       env: 3.8
-      install: pip install -r docs/doc_requirements.txt
+      install:
+        - pip install -r docs/doc_requirements.txt
       script:
         - cd docs && make html
         - touch _build/html/.nojekyll
