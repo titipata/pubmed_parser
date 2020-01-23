@@ -12,24 +12,26 @@ before_install:
   - python --version
   - pip install -U pip
 
-install:
-  - python setup.py install
-  - pip install -r docs/doc_requirements.txt
-
-script:
-  - pytest --cov=pubmed_parser tests/ --verbose
-  - cd docs && make html
-  - touch _build/html/.nojekyll
-
-deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN  # Set in travis-ci.org dashboard, marked secure
-  keep-history: true
-  on:
-    branch: master
-  local_dir: docs/_build/html/
-
+jobs:
+  include:
+    - stage: test
+      install: python setup.py install
+      script: pytest --cov=pubmed_parser tests/ --verbose
+    - stage: "Build Documentation"
+      env: 3.8
+      install: pip install -r docs/doc_requirements.txt
+      script:
+        - cd docs && make html
+        - touch _build/html/.nojekyll
+    - stage: "Deploy Documentation"
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        github_token: $GITHUB_TOKEN  # Set in travis-ci.org dashboard, marked secure
+        keep-history: true
+        on:
+          branch: master
+        local_dir: docs/_build/html/
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
