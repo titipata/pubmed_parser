@@ -32,7 +32,7 @@ def parse_pmid(pubmed_article):
         article_ids = pubmed_article.find("PubmedData/ArticleIdList")
         if article_ids is not None:
             pmid = article_ids.find('ArticleId[@IdType="pmid"]')
-            pmid = pmid.text.strip() if pmid is not None else ""
+            pmid = pmid.text.strip() if pmid is not None and pmid.text is not None  else ""
         else:
             pmid = ""
     return pmid
@@ -436,7 +436,7 @@ def parse_references(pubmed_article, reference_list):
     if reference_list_data is not None:
         for ref in reference_list_data.findall("Reference"):
             citation = ref.find("Citation")
-            citation = citation.text.strip() if citation is not None else ""
+            citation = citation.text.strip() if citation is not None and citation.text is not None else ""
             article_ids = ref.find("ArticleIdList")
             pmid = (
                 article_ids.find('ArticleId[@IdType="pubmed"]')
