@@ -32,6 +32,7 @@ def load_xml(pmid, sleep=None):
     Return
     ------
     tree: Element
+        An eutils XML of a given PMID
     """
     link = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id={}".format(
         pmid
@@ -172,6 +173,21 @@ def parse_xml_web(pmid, sleep=None, save_xml=False):
     ------
     dict_out: dict
         A dictionary contains information of parsed XML from a given PMID
+
+    Examples
+    --------
+    >>> pubmed_parser.parse_xml_web(11360989, sleep=1, save_xml=False)
+    {
+        'title': 'Molecular biology and evolution. Can genes explain biological complexity?',
+        'abstract': '',
+        'journal': 'Science (New York, N.Y.)',
+        'affiliation': 'Collegium Budapest (Institute for Advanced Study), 2 Szentháromság u., H-1014 Budapest, Hungary. szathmary@colbud.hu',
+        'authors': 'E Szathmáry; F Jordán; C Pál',
+        'keywords': 'D000818:Animals;D005075:Biological Evolution;...',
+        'doi': '10.1126/science.1060852',
+        'year': '2001',
+        'pmid': '11360989'
+    }
     """
     tree = load_xml(pmid, sleep=sleep)
     dict_out = parse_pubmed_web_tree(tree)
@@ -193,7 +209,7 @@ def extract_citations(tree):
     Return
     ------
     n_citations: int
-        Number of citations that an article get until parsed date
+        Number of citations that an article get until parsed date. If no citations found, return 0
     """
     citations_text = tree.xpath('//form/h2[@class="head"]/text()')[0]
     n_citations = re.sub("Is Cited by the Following ", "", citations_text).split(" ")[0]
@@ -242,6 +258,11 @@ def convert_document_id(doc_id, id_type="PMC"):
     output_dict: dict
         A dictionary contains possible mapping of a given document ID including 'pmc', 'pmid', and 'doi'.
         If the document ID cannot be found, this will return empty string instead
+
+    Examples
+    --------
+    >>> pp.pubmed_web_parser.convert_document_id(6933944, id_type='PMC')
+    {'pmc': 'PMC6933944', 'pmid': '31624211', 'doi': '10.1126/science.aax1562'}
     """
     doc_id = str(doc_id)
     if id_type == "PMC":
@@ -290,6 +311,17 @@ def parse_citation_web(doc_id, id_type="PMC"):
         'pmc' (Pubmed Central ID), 'pmid' (Pubmed ID), 
         'doi' (DOI of an article),  'n_citations' (number of citations for given articles),
         'pmc_cited' (list of PMCs that cite the given PMC)
+
+    Examples
+    --------
+    >>> pubmed_parser.parse_citation_web(6933944, id_type='PMC')
+    {
+        'n_citations': 0,
+        'pmid': '31624211',
+        'pmc': '6933944',
+        'doi': '10.1126/science.aax1562',
+        'pmc_cited': []
+    }
     """
     assert id_type in ["PMC", "PMID", "DOI", "OTHER"]
 
