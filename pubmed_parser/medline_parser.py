@@ -222,7 +222,6 @@ def parse_journal_info(medline):
     dict_out: dict
         dictionary with keys including `medline_ta`, `nlm_unique_id`,
         `issn_linking` and `country`
-
     """
     journal_info = medline.find("MedlineJournalInfo")
     if journal_info is not None:
@@ -607,6 +606,10 @@ def parse_medline_xml(
         A list of dictionary containing information about articles in NLM format (see
         `parse_article_info`). Articles that have been deleted will be
         added with no information other than the field `delete` being `True`
+
+    Examples
+    --------
+    >>> pubmed_parser.parse_medline_xml('data/pubmed20n0014.xml.gz')
     """
     tree = read_xml(path)
     medline_citations = tree.findall("//MedlineCitationSet/MedlineCitation")
@@ -663,6 +666,16 @@ def parse_medline_grant_id(path):
     grant_id_list: list
         A list of dictionaries contains the grants in a given path. Each dictionary
         has the keys of 'pmid', 'grant_id', 'grant_acronym', 'country', and 'agency'
+
+    >>> pubmed_parser.parse_medline_grant_id('data/pubmed20n0014.xml.gz')
+    [{
+        'pmid': '399300',
+        'grant_id': 'HL17731',
+        'grant_acronym': 'HL',
+        'country': 'United States',
+        'agency': 'NHLBI NIH HHS'
+    }, ...
+    ]
     """
     tree = read_xml(path)
     medline_citations = tree.findall("//MedlineCitationSet/MedlineCitation")

@@ -261,7 +261,7 @@ def convert_document_id(doc_id, id_type="PMC"):
 
     Examples
     --------
-    >>> pp.pubmed_web_parser.convert_document_id(6933944, id_type='PMC')
+    >>> pubmed_parser.pubmed_web_parser.convert_document_id(6933944, id_type='PMC')
     {'pmc': 'PMC6933944', 'pmid': '31624211', 'doi': '10.1126/science.aax1562'}
     """
     doc_id = str(doc_id)
@@ -380,6 +380,14 @@ def parse_outgoing_citation_web(doc_id, id_type="PMC"):
         a dictionary containing the following keys 'n_citations' (number of citations for that article),
         'doc_id' (the document ID number), 'id_type' (the type of document ID provided (PMCID or PMID)),
         'pmid_cited' (a list of papers cited by the document as PMIDs)
+
+    >>> pubmed_parser.parse_outgoing_citation_web(6933944, id_type='PMC')
+    {
+        'n_citations': 11,
+        'doc_id': '6933944',
+        'id_type': 'PMC',
+        'pmid_cited': ['30705152', ..., ]
+    }
     """
     doc_id = str(doc_id)
     if id_type == "PMC":

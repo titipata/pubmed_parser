@@ -379,6 +379,18 @@ def parse_pubmed_caption(path):
         A list contains all dictionary of figure ID ('fig_id') with its metadata.
         Metadata includes 'pmid', 'pmc', 'fig_caption' (figure's caption), 
         'graphic_ref' (a file name corresponding to a figure file in OA bulk download)
+
+    Examples
+    --------
+    >>> pubmed_parser.parse_pubmed_caption('data/pone.0000217.nxml')
+    [{
+        'pmid': '17299597',
+        'pmc': '1790863',
+        'fig_caption': "Fisher's geometric model in two-dimensional phenotypic space. ...",
+        'fig_id': 'pone-0000217-g001',
+        'fig_label': 'Figure 1',
+        'graphic_ref': 'pone.0000217.g001'
+    }, ...]
     """
     tree = read_xml(path)
     dict_article_meta = parse_article_meta(tree)
