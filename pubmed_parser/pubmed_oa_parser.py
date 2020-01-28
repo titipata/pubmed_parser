@@ -313,11 +313,21 @@ def parse_pubmed_paragraph(path, all_paragraph=False):
     ----------
     path: str
         A string to an XML path.
+    all_paragraph: bool
+        By default, this function will only append a paragraph if there is at least 
+        one reference made in a paragraph (to aviod noisy parsed text).
+        A boolean indicating if you want to include paragraph with no references made or not
+        if True, include all paragraphs
+        if False, include only paragraphs that have references
+        default: False
 
     Return
     ------
     dict_pars: list
         A list contains dictionary for paragraph text and its metadata.
+        Metadata includes 'pmc' of an article, 'pmid' of an article,
+        'reference_ids' which is a list of reference ``rid`` made in a paragraph,
+        'section' name of an article, and section 'text'
     """
     tree = read_xml(path)
     dict_article_meta = parse_article_meta(tree)
@@ -402,7 +412,19 @@ def parse_pubmed_caption(path):
 
 def table_to_df(table_text):
     """
-    Function to transform an input table XML text to list of row values and columns
+    This is a function to transform an input table XML text to list of row values and columns.
+    This will return a list of column names, and list of list of values in the table
+
+    Parameters
+    ----------
+    table_text: str
+        An XML string of table parsed from PubMed OA
+
+    Return
+    ------
+    columns, row_values: tuple (list, list)
+        ``columns`` is a list of column names of the table,
+        ``row_values`` is a list of list of values in the table
     """
     table_tree = etree.fromstring(table_text)
     columns = []

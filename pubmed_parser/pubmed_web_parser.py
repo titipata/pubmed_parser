@@ -45,7 +45,21 @@ def load_xml(pmid, sleep=None):
 
 def parse_pubmed_web_tree(tree):
     """
-    Giving a tree Element, return simple parsed information from the tree
+    Giving a tree Element from eutils, return parsed dictionary from the tree
+
+    Parameters
+    ----------
+    tree: Element
+        An lxml Element parsed from eutil website
+
+    Return
+    ------
+    dict_out: dict
+        A parsed output in dictionary format, dictionary keys includes 
+        'title', 'abstract', 'journal', 'affliation' (string of affiliation with ';' separated),
+        'authors' (string with ';' separated),
+        'keywords' (keywords and MeSH terms from an XML -- if MeSH term it will be 'MeSH descriptor':'MeSH name')
+        'doi', 'year' 
     """
     if len(tree.xpath("//articletitle")) != 0:
         title = " ".join([title.text for title in tree.xpath("//articletitle")])
@@ -169,7 +183,17 @@ def parse_xml_web(pmid, sleep=None, save_xml=False):
 
 def extract_citations(tree):
     """
-    Extract number of citations from given tree
+    Extract number of citations from a given eutils XML tree.
+
+    Parameters
+    ----------
+    tree: Element
+        An lxml Element parsed from eutil website
+
+    Return
+    ------
+    n_citations: int
+        Number of citations that an article get until parsed date
     """
     citations_text = tree.xpath('//form/h2[@class="head"]/text()')[0]
     n_citations = re.sub("Is Cited by the Following ", "", citations_text).split(" ")[0]
@@ -181,6 +205,19 @@ def extract_citations(tree):
 
 
 def extract_pmc(citation):
+    """
+    Extract PMC from a given eutils XML tree.
+
+    Parameters
+    ----------
+    tree: Element
+        An lxml Element parsed from eutil website
+
+    Return
+    ------
+    pmc: str
+        PubMed Central ID (PMC) of an article
+    """
     pmc_text = [c for c in citation.split("/") if c != ""][-1]
     pmc = re.sub("PMC", "", pmc_text)
     return pmc
@@ -198,6 +235,7 @@ def convert_document_id(doc_id, id_type="PMC"):
     id_type: str
         A document ID type corresponding to an input ``doc_id``
         default: 'PMC'
+        options: 'PMID', 'DOI', or 'OTHER'
 
     Return
     ------
@@ -207,7 +245,7 @@ def convert_document_id(doc_id, id_type="PMC"):
     """
     doc_id = str(doc_id)
     if id_type == "PMC":
-        doc_id = "PMC%s" % doc_id
+        doc_id = "PMC{}".format(doc_id)
         pmc = doc_id
         convert_link = "http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=my_tool&email=my_email@example.com&ids={}".format(
             doc_id
@@ -292,7 +330,10 @@ def parse_citation_web(doc_id, id_type="PMC"):
 
 def parse_outgoing_citation_web(doc_id, id_type="PMC"):
     """
-    Load citations from NCBI eutils API for a given document,
+    A function to load citations from NCBI eutils API for a given document
+
+    Example URL:
+    https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=pmc&linkname=pmc_refs_pubmed&id=221212
 
     Parameters
     ----------
@@ -316,8 +357,8 @@ def parse_outgoing_citation_web(doc_id, id_type="PMC"):
         db = "pubmed"
         linkname = "pubmed_pubmed_refs"
     else:
-        raise ValueError("Unsupported id_type `%s`" % id_type)
-    link = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom={}&linkname=%s&id={}".format(
+        raise ValueError("Unsupported id_type `{}`".format(id_type))
+    link = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom={}&linkname={}&id={}".format(
         db, linkname, doc_id
     )
 
