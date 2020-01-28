@@ -202,6 +202,9 @@ default: False</p>
 added with no information other than the field <cite>delete</cite> being <cite>True</cite></p>
 </dd>
 </dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pubmed_parser</span><span class="o">.</span><span class="n">parse_medline_xml</span><span class="p">(</span><span class="s1">&#39;data/pubmed20n0014.xml.gz&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -217,6 +220,17 @@ added with no information other than the field <cite>delete</cite> being <cite>T
 has the keys of ‘pmid’, ‘grant_id’, ‘grant_acronym’, ‘country’, and ‘agency’</p>
 </dd>
 </dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pubmed_parser</span><span class="o">.</span><span class="n">parse_medline_grant_id</span><span class="p">(</span><span class="s1">&#39;data/pubmed20n0014.xml.gz&#39;</span><span class="p">)</span>
+<span class="go">[{</span>
+<span class="go">    &#39;pmid&#39;: &#39;399300&#39;,</span>
+<span class="go">    &#39;grant_id&#39;: &#39;HL17731&#39;,</span>
+<span class="go">    &#39;grant_acronym&#39;: &#39;HL&#39;,</span>
+<span class="go">    &#39;country&#39;: &#39;United States&#39;,</span>
+<span class="go">    &#39;agency&#39;: &#39;NHLBI NIH HHS&#39;</span>
+<span class="go">}, ...</span>
+<span class="go">]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -305,6 +319,17 @@ Metadata includes ‘pmid’, ‘pmc’, ‘fig_caption’ (figure’s caption),
 ‘graphic_ref’ (a file name corresponding to a figure file in OA bulk download)</p>
 </dd>
 </dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pubmed_parser</span><span class="o">.</span><span class="n">parse_pubmed_caption</span><span class="p">(</span><span class="s1">&#39;data/pone.0000217.nxml&#39;</span><span class="p">)</span>
+<span class="go">[{</span>
+<span class="go">    &#39;pmid&#39;: &#39;17299597&#39;,</span>
+<span class="go">    &#39;pmc&#39;: &#39;1790863&#39;,</span>
+<span class="go">    &#39;fig_caption&#39;: &quot;Fisher&#39;s geometric model in two-dimensional phenotypic space. ...&quot;,</span>
+<span class="go">    &#39;fig_id&#39;: &#39;pone-0000217-g001&#39;,</span>
+<span class="go">    &#39;fig_label&#39;: &#39;Figure 1&#39;,</span>
+<span class="go">    &#39;graphic_ref&#39;: &#39;pone.0000217.g001&#39;</span>
+<span class="go">}, ...]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -412,6 +437,15 @@ default: False</p>
 ‘pmid_cited’ (a list of papers cited by the document as PMIDs)</p>
 </dd>
 </dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pubmed_parser</span><span class="o">.</span><span class="n">parse_outgoing_citation_web</span><span class="p">(</span><span class="mi">6933944</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s1">&#39;PMC&#39;</span><span class="p">)</span>
+<span class="go">{</span>
+<span class="go">    &#39;n_citations&#39;: 11,</span>
+<span class="go">    &#39;doc_id&#39;: &#39;6933944&#39;,</span>
+<span class="go">    &#39;id_type&#39;: &#39;PMC&#39;,</span>
+<span class="go">    &#39;pmid_cited&#39;: [&#39;30705152&#39;, ..., ]</span>
+<span class="go">}</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>

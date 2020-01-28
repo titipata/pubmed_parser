@@ -374,7 +374,6 @@
 <span class="sd">    dict_out: dict</span>
 <span class="sd">        dictionary with keys including `medline_ta`, `nlm_unique_id`,</span>
 <span class="sd">        `issn_linking` and `country`</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">journal_info</span> <span class="o">=</span> <span class="n">medline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;MedlineJournalInfo&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">journal_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -759,6 +758,10 @@
 <span class="sd">        A list of dictionary containing information about articles in NLM format (see</span>
 <span class="sd">        `parse_article_info`). Articles that have been deleted will be</span>
 <span class="sd">        added with no information other than the field `delete` being `True`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; pubmed_parser.parse_medline_xml(&#39;data/pubmed20n0014.xml.gz&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">medline_citations</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;//MedlineCitationSet/MedlineCitation&quot;</span><span class="p">)</span>
@@ -815,6 +818,16 @@
 <span class="sd">    grant_id_list: list</span>
 <span class="sd">        A list of dictionaries contains the grants in a given path. Each dictionary</span>
 <span class="sd">        has the keys of &#39;pmid&#39;, &#39;grant_id&#39;, &#39;grant_acronym&#39;, &#39;country&#39;, and &#39;agency&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; pubmed_parser.parse_medline_grant_id(&#39;data/pubmed20n0014.xml.gz&#39;)</span>
+<span class="sd">    [{</span>
+<span class="sd">        &#39;pmid&#39;: &#39;399300&#39;,</span>
+<span class="sd">        &#39;grant_id&#39;: &#39;HL17731&#39;,</span>
+<span class="sd">        &#39;grant_acronym&#39;: &#39;HL&#39;,</span>
+<span class="sd">        &#39;country&#39;: &#39;United States&#39;,</span>
+<span class="sd">        &#39;agency&#39;: &#39;NHLBI NIH HHS&#39;</span>
+<span class="sd">    }, ...</span>
+<span class="sd">    ]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">medline_citations</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;//MedlineCitationSet/MedlineCitation&quot;</span><span class="p">)</span>

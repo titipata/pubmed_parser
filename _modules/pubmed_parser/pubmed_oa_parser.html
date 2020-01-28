@@ -531,6 +531,18 @@
 <span class="sd">        A list contains all dictionary of figure ID (&#39;fig_id&#39;) with its metadata.</span>
 <span class="sd">        Metadata includes &#39;pmid&#39;, &#39;pmc&#39;, &#39;fig_caption&#39; (figure&#39;s caption), </span>
 <span class="sd">        &#39;graphic_ref&#39; (a file name corresponding to a figure file in OA bulk download)</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; pubmed_parser.parse_pubmed_caption(&#39;data/pone.0000217.nxml&#39;)</span>
+<span class="sd">    [{</span>
+<span class="sd">        &#39;pmid&#39;: &#39;17299597&#39;,</span>
+<span class="sd">        &#39;pmc&#39;: &#39;1790863&#39;,</span>
+<span class="sd">        &#39;fig_caption&#39;: &quot;Fisher&#39;s geometric model in two-dimensional phenotypic space. ...&quot;,</span>
+<span class="sd">        &#39;fig_id&#39;: &#39;pone-0000217-g001&#39;,</span>
+<span class="sd">        &#39;fig_label&#39;: &#39;Figure 1&#39;,</span>
+<span class="sd">        &#39;graphic_ref&#39;: &#39;pone.0000217.g001&#39;</span>
+<span class="sd">    }, ...]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">dict_article_meta</span> <span class="o">=</span> <span class="n">parse_article_meta</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>

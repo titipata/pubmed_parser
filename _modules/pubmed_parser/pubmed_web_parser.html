@@ -413,7 +413,7 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; pp.pubmed_web_parser.convert_document_id(6933944, id_type=&#39;PMC&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; pubmed_parser.pubmed_web_parser.convert_document_id(6933944, id_type=&#39;PMC&#39;)</span>
 <span class="sd">    {&#39;pmc&#39;: &#39;PMC6933944&#39;, &#39;pmid&#39;: &#39;31624211&#39;, &#39;doi&#39;: &#39;10.1126/science.aax1562&#39;}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">doc_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">doc_id</span><span class="p">)</span>
@@ -532,6 +532,14 @@
 <span class="sd">        a dictionary containing the following keys &#39;n_citations&#39; (number of citations for that article),</span>
 <span class="sd">        &#39;doc_id&#39; (the document ID number), &#39;id_type&#39; (the type of document ID provided (PMCID or PMID)),</span>
 <span class="sd">        &#39;pmid_cited&#39; (a list of papers cited by the document as PMIDs)</span>
+
+<span class="sd">    &gt;&gt;&gt; pubmed_parser.parse_outgoing_citation_web(6933944, id_type=&#39;PMC&#39;)</span>
+<span class="sd">    {</span>
+<span class="sd">        &#39;n_citations&#39;: 11,</span>
+<span class="sd">        &#39;doc_id&#39;: &#39;6933944&#39;,</span>
+<span class="sd">        &#39;id_type&#39;: &#39;PMC&#39;,</span>
+<span class="sd">        &#39;pmid_cited&#39;: [&#39;30705152&#39;, ..., ]</span>
+<span class="sd">    }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">doc_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">doc_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">id_type</span> <span class="o">==</span> <span class="s2">&quot;PMC&quot;</span><span class="p">:</span>
