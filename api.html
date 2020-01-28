@@ -349,6 +349,20 @@ default: False</p>
 <dt>dict_out: dict</dt><dd><p>A dictionary contains information of parsed XML from a given PMID</p>
 </dd>
 </dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pubmed_parser</span><span class="o">.</span><span class="n">parse_xml_web</span><span class="p">(</span><span class="mi">11360989</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">save_xml</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">{</span>
+<span class="go">    &#39;title&#39;: &#39;Molecular biology and evolution. Can genes explain biological complexity?&#39;,</span>
+<span class="go">    &#39;abstract&#39;: &#39;&#39;,</span>
+<span class="go">    &#39;journal&#39;: &#39;Science (New York, N.Y.)&#39;,</span>
+<span class="go">    &#39;affiliation&#39;: &#39;Collegium Budapest (Institute for Advanced Study), 2 Szentháromság u., H-1014 Budapest, Hungary. szathmary@colbud.hu&#39;,</span>
+<span class="go">    &#39;authors&#39;: &#39;E Szathmáry; F Jordán; C Pál&#39;,</span>
+<span class="go">    &#39;keywords&#39;: &#39;D000818:Animals;D005075:Biological Evolution;...&#39;,</span>
+<span class="go">    &#39;doi&#39;: &#39;10.1126/science.1060852&#39;,</span>
+<span class="go">    &#39;year&#39;: &#39;2001&#39;,</span>
+<span class="go">    &#39;pmid&#39;: &#39;11360989&#39;</span>
+<span class="go">}</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -368,6 +382,16 @@ default: False</p>
 ‘pmc_cited’ (list of PMCs that cite the given PMC)</p>
 </dd>
 </dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pubmed_parser</span><span class="o">.</span><span class="n">parse_citation_web</span><span class="p">(</span><span class="mi">6933944</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s1">&#39;PMC&#39;</span><span class="p">)</span>
+<span class="go">{</span>
+<span class="go">    &#39;n_citations&#39;: 0,</span>
+<span class="go">    &#39;pmid&#39;: &#39;31624211&#39;,</span>
+<span class="go">    &#39;pmc&#39;: &#39;6933944&#39;,</span>
+<span class="go">    &#39;doi&#39;: &#39;10.1126/science.aax1562&#39;,</span>
+<span class="go">    &#39;pmc_cited&#39;: []</span>
+<span class="go">}</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">

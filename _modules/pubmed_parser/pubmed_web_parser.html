@@ -184,6 +184,7 @@
 <span class="sd">    Return</span>
 <span class="sd">    ------</span>
 <span class="sd">    tree: Element</span>
+<span class="sd">        An eutils XML of a given PMID</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">link</span> <span class="o">=</span> <span class="s2">&quot;https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&amp;retmode=xml&amp;id=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="n">pmid</span>
@@ -324,6 +325,21 @@
 <span class="sd">    ------</span>
 <span class="sd">    dict_out: dict</span>
 <span class="sd">        A dictionary contains information of parsed XML from a given PMID</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; pubmed_parser.parse_xml_web(11360989, sleep=1, save_xml=False)</span>
+<span class="sd">    {</span>
+<span class="sd">        &#39;title&#39;: &#39;Molecular biology and evolution. Can genes explain biological complexity?&#39;,</span>
+<span class="sd">        &#39;abstract&#39;: &#39;&#39;,</span>
+<span class="sd">        &#39;journal&#39;: &#39;Science (New York, N.Y.)&#39;,</span>
+<span class="sd">        &#39;affiliation&#39;: &#39;Collegium Budapest (Institute for Advanced Study), 2 Szentháromság u., H-1014 Budapest, Hungary. szathmary@colbud.hu&#39;,</span>
+<span class="sd">        &#39;authors&#39;: &#39;E Szathmáry; F Jordán; C Pál&#39;,</span>
+<span class="sd">        &#39;keywords&#39;: &#39;D000818:Animals;D005075:Biological Evolution;...&#39;,</span>
+<span class="sd">        &#39;doi&#39;: &#39;10.1126/science.1060852&#39;,</span>
+<span class="sd">        &#39;year&#39;: &#39;2001&#39;,</span>
+<span class="sd">        &#39;pmid&#39;: &#39;11360989&#39;</span>
+<span class="sd">    }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tree</span> <span class="o">=</span> <span class="n">load_xml</span><span class="p">(</span><span class="n">pmid</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="n">sleep</span><span class="p">)</span>
     <span class="n">dict_out</span> <span class="o">=</span> <span class="n">parse_pubmed_web_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
@@ -345,7 +361,7 @@
 <span class="sd">    Return</span>
 <span class="sd">    ------</span>
 <span class="sd">    n_citations: int</span>
-<span class="sd">        Number of citations that an article get until parsed date</span>
+<span class="sd">        Number of citations that an article get until parsed date. If no citations found, return 0</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">citations_text</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//form/h2[@class=&quot;head&quot;]/text()&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">n_citations</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;Is Cited by the Following &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">citations_text</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -394,6 +410,11 @@
 <span class="sd">    output_dict: dict</span>
 <span class="sd">        A dictionary contains possible mapping of a given document ID including &#39;pmc&#39;, &#39;pmid&#39;, and &#39;doi&#39;.</span>
 <span class="sd">        If the document ID cannot be found, this will return empty string instead</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; pp.pubmed_web_parser.convert_document_id(6933944, id_type=&#39;PMC&#39;)</span>
+<span class="sd">    {&#39;pmc&#39;: &#39;PMC6933944&#39;, &#39;pmid&#39;: &#39;31624211&#39;, &#39;doi&#39;: &#39;10.1126/science.aax1562&#39;}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">doc_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">doc_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">id_type</span> <span class="o">==</span> <span class="s2">&quot;PMC&quot;</span><span class="p">:</span>
@@ -442,6 +463,17 @@
 <span class="sd">        &#39;pmc&#39; (Pubmed Central ID), &#39;pmid&#39; (Pubmed ID), </span>
 <span class="sd">        &#39;doi&#39; (DOI of an article),  &#39;n_citations&#39; (number of citations for given articles),</span>
 <span class="sd">        &#39;pmc_cited&#39; (list of PMCs that cite the given PMC)</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; pubmed_parser.parse_citation_web(6933944, id_type=&#39;PMC&#39;)</span>
+<span class="sd">    {</span>
+<span class="sd">        &#39;n_citations&#39;: 0,</span>
+<span class="sd">        &#39;pmid&#39;: &#39;31624211&#39;,</span>
+<span class="sd">        &#39;pmc&#39;: &#39;6933944&#39;,</span>
+<span class="sd">        &#39;doi&#39;: &#39;10.1126/science.aax1562&#39;,</span>
+<span class="sd">        &#39;pmc_cited&#39;: []</span>
+<span class="sd">    }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">id_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;PMC&quot;</span><span class="p">,</span> <span class="s2">&quot;PMID&quot;</span><span class="p">,</span> <span class="s2">&quot;DOI&quot;</span><span class="p">,</span> <span class="s2">&quot;OTHER&quot;</span><span class="p">]</span>
 

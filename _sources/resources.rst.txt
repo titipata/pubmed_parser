@@ -10,7 +10,7 @@ Links to download Pubmed and MEDLINE dataset
 
 Here are links for downloading PubMed OA and MEDLINE data
 
-- PubMed Open-Access (OA) dataset is available at ``http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/``. Here is the `FTP link <ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/>`_ for downloading the bulk of dataset. You can check `oa_bulk folder <ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk//>`_ to see the full tar files.
+- `PubMed Open-Access (OA) <http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/>`_ dataset is available at ``http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/``. Here is the `FTP link <ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/>`_ for downloading the bulk of dataset. You can check `oa_bulk folder <ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk//>`_ to see the full tar files.
 - the MEDLINE XMLs are available here ``ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/``
 - the MEDLINE XMLs weekly updates are available here ``ftp://ftp.nlm.nih.gov/nlmdata/.medlease/gz/``
 - MEDLINE Document Type Definitions (DTDs) file is available at this `link <https://www.nlm.nih.gov/databases/dtd/>`_. We can use it to see available tags from a given MEDLINE XML.

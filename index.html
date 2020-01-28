@@ -156,8 +156,19 @@
 <h1>Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset<a class="headerlink" href="#pubmed-parser-a-python-parser-for-pubmed-open-access-xml-subset-and-medline-xml-dataset" title="Permalink to this headline">¶</a></h1>
 <p>Pubmed Parser is a Python library for parsing the <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/">PubMed Open-Access (OA) subset</a>
 and <a class="reference external" href="https://www.nlm.nih.gov/bsd/licensee/">MEDLINE XML</a> repositories.
-It parses this information into a Python dictionary which can be easily used for research such in text mining and natural language processing pipelines.
+It uses <cite>lxml</cite> library to parse this information into a Python dictionary which can be easily used for research such in text mining and natural language processing pipelines.
 See our <a class="reference external" href="https://github.com/titipata/pubmed_parser/wiki/">Wiki page</a> or this documentation on how to download and process dataset using the repository.</p>
+</div>
+<div class="section" id="about-the-dataset">
+<h1>About the dataset<a class="headerlink" href="#about-the-dataset" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/">PubMed Open-Access (OA) subset</a> contains XMLs of a full submitted papers which has
+information that you might get from a regular PDF article file but in a more structured format. <a class="reference external" href="https://www.nlm.nih.gov/bsd/licensee/">MEDLINE XML</a>
+contains about 30M biomedical articles published until now. We can access information until abstracts from a compressed XML file.
+Other information such as number of citations of an article can be query through <a class="reference external" href="https://eutils.ncbi.nlm.nih.gov/">Entrez Programming Utilities (E-utils)</a>
+which can be obtained in XML format.</p>
+<p>To work with the data, normally, you have to write an XML to parse these XMLs which can take time and effort. Pubmed Parser aims to reduce
+those development by giving a high level functionalities so that researchers can obtain the dataset to analyze fast. It is also developed by researchers
+who use these data so that we always keep it up-to-date.</p>
 </div>
 <div class="section" id="contents">
 <h1>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h1>
