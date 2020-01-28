@@ -197,7 +197,21 @@
 
 <span class="k">def</span> <span class="nf">parse_pubmed_web_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Giving a tree Element, return simple parsed information from the tree</span>
+<span class="sd">    Giving a tree Element from eutils, return parsed dictionary from the tree</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tree: Element</span>
+<span class="sd">        An lxml Element parsed from eutil website</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict_out: dict</span>
+<span class="sd">        A parsed output in dictionary format, dictionary keys includes </span>
+<span class="sd">        &#39;title&#39;, &#39;abstract&#39;, &#39;journal&#39;, &#39;affliation&#39; (string of affiliation with &#39;;&#39; separated),</span>
+<span class="sd">        &#39;authors&#39; (string with &#39;;&#39; separated),</span>
+<span class="sd">        &#39;keywords&#39; (keywords and MeSH terms from an XML -- if MeSH term it will be &#39;MeSH descriptor&#39;:&#39;MeSH name&#39;)</span>
+<span class="sd">        &#39;doi&#39;, &#39;year&#39; </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//articletitle&quot;</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">title</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">title</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//articletitle&quot;</span><span class="p">)])</span>
@@ -321,7 +335,17 @@
 
 <span class="k">def</span> <span class="nf">extract_citations</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Extract number of citations from given tree</span>
+<span class="sd">    Extract number of citations from a given eutils XML tree.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tree: Element</span>
+<span class="sd">        An lxml Element parsed from eutil website</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    n_citations: int</span>
+<span class="sd">        Number of citations that an article get until parsed date</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">citations_text</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//form/h2[@class=&quot;head&quot;]/text()&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">n_citations</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;Is Cited by the Following &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">citations_text</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -333,6 +357,19 @@
 
 
 <span class="k">def</span> <span class="nf">extract_pmc</span><span class="p">(</span><span class="n">citation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract PMC from a given eutils XML tree.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tree: Element</span>
+<span class="sd">        An lxml Element parsed from eutil website</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    pmc: str</span>
+<span class="sd">        PubMed Central ID (PMC) of an article</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pmc_text</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">citation</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">pmc</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;PMC&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">pmc_text</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">pmc</span>
@@ -350,6 +387,7 @@
 <span class="sd">    id_type: str</span>
 <span class="sd">        A document ID type corresponding to an input ``doc_id``</span>
 <span class="sd">        default: &#39;PMC&#39;</span>
+<span class="sd">        options: &#39;PMID&#39;, &#39;DOI&#39;, or &#39;OTHER&#39;</span>
 
 <span class="sd">    Return</span>
 <span class="sd">    ------</span>
@@ -359,7 +397,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">doc_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">doc_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">id_type</span> <span class="o">==</span> <span class="s2">&quot;PMC&quot;</span><span class="p">:</span>
-        <span class="n">doc_id</span> <span class="o">=</span> <span class="s2">&quot;PMC</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">doc_id</span>
+        <span class="n">doc_id</span> <span class="o">=</span> <span class="s2">&quot;PMC</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">doc_id</span><span class="p">)</span>
         <span class="n">pmc</span> <span class="o">=</span> <span class="n">doc_id</span>
         <span class="n">convert_link</span> <span class="o">=</span> <span class="s2">&quot;http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?tool=my_tool&amp;email=my_email@example.com&amp;ids=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">doc_id</span>
@@ -444,7 +482,10 @@
 
 <div class="viewcode-block" id="parse_outgoing_citation_web"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_outgoing_citation_web">[docs]</a><span class="k">def</span> <span class="nf">parse_outgoing_citation_web</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Load citations from NCBI eutils API for a given document,</span>
+<span class="sd">    A function to load citations from NCBI eutils API for a given document</span>
+
+<span class="sd">    Example URL:</span>
+<span class="sd">    https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=pmc&amp;linkname=pmc_refs_pubmed&amp;id=221212</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -468,8 +509,8 @@
         <span class="n">db</span> <span class="o">=</span> <span class="s2">&quot;pubmed&quot;</span>
         <span class="n">linkname</span> <span class="o">=</span> <span class="s2">&quot;pubmed_pubmed_refs&quot;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported id_type `</span><span class="si">%s</span><span class="s2">`&quot;</span> <span class="o">%</span> <span class="n">id_type</span><span class="p">)</span>
-    <span class="n">link</span> <span class="o">=</span> <span class="s2">&quot;https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=</span><span class="si">{}</span><span class="s2">&amp;linkname=</span><span class="si">%s</span><span class="s2">&amp;id=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported id_type `</span><span class="si">{}</span><span class="s2">`&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">id_type</span><span class="p">))</span>
+    <span class="n">link</span> <span class="o">=</span> <span class="s2">&quot;https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=</span><span class="si">{}</span><span class="s2">&amp;linkname=</span><span class="si">{}</span><span class="s2">&amp;id=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="n">db</span><span class="p">,</span> <span class="n">linkname</span><span class="p">,</span> <span class="n">doc_id</span>
     <span class="p">)</span>
 
