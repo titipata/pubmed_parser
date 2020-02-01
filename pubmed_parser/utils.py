@@ -1,5 +1,9 @@
 import calendar
 import collections
+try:
+    from collections.abc import Iterable
+except:
+    from collections import Iterable
 from time import strptime
 from six import string_types
 from lxml import etree
@@ -86,7 +90,7 @@ def _flatten(l):
     Flatten list into one dimensional
     """
     for el in l:
-        if isinstance(el, collections.Iterable) and not isinstance(el, string_types):
+        if isinstance(el, Iterable) and not isinstance(el, string_types):
             for sub in _flatten(el):
                 yield sub
         else:
