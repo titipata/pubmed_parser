@@ -32,7 +32,7 @@ Pubmed Parser has the capability of parsing multiple pieces of information into 
 
 ``` python
 import pubmed_parser as pp
-parsed_articles = pp.parse_medline_xml('data/medline16n0902.xml.gz',
+parsed_articles = pp.parse_medline_xml('data/pubmed20n0014.xml.gz',
                                        year_info_only=True,
                                        nlm_category=False,
                                        author_list=False)
