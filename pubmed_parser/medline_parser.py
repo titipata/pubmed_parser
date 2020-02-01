@@ -454,7 +454,13 @@ def parse_references(pubmed_article, reference_list):
                 if article_ids is not None
                 else None
             )
-            pmid = pmid.text.strip() if pmid is not None else ""
+            if pmid is not None:
+                if pmid.text is not None:
+                    pmid = pmid.text.strip()
+                else:
+                    pmid = ""
+            else:
+                pmid = ""
             references.append({"citation": citation, "pmid": pmid})
 
     if reference_list:
