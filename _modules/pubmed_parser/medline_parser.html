@@ -606,7 +606,13 @@
                 <span class="k">if</span> <span class="n">article_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="k">else</span> <span class="kc">None</span>
             <span class="p">)</span>
-            <span class="n">pmid</span> <span class="o">=</span> <span class="n">pmid</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">pmid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">pmid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">pmid</span><span class="o">.</span><span class="n">text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">pmid</span> <span class="o">=</span> <span class="n">pmid</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">pmid</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pmid</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="n">references</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;citation&quot;</span><span class="p">:</span> <span class="n">citation</span><span class="p">,</span> <span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">pmid</span><span class="p">})</span>
 
     <span class="k">if</span> <span class="n">reference_list</span><span class="p">:</span>
