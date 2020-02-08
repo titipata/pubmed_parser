@@ -1,6 +1,6 @@
 # Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/titipata/pubmed_parser/blob/master/LICENSE) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3648715.svg)](https://doi.org/10.5281/zenodo.3648715) [![Build Status](https://travis-ci.com/titipata/pubmed_parser.svg?branch=master)](https://travis-ci.com/titipata/pubmed_parser)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/titipata/pubmed_parser/blob/master/LICENSE) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3660006.svg)](https://doi.org/10.5281/zenodo.3660006) [![Build Status](https://travis-ci.com/titipata/pubmed_parser.svg?branch=master)](https://travis-ci.com/titipata/pubmed_parser)
 
 Pubmed Parser is a Python library for parsing the [PubMed Open-Access (OA) subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
  , [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/) repositories, and [Entrez Programming Utilities (E-utils)](https://eutils.ncbi.nlm.nih.gov/). It uses `lxml` library to parse this information into a Python dictionary which can be easily used for research such in text mining and natural language processing pipelines. See
@@ -305,7 +305,7 @@ and [contributors](https://github.com/titipata/pubmed_parser/graphs/contributors
 
 If you use Pubmed Parser, please cite it as follows
 
-> Titipat Achakulvisut, Daniel E. Acuna (2015) "_Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset_" [http://github.com/titipata/pubmed_parser](http://github.com/titipata/pubmed_parser). doi:10.5281/zenodo.3648715
+> Titipat Achakulvisut, Daniel E. Acuna (2015) "_Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset_" [http://github.com/titipata/pubmed_parser](http://github.com/titipata/pubmed_parser). doi:10.5281/zenodo.3660006
 
 or using BibTex
 
@@ -317,7 +317,7 @@ or using BibTex
   publisher = {GitHub},
   journal = {GitHub repository},
   howpublished = {\url{http://github.com/titipata/pubmed_parser}},
-  doi = {10.5281/zenodo.3648715}
+  doi = {10.5281/zenodo.3660006}
 }
 ```
 
