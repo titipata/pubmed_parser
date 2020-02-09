@@ -1,6 +1,7 @@
 # Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/titipata/pubmed_parser/blob/master/LICENSE) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3660006.svg)](https://doi.org/10.5281/zenodo.3660006) [![Build Status](https://travis-ci.com/titipata/pubmed_parser.svg?branch=master)](https://travis-ci.com/titipata/pubmed_parser)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/titipata/pubmed_parser/blob/master/LICENSE) [![DOI](https://joss.theoj.org/papers/10.21105/joss.01979/status.svg)](https://doi.org/10.21105/joss.01979)
+ [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3660006.svg)](https://doi.org/10.5281/zenodo.3660006) [![Build Status](https://travis-ci.com/titipata/pubmed_parser.svg?branch=master)](https://travis-ci.com/titipata/pubmed_parser)
 
 Pubmed Parser is a Python library for parsing the [PubMed Open-Access (OA) subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
  , [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/) repositories, and [Entrez Programming Utilities (E-utils)](https://eutils.ncbi.nlm.nih.gov/). It uses `lxml` library to parse this information into a Python dictionary which can be easily used for research such in text mining and natural language processing pipelines. See
@@ -303,25 +304,26 @@ and [contributors](https://github.com/titipata/pubmed_parser/graphs/contributors
 
 ## Citation
 
-If you use Pubmed Parser, please cite it as follows
+If you use Pubmed Parser, please cite it from [JOSS](https://joss.theoj.org/papers/10.21105/joss.01979) as follows
 
-> Titipat Achakulvisut, Daniel E. Acuna (2015) "_Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset_" [http://github.com/titipata/pubmed_parser](http://github.com/titipata/pubmed_parser). doi:10.5281/zenodo.3660006
+> Achakulvisut et al., (2020). Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset XML Dataset. Journal of Open Source Software, 5(46), 1979, https://doi.org/10.21105/joss.01979
 
 or using BibTex
 
-``` bib
-@misc{achakulvisut2015,
-  author = {Achakulvisut Titipat AND Acuna, Daniel},
-  title = {Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset},
-  year = {2015},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{http://github.com/titipata/pubmed_parser}},
-  doi = {10.5281/zenodo.3660006}
+```
+@article{Achakulvisut2020,
+  doi = {10.21105/joss.01979},
+  url = {https://doi.org/10.21105/joss.01979},
+  year = {2020},
+  publisher = {The Open Journal},
+  volume = {5},
+  number = {46},
+  pages = {1979},
+  author = {Titipat Achakulvisut and Daniel Acuna and Konrad Kording},
+  title = {Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset XML Dataset},
+  journal = {Journal of Open Source Software}
 }
 ```
-
-We are submitting to [JOSS](https://joss.readthedocs.io/en/latest/) and we will update the citation section soon.
 
 ## Contributions
 
