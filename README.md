@@ -4,12 +4,10 @@
  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3660006.svg)](https://doi.org/10.5281/zenodo.3660006) [![Build Status](https://travis-ci.com/titipata/pubmed_parser.svg?branch=master)](https://travis-ci.com/titipata/pubmed_parser)
 
 Pubmed Parser is a Python library for parsing the [PubMed Open-Access (OA) subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
- , [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/) repositories, and [Entrez Programming Utilities (E-utils)](https://eutils.ncbi.nlm.nih.gov/). It uses `lxml` library to parse this information into a Python dictionary which can be easily used for research such in text mining and natural language processing pipelines. See
- [wiki page](https://github.com/titipata/pubmed_parser/wiki) on how to download and
- process dataset using the repository.
+ , [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/) repositories, and [Entrez Programming Utilities (E-utils)](https://eutils.ncbi.nlm.nih.gov/). It uses `lxml` library to parse this information into a Python dictionary which can be easily used for research such in text mining and natural language processing pipelines.
 
-For available APIs and details about the dataset, please see [documentation page](http://titipata.github.io/pubmed_parser/) for more details.
-Below, we list some of the core funtionalities and examples code.
+For available APIs and details about the dataset, please see our [wiki page](https://github.com/titipata/pubmed_parser/wiki) or
+ [documentation page](http://titipata.github.io/pubmed_parser/) for more details. Below, we list some of the core funtionalities and examples code.
 
 ## Available Parsers
 
