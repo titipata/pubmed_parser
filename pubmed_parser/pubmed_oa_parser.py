@@ -145,7 +145,7 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
     pub_day_node = tree.find(".//pub-date/day")
     pub_day = pub_day_node.text if pub_day_node is not None else "01"
 
-    subjects_node = tree.findall(".//article-categories.//subj-group/subject")
+    subjects_node = tree.findall(".//article-categories//subj-group/subject")
     subjects = list()
     if subjects_node is not None:
         for s in subjects_node:
