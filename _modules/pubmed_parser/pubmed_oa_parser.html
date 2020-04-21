@@ -297,7 +297,7 @@
     <span class="n">pub_day_node</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.//pub-date/day&quot;</span><span class="p">)</span>
     <span class="n">pub_day</span> <span class="o">=</span> <span class="n">pub_day_node</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">pub_day_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;01&quot;</span>
 
-    <span class="n">subjects_node</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//article-categories.//subj-group/subject&quot;</span><span class="p">)</span>
+    <span class="n">subjects_node</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//article-categories//subj-group/subject&quot;</span><span class="p">)</span>
     <span class="n">subjects</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">subjects_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">subjects_node</span><span class="p">:</span>
