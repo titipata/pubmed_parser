@@ -81,6 +81,23 @@ def parse_article_meta(tree):
     return dict_article_meta
 
 
+def parse_coi_statements(tree):
+    """
+    Parse conflict of interest statements from given article tree
+    """
+    def _yield_children(el):
+        for child in el:
+            if child.text:
+                yield child.text
+                yield from _yield_children(child)
+
+    for el in tree.xpath('.//*[@*="COI-statement"]'):
+        yield from _yield_children(el)
+
+    for el in tree.xpath('conflict'):
+        yield from _yield_children(el)
+
+
 def parse_pubmed_xml(path, include_path=False, nxml=False):
     """
     Given an input XML path to PubMed XML file, extract information and metadata
@@ -190,6 +207,8 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
             author_list.append(["", "", ref_id_list])
     author_list = flatten_zip_author(author_list)
 
+    coi_statement = '\n'.join(parse_coi_statements(tree))
+
     dict_out = {
         "full_title": full_title.strip(),
         "abstract": abstract,
@@ -203,6 +222,7 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
         "publication_year": pub_year,
         "publication_date": "{}-{}-{}".format(pub_day, pub_month, pub_year),
         "subjects": subjects,
+        "coi_statement": coi_statement,
     }
     if include_path:
         dict_out["path_to_file"] = path
