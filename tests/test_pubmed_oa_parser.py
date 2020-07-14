@@ -1,5 +1,4 @@
 import os
-import pytest
 
 import pubmed_parser as pp
 
@@ -14,7 +13,8 @@ def test_parse_pubmed_xml():
     assert len(parsed_xml.get("full_title")) > 0
     assert parsed_xml.get("pmc") == "3460867"
     assert parsed_xml.get("doi") == "10.1371/journal.pone.0046493"
-    assert parsed_xml.get("subjects") == "Research Article; Biology; Biochemistry; Enzymes; Enzyme Metabolism; Lipids; Fatty Acids; Glycerides; Lipid Metabolism; Neutral Lipids; Metabolism; Lipid Metabolism; Proteins; Globular Proteins; Protein Classes; Recombinant Proteins; Biotechnology; Microbiology; Bacterial Pathogens; Bacteriology; Emerging Infectious Diseases; Host-Pathogen Interaction; Microbial Growth and Development; Microbial Metabolism; Microbial Pathogens; Microbial Physiology; Proteomics; Sequence Analysis; Spectrometric Identification of Proteins"
+    assert parsed_xml.get("subjects") == "Research Article; Biology; Biochemistry; Enzymes; Enzyme Metabolism; Lipids; Fatty Acids; Glycerides; Lipid Metabolism; Neutral Lipids; Metabolism; Lipid Metabolism; Proteins; Globular Proteins; Protein Classes; Recombinant Proteins; Biotechnology; Microbiology; Bacterial Pathogens; Bacteriology; Emerging Infectious Diseases; Host-Pathogen Interaction; Microbial Growth and Development; Microbial Metabolism; Microbial Pathogens; Microbial Physiology; Proteomics; Sequence Analysis; Spectrometric Identification of Proteins"  # noqa
+    assert "Competing Interests: " in parsed_xml.get("coi_statement")
 
 
 def test_parse_pubmed_paragraph():
