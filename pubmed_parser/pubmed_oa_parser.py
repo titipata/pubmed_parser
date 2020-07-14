@@ -91,11 +91,16 @@ def parse_coi_statements(tree):
                 yield child.text
                 yield from _yield_children(child)
 
-    for el in tree.xpath('.//*[@*="COI-statement"]'):
-        yield from _yield_children(el)
+    coi_paths = (
+        'conflict',
+        'CoiStatement',
+        './/*[@*="conflict-interest"]',
+        './/*[@*="COI-statement"]',
+    )
 
-    for el in tree.xpath('conflict'):
-        yield from _yield_children(el)
+    for path in coi_paths:
+        for el in tree.xpath(path):
+            yield from _yield_children(el)
 
 
 def parse_pubmed_xml(path, include_path=False, nxml=False):
