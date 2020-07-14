@@ -89,11 +89,12 @@ def parse_coi_statements(tree):
         for child in el:
             if child.text:
                 yield child.text
-                yield from _yield_children(child)
+            yield from _yield_children(child)
 
     coi_paths = (
         'conflict',
         'CoiStatement',
+        './/*[@*="conflict"]',
         './/*[@*="conflict-interest"]',
         './/*[@*="COI-statement"]',
     )
