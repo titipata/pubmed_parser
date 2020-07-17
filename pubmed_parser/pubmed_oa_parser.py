@@ -4,7 +4,7 @@ Parsers for PubMed XML
 import os
 from lxml import etree
 from itertools import chain
-from .utils import *
+from .utils import read_xml, stringify_affiliation_rec, stringify_children
 from unidecode import unidecode
 
 __all__ = [
@@ -43,10 +43,10 @@ def list_xml_path(path_dir):
 
 def zip_author(author):
     """
-    Give a list of author and its affiliation keys 
+    Give a list of author and its affiliation keys
     in this following format
         [first_name, last_name, [key1, key2]]
-    and return the output in 
+    and return the output in
         [[first_name, last_name, key1], [first_name, last_name, key2]] instead
     """
     author_zipped = list(zip([[author[0], author[1]]] * len(author[-1]), author[-1]))
@@ -81,11 +81,28 @@ def parse_article_meta(tree):
     return dict_article_meta
 
 
+def parse_coi_statements(tree):
+    """
+    Parse conflict of interest statements from given article tree
+    """
+    coi_paths = (
+        'conflict',
+        'CoiStatement',
+        './/*[@*="conflict"]',
+        './/*[@*="conflict-interest"]',
+        './/*[@*="COI-statement"]',
+    )
+
+    for path in coi_paths:
+        for el in tree.xpath(path):
+            yield '\n'.join(el.itertext())
+
+
 def parse_pubmed_xml(path, include_path=False, nxml=False):
     """
-    Given an input XML path to PubMed XML file, extract information and metadata 
+    Given an input XML path to PubMed XML file, extract information and metadata
     from a given XML file and return parsed XML file in dictionary format.
-    You can check ``ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/`` to list of available files to download 
+    You can check ``ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/`` to list of available files to download
 
     Parameters
     ----------
@@ -96,7 +113,7 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
         default: False
     nxml: bool
         if True, this will strip a namespace of an XML after reading a file
-        see https://stackoverflow.com/questions/18159221/remove-namespace-and-prefix-from-xml-in-python-using-lxml to 
+        see https://stackoverflow.com/questions/18159221/remove-namespace-and-prefix-from-xml-in-python-using-lxml to
         default: False
 
     Return
@@ -128,7 +145,7 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
                 text = t.replace("\n", " ").replace("\t", " ").strip()
                 abstracts.append(text)
         abstract = " ".join(abstracts)
-    except:
+    except BaseException:
         abstract = ""
 
     journal_node = tree.findall(".//journal-title")
@@ -176,7 +193,7 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
         author_aff = author.findall('xref[@ref-type="aff"]')
         try:
             ref_id_list = [str(a.attrib["rid"]) for a in author_aff]
-        except:
+        except BaseException:
             ref_id_list = ""
         try:
             author_list.append(
@@ -186,9 +203,11 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
                     ref_id_list,
                 ]
             )
-        except:
+        except BaseException:
             author_list.append(["", "", ref_id_list])
     author_list = flatten_zip_author(author_list)
+
+    coi_statement = '\n'.join(parse_coi_statements(tree))
 
     dict_out = {
         "full_title": full_title.strip(),
@@ -203,6 +222,7 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
         "publication_year": pub_year,
         "publication_date": "{}-{}-{}".format(pub_day, pub_month, pub_year),
         "subjects": subjects,
+        "coi_statement": coi_statement,
     }
     if include_path:
         dict_out["path_to_file"] = path
@@ -305,7 +325,7 @@ def parse_pubmed_references(path):
 
 def parse_pubmed_paragraph(path, all_paragraph=False):
     """
-    Give path to a given PubMed OA file, parse and return 
+    Give path to a given PubMed OA file, parse and return
     a dictionary of all paragraphs, section that it belongs to,
     and a list of reference made in each paragraph as a list of PMIDs
 
@@ -314,7 +334,7 @@ def parse_pubmed_paragraph(path, all_paragraph=False):
     path: str
         A string to an XML path.
     all_paragraph: bool
-        By default, this function will only append a paragraph if there is at least 
+        By default, this function will only append a paragraph if there is at least
         one reference made in a paragraph (to aviod noisy parsed text).
         A boolean indicating if you want to include paragraph with no references made or not
         if True, include all paragraphs
@@ -365,7 +385,7 @@ def parse_pubmed_paragraph(path, all_paragraph=False):
 
 def parse_pubmed_caption(path):
     """
-    Given single xml path, extract figure caption and 
+    Given single xml path, extract figure caption and
     reference id back to that figure
 
     Parameters
@@ -377,7 +397,7 @@ def parse_pubmed_caption(path):
     ------
     dict_captions: list
         A list contains all dictionary of figure ID ('fig_id') with its metadata.
-        Metadata includes 'pmid', 'pmc', 'fig_caption' (figure's caption), 
+        Metadata includes 'pmid', 'pmc', 'fig_caption' (figure's caption),
         'graphic_ref' (a file name corresponding to a figure file in OA bulk download)
 
     Examples
@@ -470,7 +490,7 @@ def parse_pubmed_table(path, return_xml=True):
     path: str
         A string to an PubMed OA XML path
     return_xml: bool
-        if True, a dictionary (in an output list) 
+        if True, a dictionary (in an output list)
         will have a key 'table_xml' which is an XML string of a parsed table
         default: True
 
