@@ -85,12 +85,6 @@ def parse_coi_statements(tree):
     """
     Parse conflict of interest statements from given article tree
     """
-    def _yield_children(el):
-        for child in el:
-            if child.text:
-                yield child.text
-            yield from _yield_children(child)
-
     coi_paths = (
         'conflict',
         'CoiStatement',
@@ -101,7 +95,7 @@ def parse_coi_statements(tree):
 
     for path in coi_paths:
         for el in tree.xpath(path):
-            yield from _yield_children(el)
+            yield '\n'.join(el.itertext())
 
 
 def parse_pubmed_xml(path, include_path=False, nxml=False):
