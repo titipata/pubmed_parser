@@ -20,6 +20,8 @@ def test_parse_medline_xml():
     assert parsed_medline[0]["title"][0:50] == expected_title
     assert parsed_medline[0]["abstract"][0:50] == expected_abstract
     assert parsed_medline[0]["pmid"] == "399296"
+    assert parsed_medline[0]["language"] == ["eng"]
+    assert parsed_medline[965]["language"] == ["fre", "ger"]
 
 
 def test_parse_medline_grant_id():
