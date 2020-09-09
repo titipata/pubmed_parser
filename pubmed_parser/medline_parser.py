@@ -325,7 +325,7 @@ def parse_author_affiliation(medline):
     ----------
     medline: Element
         The lxml node pointing to a medline document
-    
+
     Returns
     -------
     authors: list
@@ -426,7 +426,7 @@ def parse_references(pubmed_article, reference_list):
     pubmed_article: Element
         The lxml element pointing to a medline document
 
-    reference_list: bool 
+    reference_list: bool
         if it is True, return a list of dictionary
         if it is False return a string of PMIDs seprated by semicolon ';'
 
@@ -549,6 +549,9 @@ def parse_article_info(
     journal = article.find("Journal")
     journal_name = " ".join(journal.xpath("Title/text()"))
 
+    language_field = article.findall("Language")
+    language = [''.join(elem.itertext()) for elem in language_field]
+
     pmid = parse_pmid(pubmed_article)
     doi = parse_doi(pubmed_article)
     references = parse_references(pubmed_article, reference_list)
@@ -566,6 +569,7 @@ def parse_article_info(
         "authors": authors,
         "pubdate": pubdate,
         "pmid": pmid,
+        "language": language,
         "mesh_terms": mesh_terms,
         "publication_types": publication_types,
         "chemical_list": chemical_list,
@@ -609,7 +613,7 @@ def parse_medline_xml(
         if False, this will parse structured abstract where each section will be assigned to
         NLM category of each sections
         default: False
-    author_list: bool 
+    author_list: bool
         if True, return parsed author output as a list of authors
         if False, return parsed author output as a string of authors concatenated with ``;``
         default: False
