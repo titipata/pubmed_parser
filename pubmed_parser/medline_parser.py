@@ -549,8 +549,8 @@ def parse_article_info(
     journal = article.find("Journal")
     journal_name = " ".join(journal.xpath("Title/text()"))
 
-    language = article.findall("Language")
-    language = [''.join(elem.itertext()) for elem in language]
+    language_field = article.findall("Language")
+    language = [''.join(elem.itertext()) for elem in language_field]
 
     pmid = parse_pmid(pubmed_article)
     doi = parse_doi(pubmed_article)
