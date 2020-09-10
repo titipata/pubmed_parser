@@ -24,6 +24,31 @@ def test_parse_medline_xml():
     assert parsed_medline[965]["language"] == ["fre", "ger"]
 
 
+def test_parse_medline_xml_abcam():
+    """
+    Test parsing MEDLINE XML - Abcam version
+    """
+
+    expected_title = "Monitoring of bacteriological contamination and as"
+    expected_abstract = "Two hundred and sixty nine beef, 230 sheep and 165"
+
+    parsed_medline = pp.parse_medline_xml_abcam(os.path.join("data", "pubmed20n0014.xml.gz"))
+
+    assert isinstance(parsed_medline, list)
+    assert len(parsed_medline) == 30000, "Expect to have 30000 records"
+    assert (len([p for p in parsed_medline if len(p["Title"]) > 0]) == 30000), "Expect every records to have title"
+
+    assert parsed_medline[0]["Title"][0:50] == expected_title
+    assert parsed_medline[0]["Abstract"][0:50] == expected_abstract
+    assert parsed_medline[0]["PMID"] == "399296"
+    assert parsed_medline[0]["Language"] == ["eng"]
+    assert parsed_medline[965]["Language"] == ["fre", "ger"]
+    assert parsed_medline[23]['Year'] == '1979'
+    assert parsed_medline[31]['DOI'] == '10.1038/281646a0'
+    assert parsed_medline[33]['Journal'] == 'Nature'
+    assert parsed_medline[33]['JournalAbv'] == 'Nature'
+
+
 def test_parse_medline_grant_id():
     """
     Test parsing grants from MEDLINE XML

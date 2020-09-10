@@ -79,6 +79,29 @@ def parse_doi(pubmed_article):
     return doi
 
 
+def parse_pmcid(pubmed_article):
+    """
+    A function to parse PMCID from a given Pubmed Article tree
+
+    Parameters
+    ----------
+    pubmed_article: Element
+        The lxml node pointing to a medline document
+
+    Returns
+    -------
+    doi: str
+        A string of PMCID parsed from a given ``pubmed_article``
+    """
+
+    article_id_list = pubmed_article.find('PubmedData').find('ArticleIdList')
+    if article_id_list is not None:
+        for child in article_id_list.getchildren():
+            if 'pmc' in child.values():
+                return child.text
+    return ''
+
+
 def parse_mesh_terms(medline):
     """
     A function to parse MESH terms from article
@@ -585,6 +608,89 @@ def parse_article_info(
     return dict_out
 
 
+def parse_article_info_abcam(pubmed_article):
+    """Parse article nodes from Medline dataset --- specifically for Abcams needs
+
+    Parameters
+    ----------
+    pubmed_article: Element
+        The lxml element pointing to a medline document
+
+    Returns
+    -------
+    article: dict
+        Dictionary containing information about the article, as per the Abcams requirements
+    """
+
+    # Fixtures
+    year_info_only = True
+    nlm_category = True
+    reference_list = True
+
+    medline = pubmed_article.find("MedlineCitation")
+    article = medline.find("Article")
+
+    if article.find("ArticleTitle") is not None:
+        title = stringify_children(article.find("ArticleTitle")).strip() or ""
+    else:
+        title = ""
+
+    category = "NlmCategory" if nlm_category else "Label"
+    if article.find("Abstract/AbstractText") is not None:
+        # parsing structured abstract
+        if len(article.findall("Abstract/AbstractText")) > 1:
+            abstract_list = list()
+            for abstract in article.findall("Abstract/AbstractText"):
+                section = abstract.attrib.get(category, "")
+                if section != "UNASSIGNED":
+                    abstract_list.append("\n")
+                    abstract_list.append(abstract.attrib.get(category, ""))
+                section_text = stringify_children(abstract).strip()
+                abstract_list.append(section_text)
+            abstract = "\n".join(abstract_list).strip()
+        else:
+            abstract = (
+                stringify_children(article.find("Abstract/AbstractText")).strip() or ""
+            )
+    elif article.find("Abstract") is not None:
+        abstract = stringify_children(article.find("Abstract")).strip() or ""
+    else:
+        abstract = ""
+
+    authors = parse_author_affiliation(medline)
+
+    journal = article.find("Journal")
+    journal_name = " ".join(journal.xpath("Title/text()"))
+
+    language_field = article.findall("Language")
+    language = [''.join(elem.itertext()) for elem in language_field]
+
+    pmid = parse_pmid(pubmed_article)
+    doi = parse_doi(pubmed_article)
+    pmcid = parse_pmcid(pubmed_article)
+    references = parse_references(pubmed_article, reference_list)
+    year = date_extractor(journal, year_info_only)
+    other_id_dict = parse_other_id(medline)
+    journal_info_dict = parse_journal_info(medline)
+
+    dict_out = {
+        "PMID": pmid,
+        "PMCID": pmcid,
+        "DOI": doi,
+        "Title": title,
+        "Abstract": abstract,
+        "Language": language,
+        "Journal": journal_name,
+        "JournalAbv": journal_info_dict.get('medline_ta'),
+        "Year": year,
+        "Authors": authors,
+        "References": references,
+        "delete": False,
+    }
+
+    return dict_out
+
+
 def parse_medline_xml(
     path,
     year_info_only=True,
@@ -672,6 +778,66 @@ def parse_medline_xml(
         for p in delete_citations
     ]
     article_list.extend(dict_delete)
+    return article_list
+
+
+def parse_medline_xml_abcam(path, include_deleted=False):
+    """Parse XML file frxoxm Medline XML format available at
+    ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/
+
+    This method follows the requirements set by Abcam.
+
+    Parameters
+    ----------
+    path: str
+        The path
+
+    include_deleted: bool
+        If True, include the deleted articles as part of the output
+
+    Return
+    ------
+    article_list: list
+        A list of dictionary containing information about articles in NLM format (see
+        `parse_article_info_abcam`). Articles that have been deleted will be
+        added with no information other than the field `delete` being `True`
+
+    Examples
+    --------
+    >>> pubmed_parser.parse_medline_xml_abcam('data/pubmed20n0014.xml.gz')
+    """
+
+    tree = read_xml(path)
+    medline_citations = tree.findall("//MedlineCitationSet/MedlineCitation")
+    if len(medline_citations) == 0:
+        medline_citations = tree.findall("//PubmedArticle")
+    article_list = list(
+        map(lambda m: parse_article_info_abcam(m), medline_citations)
+    )
+
+    if include_deleted:
+        delete_citations = tree.findall("//DeleteCitation/PMID")
+        dict_delete = [
+
+            {
+                "PMID": p.text.strip(),
+                "PMCID": '',
+                "DOI": '',
+                "Title": '',
+                "Abstract": '',
+                "Language": '',
+                "Journal": '',
+                "JournalAbv": '',
+                "Year": '',
+                "Authors": '',
+                "References": '',
+                "delete": True,
+            }
+
+            for p in delete_citations
+        ]
+        article_list.extend(dict_delete)
+
     return article_list
 
 
