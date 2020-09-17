@@ -781,6 +781,27 @@ def parse_medline_xml(
     return article_list
 
 
+def get_medline_tree(path):
+    """Initial parsing of the xml file tree. Finds all the articles.
+
+    Parameters
+    ----------
+    path: str
+        The path
+
+    Return
+    ------
+    medline_citations: list
+        A list of lxml.etree._Element, each being a pubmed article
+    """
+    tree = read_xml(path)
+    medline_citations = tree.findall("//MedlineCitationSet/MedlineCitation")
+    if len(medline_citations) == 0:
+        medline_citations = tree.findall("//PubmedArticle")
+
+    return medline_citations
+
+
 def parse_medline_xml_abcam(path, include_deleted=False):
     """Parse XML file frxoxm Medline XML format available at
     ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/
@@ -807,10 +828,7 @@ def parse_medline_xml_abcam(path, include_deleted=False):
     >>> pubmed_parser.parse_medline_xml_abcam('data/pubmed20n0014.xml.gz')
     """
 
-    tree = read_xml(path)
-    medline_citations = tree.findall("//MedlineCitationSet/MedlineCitation")
-    if len(medline_citations) == 0:
-        medline_citations = tree.findall("//PubmedArticle")
+    medline_citations = get_medline_tree(path)
     article_list = list(
         map(lambda m: parse_article_info_abcam(m), medline_citations)
     )
