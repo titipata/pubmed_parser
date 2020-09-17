@@ -782,7 +782,7 @@ def parse_medline_xml(
     return article_list
 
 
-def get_medline_tree(path, to_string=False):
+def get_medline_tree(path, to_string=False, encoding='utf-8'):
     """Initial parsing of the xml file tree. Finds all the articles.
 
     Parameters
@@ -792,6 +792,9 @@ def get_medline_tree(path, to_string=False):
 
     to_string: bool
         If True, return a list of string elements
+
+    encoding: str
+        How to encode the elements if `to_string=True`
 
     Return
     ------
@@ -804,7 +807,7 @@ def get_medline_tree(path, to_string=False):
         medline_citations = tree.findall("//PubmedArticle")
 
     if to_string:
-        return [lxml.etree.tostring(elem) for elem in medline_citations]
+        return [lxml.etree.tostring(elem, encoding=encoding) for elem in medline_citations]
 
     return medline_citations
 
