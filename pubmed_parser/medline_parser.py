@@ -6,6 +6,7 @@ import numpy as np
 from itertools import chain
 from collections import defaultdict
 from pubmed_parser.utils import read_xml, stringify_children, month_or_day_formater
+import lxml
 
 __all__ = ["parse_medline_xml", "parse_medline_grant_id"]
 
@@ -781,13 +782,16 @@ def parse_medline_xml(
     return article_list
 
 
-def get_medline_tree(path):
+def get_medline_tree(path, to_string=False):
     """Initial parsing of the xml file tree. Finds all the articles.
 
     Parameters
     ----------
     path: str
         The path
+
+    to_string: bool
+        If True, return a list of string elements
 
     Return
     ------
@@ -798,6 +802,9 @@ def get_medline_tree(path):
     medline_citations = tree.findall("//MedlineCitationSet/MedlineCitation")
     if len(medline_citations) == 0:
         medline_citations = tree.findall("//PubmedArticle")
+
+    if to_string:
+        return [lxml.etree.tostring(elem) for elem in medline_citations]
 
     return medline_citations
 
