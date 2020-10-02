@@ -38,7 +38,7 @@ See below if you want to contribute code for your idea as well.
 
 ### Contribute code and documentation 📝
 
-If you have been using `pubmed_parser` and see any errors that can be fixed, we are welcome to report an [issue](https://github.com/titipata/pubmed_parser/issues), comment if issue already exist, or contribute if you know where the bug occurs. We currently have documentation for each function directly in the source code. You can contribute directly there.
+If you have been using `pubmed_parser` and see any errors that can be fixed, you are welcome to report an [issue](https://github.com/titipata/pubmed_parser/issues), comment if the issue already exists, or contribute if you know where the bug occurs. We currently have documentation for each function directly in the source code. You can contribute directly there.
 
 ### Ask a private question
 
