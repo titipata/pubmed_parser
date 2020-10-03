@@ -4,15 +4,15 @@
  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3660006.svg)](https://doi.org/10.5281/zenodo.3660006) [![Build Status](https://travis-ci.com/titipata/pubmed_parser.svg?branch=master)](https://travis-ci.com/titipata/pubmed_parser)
 
 Pubmed Parser is a Python library for parsing the [PubMed Open-Access (OA) subset](http://www.ncbi.nlm.nih.gov/pmc/tools/ftp/)
- , [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/) repositories, and [Entrez Programming Utilities (E-utils)](https://eutils.ncbi.nlm.nih.gov/). It uses `lxml` library to parse this information into a Python dictionary which can be easily used for research such in text mining and natural language processing pipelines.
+ , [MEDLINE XML](https://www.nlm.nih.gov/bsd/licensee/) repositories, and [Entrez Programming Utilities (E-utils)](https://eutils.ncbi.nlm.nih.gov/). It uses the `lxml` library to parse this information into a Python dictionary which can be easily used for research, such as in text mining and natural language processing pipelines.
 
 For available APIs and details about the dataset, please see our [wiki page](https://github.com/titipata/pubmed_parser/wiki) or
- [documentation page](http://titipata.github.io/pubmed_parser/) for more details. Below, we list some of the core funtionalities and examples code.
+ [documentation page](http://titipata.github.io/pubmed_parser/) for more details. Below, we list some of the core funtionalities and code examples.
 
 ## Available Parsers
 
-* `path` provided to a function can be path to a compressed or uncompressed XML file. We provide example files in [ `data` ](data/) folder.
-* for website parser, you should scrape with pause. Please see [copyright notice](https://www.ncbi.nlm.nih.gov/pmc/about/copyright/#copy-PMC) because your IP can get blocked if you try to download in bulk.
+* `path` provided to a function can be the path to a compressed or uncompressed XML file. We provide example files in the [ `data` ](data/) folder.
+* for website parsing, you should scrape with pause. Please see the [copyright notice](https://www.ncbi.nlm.nih.gov/pmc/about/copyright/#copy-PMC) because your IP can get blocked if you try to download in bulk.
 
 Below, we list available parsers from `pubmed_parser`.
 
@@ -29,7 +29,7 @@ Below, we list available parsers from `pubmed_parser`.
 
 ### Parse PubMed OA XML information
 
-We created a simple parser for PubMed Open Access Subset where you can give an XML path or string to the function called `parse_pubmed_xml` which will return a dictionary with the following information:
+We created a simple parser for the PubMed Open Access Subset where you can give an XML path or string to the function called `parse_pubmed_xml` which will return a dictionary with the following information:
 
 * `full_title` : article's title
 * `abstract` : abstract
@@ -54,7 +54,7 @@ We created a simple parser for PubMed Open Access Subset where you can give an X
 ```
 
 * `publication_year` : publication year
-* `subjects` : list of subjects listed in the article separated by semicolon. Sometimes, it only contains type of article, such as research article, review proceedings, etc.
+* `subjects` : list of subjects listed in the article separated by semicolon. Sometimes, it only contains the type of the article, such as a research article, review proceedings, etc.
 
 ``` python
 import pubmed_parser as pp
@@ -63,7 +63,7 @@ dict_out = pp.parse_pubmed_xml(path)
 
 ### Parse PubMed OA citation references
 
-The function `parse_pubmed_references` will process a Pubmed Open Access XML file and return a list of the PMID it cites. Each dictionary has keys as follows
+The function `parse_pubmed_references` will process a Pubmed Open Access XML file and return a list of the PMIDs it cites. Each dictionary has keys as follows
 
 * `pmid` : PubMed ID of the article
 * `pmc` : PubMed Central ID of the article
@@ -72,7 +72,7 @@ The function `parse_pubmed_references` will process a Pubmed Open Access XML fil
 * `journal_type` : type of journal
 * `pmid_cited` : PubMed ID of article that article cites
 * `doi_cited` : DOI of article that article cites
-* `year` : Publication year as it appears in the reference (May include letter suffix, e.g.2007a)
+* `year` : Publication year as it appears in the reference (may include letter suffix, e.g.2007a)
 
 ``` python
 dicts_out = pp.parse_pubmed_references(path) # return list of dictionary
@@ -80,7 +80,7 @@ dicts_out = pp.parse_pubmed_references(path) # return list of dictionary
 
 ### Parse PubMed OA images and captions
 
-The function `parse_pubmed_caption` can parse image captions from given path to XML file. It will return reference index that you can refer back to actual images. The function will return list of dictionary which has following keys
+The function `parse_pubmed_caption` can parse image captions from a given path to XML file. It will return reference index that you can refer back to actual images. The function will return list of dictionary which has following keys
 
 * `pmid` : PubMed ID
 * `pmc` : PubMed Central ID
