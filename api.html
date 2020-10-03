@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Resources" href="resources.html" />
@@ -50,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Pubmed Parser
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Pubmed Parser
           
 
           
@@ -77,6 +78,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -99,6 +101,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -137,7 +140,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>API Documentation</li>
     
@@ -239,7 +242,7 @@ has the keys of ‘pmid’, ‘grant_id’, ‘grant_acronym’, ‘country’, 
 <dl class="py function">
 <dt id="pubmed_parser.parse_pubmed_xml">
 <code class="sig-prename descclassname">pubmed_parser.</code><code class="sig-name descname">parse_pubmed_xml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">include_path</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">nxml</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_oa_parser.html#parse_pubmed_xml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pubmed_parser.parse_pubmed_xml" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given an input XML path to PubMed XML file, extract information and metadata 
+<dd><p>Given an input XML path to PubMed XML file, extract information and metadata
 from a given XML file and return parsed XML file in dictionary format.
 You can check <code class="docutils literal notranslate"><span class="pre">ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/</span></code> to list of available files to download</p>
 <dl class="simple">
@@ -249,7 +252,7 @@ You can check <code class="docutils literal notranslate"><span class="pre">ftp:/
 default: False</p>
 </dd>
 <dt>nxml: bool</dt><dd><p>if True, this will strip a namespace of an XML after reading a file
-see <a class="reference external" href="https://stackoverflow.com/questions/18159221/remove-namespace-and-prefix-from-xml-in-python-using-lxml">https://stackoverflow.com/questions/18159221/remove-namespace-and-prefix-from-xml-in-python-using-lxml</a> to 
+see <a class="reference external" href="https://stackoverflow.com/questions/18159221/remove-namespace-and-prefix-from-xml-in-python-using-lxml">https://stackoverflow.com/questions/18159221/remove-namespace-and-prefix-from-xml-in-python-using-lxml</a> to
 default: False</p>
 </dd>
 </dl>
@@ -281,13 +284,13 @@ to list of dictionary</p>
 <dl class="py function">
 <dt id="pubmed_parser.parse_pubmed_paragraph">
 <code class="sig-prename descclassname">pubmed_parser.</code><code class="sig-name descname">parse_pubmed_paragraph</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">all_paragraph</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_oa_parser.html#parse_pubmed_paragraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pubmed_parser.parse_pubmed_paragraph" title="Permalink to this definition">¶</a></dt>
-<dd><p>Give path to a given PubMed OA file, parse and return 
+<dd><p>Give path to a given PubMed OA file, parse and return
 a dictionary of all paragraphs, section that it belongs to,
 and a list of reference made in each paragraph as a list of PMIDs</p>
 <dl class="simple">
 <dt>path: str</dt><dd><p>A string to an XML path.</p>
 </dd>
-<dt>all_paragraph: bool</dt><dd><p>By default, this function will only append a paragraph if there is at least 
+<dt>all_paragraph: bool</dt><dd><p>By default, this function will only append a paragraph if there is at least
 one reference made in a paragraph (to aviod noisy parsed text).
 A boolean indicating if you want to include paragraph with no references made or not
 if True, include all paragraphs
@@ -307,7 +310,7 @@ Metadata includes ‘pmc’ of an article, ‘pmid’ of an article,
 <dl class="py function">
 <dt id="pubmed_parser.parse_pubmed_caption">
 <code class="sig-prename descclassname">pubmed_parser.</code><code class="sig-name descname">parse_pubmed_caption</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_oa_parser.html#parse_pubmed_caption"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pubmed_parser.parse_pubmed_caption" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given single xml path, extract figure caption and 
+<dd><p>Given single xml path, extract figure caption and
 reference id back to that figure</p>
 <dl class="simple">
 <dt>path: str</dt><dd><p>A string to an PubMed OA XML path</p>
@@ -315,7 +318,7 @@ reference id back to that figure</p>
 </dl>
 <dl class="simple">
 <dt>dict_captions: list</dt><dd><p>A list contains all dictionary of figure ID (‘fig_id’) with its metadata.
-Metadata includes ‘pmid’, ‘pmc’, ‘fig_caption’ (figure’s caption), 
+Metadata includes ‘pmid’, ‘pmc’, ‘fig_caption’ (figure’s caption),
 ‘graphic_ref’ (a file name corresponding to a figure file in OA bulk download)</p>
 </dd>
 </dl>
@@ -339,7 +342,7 @@ Metadata includes ‘pmid’, ‘pmc’, ‘fig_caption’ (figure’s caption),
 <dl class="simple">
 <dt>path: str</dt><dd><p>A string to an PubMed OA XML path</p>
 </dd>
-<dt>return_xml: bool</dt><dd><p>if True, a dictionary (in an output list) 
+<dt>return_xml: bool</dt><dd><p>if True, a dictionary (in an output list)
 will have a key ‘table_xml’ which is an XML string of a parsed table
 default: True</p>
 </dd>
@@ -471,11 +474,19 @@ default: False</p>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, Titipat Achakulvisut
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -486,7 +497,6 @@ default: False</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
