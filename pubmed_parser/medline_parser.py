@@ -630,9 +630,9 @@ def parse_medline_xml(
     >>> pubmed_parser.parse_medline_xml('data/pubmed20n0014.xml.gz')
     """
     tree = read_xml(path)
-    medline_citations = tree.findall("//MedlineCitationSet/MedlineCitation")
+    medline_citations = tree.findall(".//MedlineCitationSet/MedlineCitation")
     if len(medline_citations) == 0:
-        medline_citations = tree.findall("//PubmedArticle")
+        medline_citations = tree.findall(".//PubmedArticle")
     article_list = list(
         map(
             lambda m: parse_article_info(
@@ -641,7 +641,7 @@ def parse_medline_xml(
             medline_citations,
         )
     )
-    delete_citations = tree.findall("//DeleteCitation/PMID")
+    delete_citations = tree.findall(".//DeleteCitation/PMID")
     dict_delete = [
         {
             "title": np.nan,
@@ -696,9 +696,9 @@ def parse_medline_grant_id(path):
     ]
     """
     tree = read_xml(path)
-    medline_citations = tree.findall("//MedlineCitationSet/MedlineCitation")
+    medline_citations = tree.findall(".//MedlineCitationSet/MedlineCitation")
     if len(medline_citations) == 0:
-        medline_citations = tree.findall("//PubmedArticle")
+        medline_citations = tree.findall(".//PubmedArticle")
     grant_id_list = list(map(parse_grant_id, medline_citations))
     grant_id_list = list(chain(*grant_id_list))  # flatten list
     return grant_id_list
