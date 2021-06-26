@@ -343,9 +343,9 @@ def parse_author_affiliation(medline):
                 else:
                     forename = ""
                 if author.find("Initials") is not None:
-                    firstname = (author.find("Initials").text or "").strip() or ""
+                    initials = (author.find("Initials").text or "").strip() or ""
                 else:
-                    firstname = ""
+                    initials = ""
                 if author.find("LastName") is not None:
                     lastname = (author.find("LastName").text or "").strip() or ""
                 else:
@@ -364,9 +364,9 @@ def parse_author_affiliation(medline):
                     affiliation = ""
                 authors.append(
                     {
-                        "forename": forename,
-                        "firstname": firstname,
                         "lastname": lastname,
+                        "forename": forename,
+                        "initials": initials,
                         "identifier": identifier,
                         "affiliation": affiliation,
                     }
@@ -545,7 +545,7 @@ def parse_article_info(
         )
         authors = ";".join(
             [
-                author.get("firstname", "") + "|" + author.get("lastname",   "") + "|" +
+                author.get("lastname", "") + "|" + author.get("forename",   "") + "|" +
                 author.get("initials",  "") + "|" + author.get("identifier", "")
                 for author in authors_dict
             ]
