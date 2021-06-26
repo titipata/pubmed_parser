@@ -325,7 +325,7 @@ def parse_author_affiliation(medline):
     ----------
     medline: Element
         The lxml node pointing to a medline document
-    
+
     Returns
     -------
     authors: list
@@ -350,6 +350,10 @@ def parse_author_affiliation(medline):
                     lastname = (author.find("LastName").text or "").strip() or ""
                 else:
                     lastname = ""
+                if author.find("Identifier") is not None:
+                    identifier = (author.find("Identifier").text or "").strip() or ""
+                else:
+                    identifier = ""
                 if author.find("AffiliationInfo/Affiliation") is not None:
                     affiliation = author.find("AffiliationInfo/Affiliation").text or ""
                     affiliation = affiliation.replace(
@@ -363,6 +367,7 @@ def parse_author_affiliation(medline):
                         "forename": forename,
                         "firstname": firstname,
                         "lastname": lastname,
+                        "identifier": identifier,
                         "affiliation": affiliation,
                     }
                 )
@@ -426,7 +431,7 @@ def parse_references(pubmed_article, reference_list):
     pubmed_article: Element
         The lxml element pointing to a medline document
 
-    reference_list: bool 
+    reference_list: bool
         if it is True, return a list of dictionary
         if it is False return a string of PMIDs seprated by semicolon ';'
 
@@ -540,7 +545,8 @@ def parse_article_info(
         )
         authors = ";".join(
             [
-                author.get("firstname", "") + " " + author.get("lastname", "")
+                author.get("firstname", "") + "|" + author.get("lastname",   "") + "|" +
+                author.get("initials",  "") + "|" + author.get("identifier", "")
                 for author in authors_dict
             ]
         )
@@ -609,7 +615,7 @@ def parse_medline_xml(
         if False, this will parse structured abstract where each section will be assigned to
         NLM category of each sections
         default: False
-    author_list: bool 
+     author_list: bool
         if True, return parsed author output as a list of authors
         if False, return parsed author output as a string of authors concatenated with ``;``
         default: False
