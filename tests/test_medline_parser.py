@@ -18,6 +18,8 @@ def test_parse_medline_xml():
         len([p for p in parsed_medline if len(p["title"]) > 0]) == 30000
     ), "Expect every records to have title"
     assert parsed_medline[0]["title"][0:50] == expected_title
+    assert parsed_medline[0]["issue"] == "50(2)"
+    assert parsed_medline[0]["pages"] == "123-33"
     assert parsed_medline[0]["abstract"][0:50] == expected_abstract
     assert parsed_medline[0]["pmid"] == "399296"
 

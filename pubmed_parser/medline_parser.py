@@ -500,7 +500,7 @@ def parse_article_info(
     article: dict
         Dictionary containing information about the article, including
         `title`, `abstract`, `journal`, `authors`, `affiliations`, `pubdate`,
-        `pmid`, `other_id`, `mesh_terms`, and `keywords`. The field
+        `pmid`, `other_id`, `mesh_terms`, `pages`, `issue`, and `keywords`. The field
         `delete` is always `False` because this function parses
         articles that by definition are not deleted.
     """
@@ -511,6 +511,24 @@ def parse_article_info(
         title = stringify_children(article.find("ArticleTitle")).strip() or ""
     else:
         title = ""
+
+    if article.find("Journal/JournalIssue/Volume") is not None:
+        volume = article.find("Journal/JournalIssue/Volume").text or ""
+    else:
+        volume = ""
+
+    if article.find("Journal/JournalIssue/Issue") is not None:
+        issue = article.find("Journal/JournalIssue/Issue").text or ""
+    else:
+        issue = ""
+
+    if volume != "":
+        issue = f"{volume}({issue})"
+
+    if article.find("Pagination/MedlinePgn") is not None:
+        pages = article.find("Pagination/MedlinePgn").text or ""
+    else:
+        pages = ""
 
     category = "NlmCategory" if nlm_category else "Label"
     if article.find("Abstract/AbstractText") is not None:
@@ -567,6 +585,8 @@ def parse_article_info(
     journal_info_dict = parse_journal_info(medline)
     dict_out = {
         "title": title,
+        "issue": issue,
+        "pages": pages,
         "abstract": abstract,
         "journal": journal_name,
         "authors": authors,
