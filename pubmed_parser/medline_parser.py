@@ -692,6 +692,8 @@ def parse_medline_xml(
             "issn_linking": np.nan,
             "country": np.nan,
             "references": np.nan,
+            "issue": np.nan,
+            "pages": np.nan,
         }
         for p in delete_citations
     ]
