@@ -180,7 +180,7 @@ Below, we list the core APIs implemented in Pubmed Parser</p>
 <span class="sig-prename descclassname"><span class="pre">pubmed_parser.</span></span><span class="sig-name descname"><span class="pre">parse_medline_xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_info_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nlm_category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">author_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/medline_parser.html#parse_medline_xml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubmed_parser.parse_medline_xml" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse XML file from Medline XML format available at
 <a class="reference external" href="ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/">ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/</a></p>
-<dl class="simple">
+<dl>
 <dt>path: str</dt><dd><p>The path</p>
 </dd>
 <dt>year_info_only: bool</dt><dd><p>if True, this tool will only attempt to extract year information from PubDate.
@@ -192,14 +192,18 @@ NOTE: the resolution of PubDate information in the Medline(R) database varies
 between articles.
 default: True</p>
 </dd>
-<dt>nlm_category: bool</dt><dd><p>if True, this will parse structured abstract where each section if original Label
+<dt>nlm_category: bool</dt><dd><blockquote>
+<div><p>if True, this will parse structured abstract where each section if original Label
 if False, this will parse structured abstract where each section will be assigned to
 NLM category of each sections
 default: False</p>
-</dd>
-<dt>author_list: bool </dt><dd><p>if True, return parsed author output as a list of authors
+</div></blockquote>
+<dl class="simple">
+<dt>author_list: bool</dt><dd><p>if True, return parsed author output as a list of authors
 if False, return parsed author output as a string of authors concatenated with <code class="docutils literal notranslate"><span class="pre">;</span></code>
 default: False</p>
+</dd>
+</dl>
 </dd>
 <dt>reference_list: bool</dt><dd><p>if True, parse reference list as an output
 if False, return string of PMIDs concatenated with ;

@@ -487,7 +487,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    medline: Element</span>
 <span class="sd">        The lxml node pointing to a medline document</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    authors: list</span>
@@ -505,13 +505,17 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">forename</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">if</span> <span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Initials&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">firstname</span> <span class="o">=</span> <span class="p">(</span><span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Initials&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                    <span class="n">initials</span> <span class="o">=</span> <span class="p">(</span><span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Initials&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">firstname</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                    <span class="n">initials</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">if</span> <span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;LastName&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">lastname</span> <span class="o">=</span> <span class="p">(</span><span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;LastName&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">lastname</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">if</span> <span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Identifier&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">identifier</span> <span class="o">=</span> <span class="p">(</span><span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Identifier&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">identifier</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">if</span> <span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;AffiliationInfo/Affiliation&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">affiliation</span> <span class="o">=</span> <span class="n">author</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;AffiliationInfo/Affiliation&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
                     <span class="n">affiliation</span> <span class="o">=</span> <span class="n">affiliation</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
@@ -522,9 +526,10 @@
                     <span class="n">affiliation</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                 <span class="n">authors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;forename&quot;</span><span class="p">:</span> <span class="n">forename</span><span class="p">,</span>
-                        <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="n">firstname</span><span class="p">,</span>
                         <span class="s2">&quot;lastname&quot;</span><span class="p">:</span> <span class="n">lastname</span><span class="p">,</span>
+                        <span class="s2">&quot;forename&quot;</span><span class="p">:</span> <span class="n">forename</span><span class="p">,</span>
+                        <span class="s2">&quot;initials&quot;</span><span class="p">:</span> <span class="n">initials</span><span class="p">,</span>
+                        <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="n">identifier</span><span class="p">,</span>
                         <span class="s2">&quot;affiliation&quot;</span><span class="p">:</span> <span class="n">affiliation</span><span class="p">,</span>
                     <span class="p">}</span>
                 <span class="p">)</span>
@@ -588,7 +593,7 @@
 <span class="sd">    pubmed_article: Element</span>
 <span class="sd">        The lxml element pointing to a medline document</span>
 
-<span class="sd">    reference_list: bool </span>
+<span class="sd">    reference_list: bool</span>
 <span class="sd">        if it is True, return a list of dictionary</span>
 <span class="sd">        if it is False return a string of PMIDs seprated by semicolon &#39;;&#39;</span>
 
@@ -657,7 +662,7 @@
 <span class="sd">    article: dict</span>
 <span class="sd">        Dictionary containing information about the article, including</span>
 <span class="sd">        `title`, `abstract`, `journal`, `authors`, `affiliations`, `pubdate`,</span>
-<span class="sd">        `pmid`, `other_id`, `mesh_terms`, and `keywords`. The field</span>
+<span class="sd">        `pmid`, `other_id`, `mesh_terms`, `pages`, `issue`, and `keywords`. The field</span>
 <span class="sd">        `delete` is always `False` because this function parses</span>
 <span class="sd">        articles that by definition are not deleted.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -668,6 +673,26 @@
         <span class="n">title</span> <span class="o">=</span> <span class="n">stringify_children</span><span class="p">(</span><span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;ArticleTitle&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Journal/JournalIssue/Volume&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">volume</span> <span class="o">=</span> <span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Journal/JournalIssue/Volume&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">volume</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Journal/JournalIssue/Issue&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">issue</span> <span class="o">=</span> <span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Journal/JournalIssue/Issue&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">issue</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">volume</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">issue</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">issue</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">volume</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">issue</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="k">if</span> <span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Pagination/MedlinePgn&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pages</span> <span class="o">=</span> <span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Pagination/MedlinePgn&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pages</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
     <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;NlmCategory&quot;</span> <span class="k">if</span> <span class="n">nlm_category</span> <span class="k">else</span> <span class="s2">&quot;Label&quot;</span>
     <span class="k">if</span> <span class="n">article</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Abstract/AbstractText&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -702,7 +727,8 @@
         <span class="p">)</span>
         <span class="n">authors</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="p">[</span>
-                <span class="n">author</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;firstname&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">author</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lastname&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">author</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lastname&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="n">author</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;forename&quot;</span><span class="p">,</span>   <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span>
+                <span class="n">author</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;initials&quot;</span><span class="p">,</span>  <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="n">author</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">author</span> <span class="ow">in</span> <span class="n">authors_dict</span>
             <span class="p">]</span>
         <span class="p">)</span>
@@ -723,6 +749,8 @@
     <span class="n">journal_info_dict</span> <span class="o">=</span> <span class="n">parse_journal_info</span><span class="p">(</span><span class="n">medline</span><span class="p">)</span>
     <span class="n">dict_out</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+        <span class="s2">&quot;issue&quot;</span><span class="p">:</span> <span class="n">issue</span><span class="p">,</span>
+        <span class="s2">&quot;pages&quot;</span><span class="p">:</span> <span class="n">pages</span><span class="p">,</span>
         <span class="s2">&quot;abstract&quot;</span><span class="p">:</span> <span class="n">abstract</span><span class="p">,</span>
         <span class="s2">&quot;journal&quot;</span><span class="p">:</span> <span class="n">journal_name</span><span class="p">,</span>
         <span class="s2">&quot;authors&quot;</span><span class="p">:</span> <span class="n">authors</span><span class="p">,</span>
@@ -771,7 +799,7 @@
 <span class="sd">        if False, this will parse structured abstract where each section will be assigned to</span>
 <span class="sd">        NLM category of each sections</span>
 <span class="sd">        default: False</span>
-<span class="sd">    author_list: bool </span>
+<span class="sd">     author_list: bool</span>
 <span class="sd">        if True, return parsed author output as a list of authors</span>
 <span class="sd">        if False, return parsed author output as a string of authors concatenated with ``;``</span>
 <span class="sd">        default: False</span>
@@ -826,6 +854,8 @@
             <span class="s2">&quot;issn_linking&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
             <span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
             <span class="s2">&quot;references&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;issue&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;pages&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">delete_citations</span>
     <span class="p">]</span>
