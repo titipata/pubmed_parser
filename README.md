@@ -219,12 +219,18 @@ dict_out = pp.parse_outgoing_citation_web(doc_id, id_type='PMID')
 
 Identifiers should be passed as strings. PubMed Central ID's are default, and should be passed as strings *without* the `'PMC'` prefix. If no citations are found, or if no article is found matching `doc_id` in the indicated database, it will return `None`.
 
-## Install Package
+## Installation
 
-Install directly from the repository
+You can install the most update version of the package directly from the repository
 
 ``` bash
 pip install git+git://github.com/titipata/pubmed_parser.git
+```
+
+or install recent release with [PyPI](https://pypi.org/project/pubmed-parser/) using
+
+``` bash
+pip install pubmed-parser
 ```
 
 or clone the repository and install using `pip`
@@ -235,6 +241,7 @@ pip install ./pubmed_parser
 ```
 
 You can test your installation by running `pytest --cov=pubmed_parser tests/ --verbose`
+in the root of the repository.
 
 ## Example snippet to parse PubMed OA dataset
 
