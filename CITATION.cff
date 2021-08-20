@@ -22,9 +22,12 @@ preferred-citation:
       given-names: Konrad
   doi: 10.21105/joss.01979
   journal: "Journal of Open Source Software"
+  publisher: The Open Journal
   month: 9
   year: 2020
   number: 46
   volume: 5
   start: 1979
   title: "Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset XML Dataset"
+  url: https://doi.org/10.21105/joss.01979
+  
