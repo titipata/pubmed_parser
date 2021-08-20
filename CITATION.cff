@@ -10,10 +10,21 @@ authors:
 title: "Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset XML Dataset"
 date-released: 2019-12-15
 doi: 10.21105/joss.01979
-journal: "Journal of Open Source Software"
-publisher: The Open Journal
-url: "{https://doi.org/10.21105/joss.01979"
-volume: 5
-number: 46
-volume: 5
-year: 2020
+url: https://github.com/titipata/pubmed_parser
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Achakulvisut
+      given-names: Titipat
+    - family-names: Acuna
+      given-names: Daniel
+    - family-names: Kording
+      given-names: Konrad
+  doi: 10.21105/joss.01979
+  journal: "Journal of Open Source Software"
+  month: 9
+  year: 2020
+  number: 46
+  volume: 5
+  start: 1979
+  title: "Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset XML Dataset"
