@@ -7,6 +7,7 @@ authors:
     given-names: Daniel E.
   - family-names: Kording
     given-names: Konrad
-title: Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset XML Dataset
+title: "Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML Dataset XML Dataset"
 date-released: 2019-12-15
 bibliography: 10.21105/joss.01979
+url: "https://github.com/titipata/pubmed_parser"
