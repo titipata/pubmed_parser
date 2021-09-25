@@ -426,6 +426,7 @@ def parse_pubmed_caption(path):
             fig_captions = fig.find("caption").getchildren()
             caption = " ".join([stringify_children(c) for c in fig_captions])
             graphic = fig.find("graphic")
+            graphic_ref = None
             if graphic is not None:
                 graphic_ref = graphic.attrib.values()[0]
             dict_caption = {
