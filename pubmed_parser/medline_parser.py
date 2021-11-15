@@ -560,7 +560,7 @@ def parse_article_info(
             [
                 author.get("affiliation", "")
                 for author in authors_dict
-                if author.get("affiliation", "") is not ""
+                if author.get("affiliation", "") != ""
             ]
         )
         authors = ";".join(
