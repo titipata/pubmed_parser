@@ -4,7 +4,7 @@ from setuptools import setup
 if __name__ == "__main__":
     setup(
         name="pubmed_parser",
-        version="0.3.0",
+        version="0.3.1",
         description="A python parser for Pubmed Open-Access Subset and MEDLINE XML repository",
         url="https://github.com/titipata/pubmed_parser",
         download_url="https://github.com/titipata/pubmed_parser.git",
