@@ -517,6 +517,16 @@ def parse_article_info(
     else:
         volume = ""
 
+    if article.find("Language") is not None:
+        languages = ";".join([language.text for language in article.findall("Language")])
+    else:
+        languages = ""
+
+    if article.find("VernacularTitle") is not None:
+        vernacular_title = article.find("VernacularTitle").text
+    else:
+        vernacular_title = ""
+
     if article.find("Journal/JournalIssue/Issue") is not None:
         issue = article.find("Journal/JournalIssue/Issue").text or ""
     else:
@@ -601,6 +611,8 @@ def parse_article_info(
         "doi": doi,
         "references": references,
         "delete": False,
+        "languages": languages,
+        "vernacular_title": vernacular_title
     }
     if not author_list:
         dict_out.update({"affiliations": affiliations})
@@ -694,6 +706,8 @@ def parse_medline_xml(
             "references": np.nan,
             "issue": np.nan,
             "pages": np.nan,
+            "languages": np.nan,
+            "vernacular_title": np.nan
         }
         for p in delete_citations
     ]

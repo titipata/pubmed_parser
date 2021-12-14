@@ -149,6 +149,8 @@ MEDLINE XML has a different XML format than PubMed Open Access. The structure of
 * `country` : Country extracted from journal information field
 * `reference` : string of PMID each separated by `;` or list of references made to the article
 * `delete` : boolean if `False` means paper got updated so you might have two
+* `languages` : list of languages, separated by `;`
+* `vernacular_title`: vernacular title. Defaults to empty string whenever non-available.
 
 XMLs for the same paper. You can delete the record of deleted paper because it got updated.
 

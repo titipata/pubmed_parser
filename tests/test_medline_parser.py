@@ -22,6 +22,8 @@ def test_parse_medline_xml():
     assert parsed_medline[0]["pages"] == "123-33"
     assert parsed_medline[0]["abstract"][0:50] == expected_abstract
     assert parsed_medline[0]["pmid"] == "399296"
+    assert parsed_medline[0]["languages"] == "eng"
+    assert parsed_medline[0]["vernacular_title"] == ""
 
 
 def test_parse_medline_grant_id():
