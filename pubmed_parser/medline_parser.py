@@ -523,7 +523,7 @@ def parse_article_info(
         languages = ""
 
     if article.find("VernacularTitle") is not None:
-        vernacular_title = article.find("VernacularTitle").text
+        vernacular_title = stringify_children(article.find("VernacularTitle")).strip() or ""
     else:
         vernacular_title = ""
 
