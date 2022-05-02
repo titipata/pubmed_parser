@@ -226,7 +226,7 @@ Identifiers should be passed as strings. PubMed Central ID's are default, and sh
 You can install the most update version of the package directly from the repository
 
 ``` bash
-pip install git+git://github.com/titipata/pubmed_parser.git
+pip install git+https://github.com/titipata/pubmed_parser.git
 ```
 
 or install recent release with [PyPI](https://pypi.org/project/pubmed-parser/) using
