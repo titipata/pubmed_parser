@@ -7,7 +7,7 @@ from itertools import chain
 from collections import defaultdict
 from pubmed_parser.utils import read_xml, stringify_children, month_or_day_formater
 
-__all__ = ["parse_medline_xml", "parse_medline_grant_id"]
+__all__ = ["parse_medline_xml", "parse_medline_grant_id", "split_mesh"]
 
 
 def parse_pmid(pubmed_article):
@@ -107,6 +107,69 @@ def parse_mesh_terms(medline):
         mesh_terms = ""
     return mesh_terms
 
+def parse_mesh_terms_with_subs(medline):
+    """
+    A function to parse MESH terms and subterms from article
+
+    Parameters
+    ----------
+    medline: Element
+        The lxml node pointing to a medline document
+
+    Returns
+    -------
+    mesh_terms: str
+        String of semi-colon ``;`` spearated MeSH (Medical Subject Headings) terms contained in the document
+        and mesh subterms concatenated " / "
+        and appended with * if the subterm is a major topic.
+    """
+    if medline.find("MeshHeadingList") is not None:
+        mesh = medline.find("MeshHeadingList")
+        mesh_terms_list = []
+        for m in mesh.getchildren():
+            term =  m.find("DescriptorName").attrib.get("UI", "") + ":" + \
+                    m.find("DescriptorName").text
+            if m.attrib.get("MajorTopicYN", "") == "Y":
+                term += "*"
+            for q in m.findall("QualifierName"):
+                term += " / " + q.attrib.get("UI", "") + ":" + \
+                                q.text
+                if q.attrib.get("MajorTopicYN", "") == "Y":
+                    term += "*"
+            mesh_terms_list.append(term)
+        mesh_terms = "; ".join(mesh_terms_list)
+    else:
+        mesh_terms = ""
+    return mesh_terms
+
+def split_mesh(mesh):
+    """String split a string from parse_mesh_terms_with_subs()
+
+    Parameters
+    ----------
+    mesh: str
+        A string returned from parse_mesh_terms_with_subs()
+
+    Returns
+    -------
+    mesh_list: List of List of 2-tuples of strings
+        A list representation of the mesh headings
+
+    Example
+    --------
+    >>> pubmed_parser.split_mesh('D001249:Asthma / Q000188:drug therapy*; D001993:Bronchodilator Agents / Q000008:administration & dosage* / Q000009:adverse effects
+')
+    [[('D001249', 'Asthma'), ('Q000188', 'drug therapy*')],
+     [('D001993', 'Bronchodilator Agents'), ('Q000008', 'administration & dosage*'), ('Q000009', 'adverse effects')]]
+    """
+    mesh_list = []
+    for term in mesh.split("; "):
+        subs = []
+        for subterm in term.split(" / "):
+            ui, descriptor = subterm.split(":")
+            subs.append((ui, descriptor))
+        mesh_list.append(subs)
+    return mesh_list
 
 def parse_publication_types(medline):
     """Parse Publication types from article
@@ -627,6 +690,7 @@ def parse_medline_xml(
     nlm_category=False,
     author_list=False,
     reference_list=False,
+    parse_downto_mesh_subterms=False
 ):
     """Parse XML file from Medline XML format available at
     ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/
@@ -657,6 +721,11 @@ def parse_medline_xml(
         if True, parse reference list as an output
         if False, return string of PMIDs concatenated with ;
         default: False
+    parse_downto_mesh_subterms: bool
+        if True, return mesh terms concatenated with "; " and mesh subterms concatenated " / "
+                and appended with * if the subterm is major
+        if False, return mesh_terms concatenated with "; "
+        default: False
 
     Return
     ------
@@ -669,6 +738,11 @@ def parse_medline_xml(
     --------
     >>> pubmed_parser.parse_medline_xml('data/pubmed20n0014.xml.gz')
     """
+    global parse_mesh_terms
+    global parse_mesh_terms_with_subs
+    parse_mesh_terms_default = parse_mesh_terms
+    if parse_downto_mesh_subterms:
+        parse_mesh_terms = parse_mesh_terms_with_subs
     tree = read_xml(path)
     medline_citations = tree.findall(".//MedlineCitationSet/MedlineCitation")
     if len(medline_citations) == 0:
@@ -681,6 +755,7 @@ def parse_medline_xml(
             medline_citations,
         )
     )
+    parse_mesh_terms = parse_mesh_terms_default # restore default
     delete_citations = tree.findall(".//DeleteCitation/PMID")
     dict_delete = [
         {
