@@ -79,7 +79,7 @@ def parse_doi(pubmed_article):
     return doi
 
 
-def parse_mesh_terms(medline):
+def parse_mesh_terms(medline, parse_subs=False):
     """
     A function to parse MESH terms from article
 
@@ -87,13 +87,16 @@ def parse_mesh_terms(medline):
     ----------
     medline: Element
         The lxml node pointing to a medline document
-
+    parse_subs: bool
+        If True, parse mesh subterms as well.
     Returns
     -------
     mesh_terms: str
         String of semi-colon ``;`` spearated MeSH (Medical Subject Headings)
         terms contained in the document.
     """
+    if parse_subs:
+        return parse_mesh_terms_with_subs(medline)
     if medline.find("MeshHeadingList") is not None:
         mesh = medline.find("MeshHeadingList")
         mesh_terms_list = [
@@ -544,7 +547,7 @@ def parse_references(pubmed_article, reference_list):
 
 
 def parse_article_info(
-    pubmed_article, year_info_only, nlm_category, author_list, reference_list
+    pubmed_article, year_info_only, nlm_category, author_list, reference_list, parse_subs=False
 ):
     """Parse article nodes from Medline dataset
 
@@ -560,7 +563,8 @@ def parse_article_info(
         if True, return output as list, else
     reference_list: bool
         if True, parse reference list as an output
-
+    parse_subs: bool
+        if True, parse mesh terms with subterms
     Returns
     -------
     article: dict
@@ -655,7 +659,7 @@ def parse_article_info(
     doi = parse_doi(pubmed_article)
     references = parse_references(pubmed_article, reference_list)
     pubdate = date_extractor(journal, year_info_only)
-    mesh_terms = parse_mesh_terms(medline)
+    mesh_terms = parse_mesh_terms(medline, parse_subs=parse_subs)
     publication_types = parse_publication_types(medline)
     chemical_list = parse_chemical_list(medline)
     keywords = parse_keywords(medline)
@@ -741,11 +745,6 @@ def parse_medline_xml(
     --------
     >>> pubmed_parser.parse_medline_xml('data/pubmed20n0014.xml.gz')
     """
-    global parse_mesh_terms
-    global parse_mesh_terms_with_subs
-    parse_mesh_terms_default = parse_mesh_terms
-    if parse_downto_mesh_subterms:
-        parse_mesh_terms = parse_mesh_terms_with_subs
     tree = read_xml(path)
     medline_citations = tree.findall(".//MedlineCitationSet/MedlineCitation")
     if len(medline_citations) == 0:
@@ -753,12 +752,11 @@ def parse_medline_xml(
     article_list = list(
         map(
             lambda m: parse_article_info(
-                m, year_info_only, nlm_category, author_list, reference_list
+                m, year_info_only, nlm_category, author_list, reference_list, parse_subs=parse_downto_mesh_subterms
             ),
             medline_citations,
         )
     )
-    parse_mesh_terms = parse_mesh_terms_default # restore default
     delete_citations = tree.findall(".//DeleteCitation/PMID")
     dict_delete = [
         {
