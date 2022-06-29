@@ -107,6 +107,7 @@ def parse_mesh_terms(medline):
         mesh_terms = ""
     return mesh_terms
 
+
 def parse_mesh_terms_with_subs(medline):
     """
     A function to parse MESH terms and subterms from article
@@ -127,13 +128,13 @@ def parse_mesh_terms_with_subs(medline):
         mesh = medline.find("MeshHeadingList")
         mesh_terms_list = []
         for m in mesh.getchildren():
-            term =  m.find("DescriptorName").attrib.get("UI", "") + ":" + \
-                    m.find("DescriptorName").text
+            term = m.find("DescriptorName").attrib.get("UI", "") + ":" + \
+                   m.find("DescriptorName").text
             if m.attrib.get("MajorTopicYN", "") == "Y":
                 term += "*"
             for q in m.findall("QualifierName"):
                 term += " / " + q.attrib.get("UI", "") + ":" + \
-                                q.text
+                        q.text
                 if q.attrib.get("MajorTopicYN", "") == "Y":
                     term += "*"
             mesh_terms_list.append(term)
@@ -141,6 +142,7 @@ def parse_mesh_terms_with_subs(medline):
     else:
         mesh_terms = ""
     return mesh_terms
+
 
 def split_mesh(mesh):
     """String split a string from parse_mesh_terms_with_subs()
@@ -157,7 +159,7 @@ def split_mesh(mesh):
 
     Example
     --------
-    >>> pubmed_parser.split_mesh('D001249:Asthma / Q000188:drug therapy*; D001993:Bronchodilator Agents / Q000008:administration & dosage* / Q000009:adverse effects
+    # >>> pubmed_parser.split_mesh('D001249:Asthma / Q000188:drug therapy*; D001993:Bronchodilator Agents / Q000008:administration & dosage* / Q000009:adverse effects
 ')
     [[('D001249', 'Asthma'), ('Q000188', 'drug therapy*')],
      [('D001993', 'Bronchodilator Agents'), ('Q000008', 'administration & dosage*'), ('Q000009', 'adverse effects')]]
@@ -170,6 +172,7 @@ def split_mesh(mesh):
             subs.append((ui, descriptor))
         mesh_list.append(subs)
     return mesh_list
+
 
 def parse_publication_types(medline):
     """Parse Publication types from article
@@ -638,8 +641,8 @@ def parse_article_info(
         )
         authors = ";".join(
             [
-                author.get("lastname", "") + "|" + author.get("forename",   "") + "|" +
-                author.get("initials",  "") + "|" + author.get("identifier", "")
+                author.get("lastname", "") + "|" + author.get("forename", "") + "|" +
+                author.get("initials", "") + "|" + author.get("identifier", "")
                 for author in authors_dict
             ]
         )
@@ -713,7 +716,7 @@ def parse_medline_xml(
         if False, this will parse structured abstract where each section will be assigned to
         NLM category of each sections
         default: False
-     author_list: bool
+    author_list: bool
         if True, return parsed author output as a list of authors
         if False, return parsed author output as a string of authors concatenated with ``;``
         default: False
