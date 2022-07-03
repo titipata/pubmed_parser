@@ -1,0 +1,301 @@
+<?xml version="1.0" ?>
+<!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January 2019//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_190101.dtd">
+<PubmedArticleSet>
+	<PubmedArticle>
+		<MedlineCitation Owner="NLM" Status="MEDLINE">
+			<PMID Version="1">29768149</PMID>
+			<DateCompleted>
+				<Year>2018</Year>
+				<Month>05</Month>
+				<Day>24</Day>
+			</DateCompleted>
+			<DateRevised>
+				<Year>2022</Year>
+				<Month>04</Month>
+				<Day>10</Day>
+			</DateRevised>
+			<Article PubModel="Print">
+				<Journal>
+					<ISSN IssnType="Electronic">1533-4406</ISSN>
+					<JournalIssue CitedMedium="Internet">
+						<Volume>378</Volume>
+						<Issue>20</Issue>
+						<PubDate>
+							<Year>2018</Year>
+							<Month>05</Month>
+							<Day>17</Day>
+						</PubDate>
+					</JournalIssue>
+					<Title>The New England journal of medicine</Title>
+					<ISOAbbreviation>N Engl J Med</ISOAbbreviation>
+				</Journal>
+				<ArticleTitle>Inhaled Combined Budesonide-Formoterol as Needed in Mild Asthma.</ArticleTitle>
+				<Pagination>
+					<MedlinePgn>1865-1876</MedlinePgn>
+				</Pagination>
+				<ELocationID EIdType="doi" ValidYN="Y">10.1056/NEJMoa1715274</ELocationID>
+				<Abstract>
+					<AbstractText Label="BACKGROUND">In patients with mild asthma, as-needed use of an inhaled glucocorticoid plus a fast-acting &#946;
+						<sub>2</sub>-agonist may be an alternative to conventional treatment strategies.
+					</AbstractText>
+					<AbstractText Label="METHODS">We conducted a 52-week, double-blind trial involving patients 12 years of age or older with mild asthma. Patients were randomly assigned to one of three regimens: twice-daily placebo plus terbutaline (0.5 mg) used as needed (terbutaline group), twice-daily placebo plus budesonide-formoterol (200 &#956;g of budesonide and 6 &#956;g of formoterol) used as needed (budesonide-formoterol group), or twice-daily budesonide (200 &#956;g) plus terbutaline used as needed (budesonide maintenance group). The primary objective was to investigate the superiority of as-needed budesonide-formoterol to as-needed terbutaline with regard to electronically recorded weeks with well-controlled asthma.</AbstractText>
+					<AbstractText Label="RESULTS">A total of 3849 patients underwent randomization, and 3836 (1277 in the terbutaline group, 1277 in the budesonide-formoterol group, and 1282 in the budesonide maintenance group) were included in the full analysis and safety data sets. With respect to the mean percentage of weeks with well-controlled asthma per patient, budesonide-formoterol was superior to terbutaline (34.4% vs. 31.1% of weeks; odds ratio, 1.14; 95% confidence interval [CI], 1.00 to 1.30; P=0.046) but inferior to budesonide maintenance therapy (34.4% and 44.4%, respectively; odds ratio, 0.64; 95% CI, 0.57 to 0.73). The annual rate of severe exacerbations was 0.20 with terbutaline, 0.07 with budesonide-formoterol, and 0.09 with budesonide maintenance therapy; the rate ratio was 0.36 (95% CI, 0.27 to 0.49) for budesonide-formoterol versus terbutaline and 0.83 (95% CI, 0.59 to 1.16) for budesonide-formoterol versus budesonide maintenance therapy. The rate of adherence in the budesonide maintenance group was 78.9%. The median metered daily dose of inhaled glucocorticoid in the budesonide-formoterol group (57 &#956;g) was 17% of the dose in the budesonide maintenance group (340 &#956;g).</AbstractText>
+					<AbstractText Label="CONCLUSIONS">In patients with mild asthma, as-needed budesonide-formoterol provided superior asthma-symptom control to as-needed terbutaline, assessed according to electronically recorded weeks with well-controlled asthma, but was inferior to budesonide maintenance therapy. Exacerbation rates with the two budesonide-containing regimens were similar and were lower than the rate with terbutaline. Budesonide-formoterol used as needed resulted in substantially lower glucocorticoid exposure than budesonide maintenance therapy. (Funded by AstraZeneca; SYGMA 1 ClinicalTrials.gov number, NCT02149199 .).</AbstractText>
+				</Abstract>
+				<AuthorList CompleteYN="Y">
+					<Author ValidYN="Y">
+						<LastName>O'Byrne</LastName>
+						<ForeName>Paul M</ForeName>
+						<Initials>PM</Initials>
+						<AffiliationInfo>
+							<Affiliation>From the Firestone Institute for Respiratory Health, St. Joseph's Healthcare and Department of Medicine, Michael G. DeGroote School of Medicine, McMaster University, Hamilton, ON (P.M.O.), and the Institute for Heart and Lung Health, University of British Columbia, Vancouver (J.M.F.) - both in Canada; the Division of Pulmonology, Department of Medicine, University of Cape Town, Cape Town, South Africa (E.D.B.); Airway Disease Section, National Heart and Lung Institute, Imperial College, London (P.J.B.); State Key Laboratory of Respiratory Diseases, First Affiliated Hospital, Guangzhou Medical University, Guangzhou, China (N.Z.); AstraZeneca Research and Development, Gothenburg, Sweden (C.K., C.J., S.I.); AstraZeneca Research and Development, Barcelona (R.L.); and Woolcock Institute of Medical Research, University of Sydney, Sydney (H.K.R.).</Affiliation>
+						</AffiliationInfo>
+					</Author>
+					<Author ValidYN="Y">
+						<LastName>FitzGerald</LastName>
+						<ForeName>J Mark</ForeName>
+						<Initials>JM</Initials>
+						<AffiliationInfo>
+							<Affiliation>From the Firestone Institute for Respiratory Health, St. Joseph's Healthcare and Department of Medicine, Michael G. DeGroote School of Medicine, McMaster University, Hamilton, ON (P.M.O.), and the Institute for Heart and Lung Health, University of British Columbia, Vancouver (J.M.F.) - both in Canada; the Division of Pulmonology, Department of Medicine, University of Cape Town, Cape Town, South Africa (E.D.B.); Airway Disease Section, National Heart and Lung Institute, Imperial College, London (P.J.B.); State Key Laboratory of Respiratory Diseases, First Affiliated Hospital, Guangzhou Medical University, Guangzhou, China (N.Z.); AstraZeneca Research and Development, Gothenburg, Sweden (C.K., C.J., S.I.); AstraZeneca Research and Development, Barcelona (R.L.); and Woolcock Institute of Medical Research, University of Sydney, Sydney (H.K.R.).</Affiliation>
+						</AffiliationInfo>
+					</Author>
+					<Author ValidYN="Y">
+						<LastName>Bateman</LastName>
+						<ForeName>Eric D</ForeName>
+						<Initials>ED</Initials>
+						<AffiliationInfo>
+							<Affiliation>From the Firestone Institute for Respiratory Health, St. Joseph's Healthcare and Department of Medicine, Michael G. DeGroote School of Medicine, McMaster University, Hamilton, ON (P.M.O.), and the Institute for Heart and Lung Health, University of British Columbia, Vancouver (J.M.F.) - both in Canada; the Division of Pulmonology, Department of Medicine, University of Cape Town, Cape Town, South Africa (E.D.B.); Airway Disease Section, National Heart and Lung Institute, Imperial College, London (P.J.B.); State Key Laboratory of Respiratory Diseases, First Affiliated Hospital, Guangzhou Medical University, Guangzhou, China (N.Z.); AstraZeneca Research and Development, Gothenburg, Sweden (C.K., C.J., S.I.); AstraZeneca Research and Development, Barcelona (R.L.); and Woolcock Institute of Medical Research, University of Sydney, Sydney (H.K.R.).</Affiliation>
+						</AffiliationInfo>
+					</Author>
+					<Author ValidYN="Y">
+						<LastName>Barnes</LastName>
+						<ForeName>Peter J</ForeName>
+						<Initials>PJ</Initials>
+						<AffiliationInfo>
+							<Affiliation>From the Firestone Institute for Respiratory Health, St. Joseph's Healthcare and Department of Medicine, Michael G. DeGroote School of Medicine, McMaster University, Hamilton, ON (P.M.O.), and the Institute for Heart and Lung Health, University of British Columbia, Vancouver (J.M.F.) - both in Canada; the Division of Pulmonology, Department of Medicine, University of Cape Town, Cape Town, South Africa (E.D.B.); Airway Disease Section, National Heart and Lung Institute, Imperial College, London (P.J.B.); State Key Laboratory of Respiratory Diseases, First Affiliated Hospital, Guangzhou Medical University, Guangzhou, China (N.Z.); AstraZeneca Research and Development, Gothenburg, Sweden (C.K., C.J., S.I.); AstraZeneca Research and Development, Barcelona (R.L.); and Woolcock Institute of Medical Research, University of Sydney, Sydney (H.K.R.).</Affiliation>
+						</AffiliationInfo>
+					</Author>
+					<Author ValidYN="Y">
+						<LastName>Zhong</LastName>
+						<ForeName>Nanshan</ForeName>
+						<Initials>N</Initials>
+						<AffiliationInfo>
+							<Affiliation>From the Firestone Institute for Respiratory Health, St. Joseph's Healthcare and Department of Medicine, Michael G. DeGroote School of Medicine, McMaster University, Hamilton, ON (P.M.O.), and the Institute for Heart and Lung Health, University of British Columbia, Vancouver (J.M.F.) - both in Canada; the Division of Pulmonology, Department of Medicine, University of Cape Town, Cape Town, South Africa (E.D.B.); Airway Disease Section, National Heart and Lung Institute, Imperial College, London (P.J.B.); State Key Laboratory of Respiratory Diseases, First Affiliated Hospital, Guangzhou Medical University, Guangzhou, China (N.Z.); AstraZeneca Research and Development, Gothenburg, Sweden (C.K., C.J., S.I.); AstraZeneca Research and Development, Barcelona (R.L.); and Woolcock Institute of Medical Research, University of Sydney, Sydney (H.K.R.).</Affiliation>
+						</AffiliationInfo>
+					</Author>
+					<Author ValidYN="Y">
+						<LastName>Keen</LastName>
+						<ForeName>Christina</ForeName>
+						<Initials>C</Initials>
+						<AffiliationInfo>
+							<Affiliation>From the Firestone Institute for Respiratory Health, St. Joseph's Healthcare and Department of Medicine, Michael G. DeGroote School of Medicine, McMaster University, Hamilton, ON (P.M.O.), and the Institute for Heart and Lung Health, University of British Columbia, Vancouver (J.M.F.) - both in Canada; the Division of Pulmonology, Department of Medicine, University of Cape Town, Cape Town, South Africa (E.D.B.); Airway Disease Section, National Heart and Lung Institute, Imperial College, London (P.J.B.); State Key Laboratory of Respiratory Diseases, First Affiliated Hospital, Guangzhou Medical University, Guangzhou, China (N.Z.); AstraZeneca Research and Development, Gothenburg, Sweden (C.K., C.J., S.I.); AstraZeneca Research and Development, Barcelona (R.L.); and Woolcock Institute of Medical Research, University of Sydney, Sydney (H.K.R.).</Affiliation>
+						</AffiliationInfo>
+					</Author>
+					<Author ValidYN="Y">
+						<LastName>Jorup</LastName>
+						<ForeName>Carin</ForeName>
+						<Initials>C</Initials>
+						<AffiliationInfo>
+							<Affiliation>From the Firestone Institute for Respiratory Health, St. Joseph's Healthcare and Department of Medicine, Michael G. DeGroote School of Medicine, McMaster University, Hamilton, ON (P.M.O.), and the Institute for Heart and Lung Health, University of British Columbia, Vancouver (J.M.F.) - both in Canada; the Division of Pulmonology, Department of Medicine, University of Cape Town, Cape Town, South Africa (E.D.B.); Airway Disease Section, National Heart and Lung Institute, Imperial College, London (P.J.B.); State Key Laboratory of Respiratory Diseases, First Affiliated Hospital, Guangzhou Medical University, Guangzhou, China (N.Z.); AstraZeneca Research and Development, Gothenburg, Sweden (C.K., C.J., S.I.); AstraZeneca Research and Development, Barcelona (R.L.); and Woolcock Institute of Medical Research, University of Sydney, Sydney (H.K.R.).</Affiliation>
+						</AffiliationInfo>
+					</Author>
+					<Author ValidYN="Y">
+						<LastName>Lamarca</LastName>
+						<ForeName>Rosa</ForeName>
+						<Initials>R</Initials>
+						<AffiliationInfo>
+							<Affiliation>From the Firestone Institute for Respiratory Health, St. Joseph's Healthcare and Department of Medicine, Michael G. DeGroote School of Medicine, McMaster University, Hamilton, ON (P.M.O.), and the Institute for Heart and Lung Health, University of British Columbia, Vancouver (J.M.F.) - both in Canada; the Division of Pulmonology, Department of Medicine, University of Cape Town, Cape Town, South Africa (E.D.B.); Airway Disease Section, National Heart and Lung Institute, Imperial College, London (P.J.B.); State Key Laboratory of Respiratory Diseases, First Affiliated Hospital, Guangzhou Medical University, Guangzhou, China (N.Z.); AstraZeneca Research and Development, Gothenburg, Sweden (C.K., C.J., S.I.); AstraZeneca Research and Development, Barcelona (R.L.); and Woolcock Institute of Medical Research, University of Sydney, Sydney (H.K.R.).</Affiliation>
+						</AffiliationInfo>
+					</Author>
+					<Author ValidYN="Y">
+						<LastName>Ivanov</LastName>
+						<ForeName>Stefan</ForeName>
+						<Initials>S</Initials>
+						<AffiliationInfo>
+							<Affiliation>From the Firestone Institute for Respiratory Health, St. Joseph's Healthcare and Department of Medicine, Michael G. DeGroote School of Medicine, McMaster University, Hamilton, ON (P.M.O.), and the Institute for Heart and Lung Health, University of British Columbia, Vancouver (J.M.F.) - both in Canada; the Division of Pulmonology, Department of Medicine, University of Cape Town, Cape Town, South Africa (E.D.B.); Airway Disease Section, National Heart and Lung Institute, Imperial College, London (P.J.B.); State Key Laboratory of Respiratory Diseases, First Affiliated Hospital, Guangzhou Medical University, Guangzhou, China (N.Z.); AstraZeneca Research and Development, Gothenburg, Sweden (C.K., C.J., S.I.); AstraZeneca Research and Development, Barcelona (R.L.); and Woolcock Institute of Medical Research, University of Sydney, Sydney (H.K.R.).</Affiliation>
+						</AffiliationInfo>
+					</Author>
+					<Author ValidYN="Y">
+						<LastName>Reddel</LastName>
+						<ForeName>Helen K</ForeName>
+						<Initials>HK</Initials>
+						<AffiliationInfo>
+							<Affiliation>From the Firestone Institute for Respiratory Health, St. Joseph's Healthcare and Department of Medicine, Michael G. DeGroote School of Medicine, McMaster University, Hamilton, ON (P.M.O.), and the Institute for Heart and Lung Health, University of British Columbia, Vancouver (J.M.F.) - both in Canada; the Division of Pulmonology, Department of Medicine, University of Cape Town, Cape Town, South Africa (E.D.B.); Airway Disease Section, National Heart and Lung Institute, Imperial College, London (P.J.B.); State Key Laboratory of Respiratory Diseases, First Affiliated Hospital, Guangzhou Medical University, Guangzhou, China (N.Z.); AstraZeneca Research and Development, Gothenburg, Sweden (C.K., C.J., S.I.); AstraZeneca Research and Development, Barcelona (R.L.); and Woolcock Institute of Medical Research, University of Sydney, Sydney (H.K.R.).</Affiliation>
+						</AffiliationInfo>
+					</Author>
+				</AuthorList>
+				<Language>eng</Language>
+				<DataBankList CompleteYN="Y">
+					<DataBank>
+						<DataBankName>ClinicalTrials.gov</DataBankName>
+						<AccessionNumberList>
+							<AccessionNumber>NCT02149199</AccessionNumber>
+						</AccessionNumberList>
+					</DataBank>
+				</DataBankList>
+				<PublicationTypeList>
+					<PublicationType UI="D017428">Clinical Trial, Phase III</PublicationType>
+					<PublicationType UI="D003160">Comparative Study</PublicationType>
+					<PublicationType UI="D016428">Journal Article</PublicationType>
+					<PublicationType UI="D016448">Multicenter Study</PublicationType>
+					<PublicationType UI="D016449">Randomized Controlled Trial</PublicationType>
+					<PublicationType UI="D013485">Research Support, Non-U.S. Gov't</PublicationType>
+				</PublicationTypeList>
+			</Article>
+			<MedlineJournalInfo>
+				<Country>United States</Country>
+				<MedlineTA>N Engl J Med</MedlineTA>
+				<NlmUniqueID>0255562</NlmUniqueID>
+				<ISSNLinking>0028-4793</ISSNLinking>
+			</MedlineJournalInfo>
+			<ChemicalList>
+				<Chemical>
+					<RegistryNumber>0</RegistryNumber>
+					<NameOfSubstance UI="D001993">Bronchodilator Agents</NameOfSubstance>
+				</Chemical>
+				<Chemical>
+					<RegistryNumber>0</RegistryNumber>
+					<NameOfSubstance UI="D004338">Drug Combinations</NameOfSubstance>
+				</Chemical>
+				<Chemical>
+					<RegistryNumber>0</RegistryNumber>
+					<NameOfSubstance UI="D005938">Glucocorticoids</NameOfSubstance>
+				</Chemical>
+				<Chemical>
+					<RegistryNumber>51333-22-3</RegistryNumber>
+					<NameOfSubstance UI="D019819">Budesonide</NameOfSubstance>
+				</Chemical>
+				<Chemical>
+					<RegistryNumber>N8ONU3L3PG</RegistryNumber>
+					<NameOfSubstance UI="D013726">Terbutaline</NameOfSubstance>
+				</Chemical>
+				<Chemical>
+					<RegistryNumber>W34SHF8J2K</RegistryNumber>
+					<NameOfSubstance UI="D000068759">Formoterol Fumarate</NameOfSubstance>
+				</Chemical>
+			</ChemicalList>
+			<CitationSubset>IM</CitationSubset>
+			<CommentsCorrectionsList>
+				<CommentsCorrections RefType="CommentIn">
+					<RefSource>N Engl J Med. 2018 May 17;378(20):1940-1942</RefSource>
+					<PMID Version="1">29768146</PMID>
+				</CommentsCorrections>
+				<CommentsCorrections RefType="CommentIn">
+					<RefSource>Ann Intern Med. 2018 Sep 18;169(6):JC31</RefSource>
+					<PMID Version="1">30242404</PMID>
+				</CommentsCorrections>
+			</CommentsCorrectionsList>
+			<MeshHeadingList>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D000280">Administration, Inhalation</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D000293">Adolescent</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D000328">Adult</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D000368">Aged</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D001249">Asthma</DescriptorName>
+					<QualifierName MajorTopicYN="Y" UI="Q000188">drug therapy</QualifierName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D001993">Bronchodilator Agents</DescriptorName>
+					<QualifierName MajorTopicYN="Y" UI="Q000008">administration &amp; dosage</QualifierName>
+					<QualifierName MajorTopicYN="N" UI="Q000009">adverse effects</QualifierName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D019819">Budesonide</DescriptorName>
+					<QualifierName MajorTopicYN="Y" UI="Q000008">administration &amp; dosage</QualifierName>
+					<QualifierName MajorTopicYN="N" UI="Q000009">adverse effects</QualifierName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D002648">Child</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D004311">Double-Blind Method</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D004334">Drug Administration Schedule</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D004338">Drug Combinations</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D005260">Female</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D005541">Forced Expiratory Volume</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D000068759">Formoterol Fumarate</DescriptorName>
+					<QualifierName MajorTopicYN="Y" UI="Q000008">administration &amp; dosage</QualifierName>
+					<QualifierName MajorTopicYN="N" UI="Q000009">adverse effects</QualifierName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D005938">Glucocorticoids</DescriptorName>
+					<QualifierName MajorTopicYN="N" UI="Q000008">administration &amp; dosage</QualifierName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D006801">Humans</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D060046">Maintenance Chemotherapy</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D008297">Male</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D055118">Medication Adherence</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D008875">Middle Aged</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D011795">Surveys and Questionnaires</DescriptorName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D013726">Terbutaline</DescriptorName>
+					<QualifierName MajorTopicYN="Y" UI="Q000008">administration &amp; dosage</QualifierName>
+					<QualifierName MajorTopicYN="N" UI="Q000009">adverse effects</QualifierName>
+				</MeshHeading>
+				<MeshHeading>
+					<DescriptorName MajorTopicYN="N" UI="D055815">Young Adult</DescriptorName>
+				</MeshHeading>
+			</MeshHeadingList>
+		</MedlineCitation>
+		<PubmedData>
+			<History>
+				<PubMedPubDate PubStatus="entrez">
+					<Year>2018</Year>
+					<Month>5</Month>
+					<Day>17</Day>
+					<Hour>6</Hour>
+					<Minute>0</Minute>
+				</PubMedPubDate>
+				<PubMedPubDate PubStatus="pubmed">
+					<Year>2018</Year>
+					<Month>5</Month>
+					<Day>17</Day>
+					<Hour>6</Hour>
+					<Minute>0</Minute>
+				</PubMedPubDate>
+				<PubMedPubDate PubStatus="medline">
+					<Year>2018</Year>
+					<Month>5</Month>
+					<Day>25</Day>
+					<Hour>6</Hour>
+					<Minute>0</Minute>
+				</PubMedPubDate>
+			</History>
+			<PublicationStatus>ppublish</PublicationStatus>
+			<ArticleIdList>
+				<ArticleId IdType="pubmed">29768149</ArticleId>
+				<ArticleId IdType="doi">10.1056/NEJMoa1715274</ArticleId>
+			</ArticleIdList>
+		</PubmedData>
+	</PubmedArticle>
+</PubmedArticleSet>
