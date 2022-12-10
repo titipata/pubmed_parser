@@ -12,7 +12,7 @@ from .pubmed_oa_parser import (
     parse_pubmed_caption,
     parse_pubmed_table,
 )
-from .medline_parser import parse_medline_xml, parse_medline_grant_id, split_mesh
+from .medline_parser import parse_medline_xml, split_mesh
 from .pubmed_web_parser import (
     parse_xml_web,
     parse_citation_web,
