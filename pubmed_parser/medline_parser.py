@@ -3,11 +3,13 @@ Parsers for MEDLINE XML
 """
 import re
 import numpy as np
+import gzip
 from itertools import chain
+from lxml import etree
 from collections import defaultdict
 from pubmed_parser.utils import read_xml, stringify_children, month_or_day_formater
 
-__all__ = ["parse_medline_xml", "parse_medline_grant_id", "split_mesh"]
+__all__ = ["parse_medline_xml",  "split_mesh"]
 
 
 def parse_pmid(pubmed_article):
@@ -349,7 +351,6 @@ def parse_grant_id(pubmed_article):
     """
     medline = pubmed_article.find("MedlineCitation")
     article = medline.find("Article")
-    pmid = parse_pmid(pubmed_article)
 
     grants = article.find("GrantList")
     grant_list = list()
@@ -377,7 +378,6 @@ def parse_grant_id(pubmed_article):
             else:
                 gid = ""
             grant_dict = {
-                "pmid": pmid,
                 "grant_id": gid,
                 "grant_acronym": acronym,
                 "country": country,
@@ -700,8 +700,9 @@ def parse_medline_xml(
     parse_downto_mesh_subterms=False
 ):
     """Parse XML file from Medline XML format available at
-    ftp://ftp.nlm.nih.gov/nlmdata/.medleasebaseline/gz/
-
+    https://ftp.ncbi.nlm.nih.gov/pubmed/
+    
+    
     Parameters
     ----------
     path: str
@@ -736,89 +737,27 @@ def parse_medline_xml(
 
     Return
     ------
-    article_list: list
-        A list of dictionary containing information about articles in NLM format (see
-        `parse_article_info`). Articles that have been deleted will be
+    An iterator of dictionary containing information about articles in NLM format.
+        see `parse_article_info`). Articles that have been deleted will be
         added with no information other than the field `delete` being `True`
 
     Examples
     --------
-    >>> pubmed_parser.parse_medline_xml('data/pubmed20n0014.xml.gz')
+    >>> article_iterator = pubmed_parser.parse_medline_xml('data/pubmed20n0014.xml.gz')
+    >>> for article in article_iterator:
+    ...     print(article['title'])
     """
-    tree = read_xml(path)
-    medline_citations = tree.findall(".//MedlineCitationSet/MedlineCitation")
-    if len(medline_citations) == 0:
-        medline_citations = tree.findall(".//PubmedArticle")
-    article_list = list(
-        map(
-            lambda m: parse_article_info(
-                m, year_info_only, nlm_category, author_list, reference_list, parse_subs=parse_downto_mesh_subterms
-            ),
-            medline_citations,
-        )
-    )
-    delete_citations = tree.findall(".//DeleteCitation/PMID")
-    dict_delete = [
-        {
-            "title": np.nan,
-            "abstract": np.nan,
-            "journal": np.nan,
-            "authors": np.nan,
-            "affiliations": np.nan,
-            "pubdate": np.nan,
-            "pmid": p.text.strip(),
-            "doi": np.nan,
-            "other_id": np.nan,
-            "pmc": np.nan,
-            "mesh_terms": np.nan,
-            "keywords": np.nan,
-            "publication_types": np.nan,
-            "chemical_list": np.nan,
-            "delete": True,
-            "medline_ta": np.nan,
-            "nlm_unique_id": np.nan,
-            "issn_linking": np.nan,
-            "country": np.nan,
-            "references": np.nan,
-            "issue": np.nan,
-            "pages": np.nan,
-            "languages": np.nan,
-            "vernacular_title": np.nan
-        }
-        for p in delete_citations
-    ]
-    article_list.extend(dict_delete)
-    return article_list
-
-
-def parse_medline_grant_id(path):
-    """Parse grant id from Medline XML file
-
-    Parameters
-    ----------
-    path: str
-        The path to the XML with the information
-
-    Return
-    ------
-    grant_id_list: list
-        A list of dictionaries contains the grants in a given path. Each dictionary
-        has the keys of 'pmid', 'grant_id', 'grant_acronym', 'country', and 'agency'
-
-    >>> pubmed_parser.parse_medline_grant_id('data/pubmed20n0014.xml.gz')
-    [{
-        'pmid': '399300',
-        'grant_id': 'HL17731',
-        'grant_acronym': 'HL',
-        'country': 'United States',
-        'agency': 'NHLBI NIH HHS'
-    }, ...
-    ]
-    """
-    tree = read_xml(path)
-    medline_citations = tree.findall(".//MedlineCitationSet/MedlineCitation")
-    if len(medline_citations) == 0:
-        medline_citations = tree.findall(".//PubmedArticle")
-    grant_id_list = list(map(parse_grant_id, medline_citations))
-    grant_id_list = list(chain(*grant_id_list))  # flatten list
-    return grant_id_list
+    with gzip.open(path, "rb") as f:
+        for event, element in etree.iterparse(f, events=("end",)):
+            if element.tag == "PubmedArticle":
+                res = parse_article_info(
+                    element,
+                    year_info_only,
+                    nlm_category,
+                    author_list,
+                    reference_list,
+                    parse_subs=parse_downto_mesh_subterms
+                )
+                res['grant_ids'] = parse_grant_id(element)
+                element.clear()
+                yield res
