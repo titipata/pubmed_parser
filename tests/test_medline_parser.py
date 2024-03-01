@@ -127,3 +127,11 @@ D055815:Young Adult""".replace("\n", "; ")
         [('D013726', 'Terbutaline'), ('Q000008', 'administration & dosage*'), ('Q000009', 'adverse effects')],
         [('D055815', 'Young Adult')]]
     assert mesh_list == expected_split_mesh
+
+def test_parse_medline_language():
+    """
+    Test if all publications have a language
+    """
+    parsed_medline = pp.parse_medline_xml("./data/pubmed20n0014.xml.gz")
+    parsed_medline_list = list(parsed_medline)
+    assert all([item['languages'] != '' for item in parsed_medline_list])

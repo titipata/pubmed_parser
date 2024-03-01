@@ -140,10 +140,10 @@ def parse_pubmed_web_tree(tree):
                 doi = article_id.text
     
     language = tree.xpath("//language")
-    if len(language) != 0:
+    try:
         language = language[0].text
-    else:
-        language = ""
+    except:
+        language = None
 
     dict_out = {
         "title": title,
