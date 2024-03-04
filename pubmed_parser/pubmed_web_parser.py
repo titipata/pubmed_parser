@@ -142,7 +142,7 @@ def parse_pubmed_web_tree(tree):
     language = tree.xpath("//language")
     try:
         language = language[0].text
-    except:
+    except IndexError:
         language = None
 
     dict_out = {
