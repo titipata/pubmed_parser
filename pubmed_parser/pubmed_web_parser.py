@@ -138,6 +138,12 @@ def parse_pubmed_web_tree(tree):
         for article_id in article_ids:
             if article_id.attrib.get("idtype") == "doi":
                 doi = article_id.text
+    
+    language = tree.xpath("//language")
+    try:
+        language = language[0].text
+    except IndexError:
+        language = None
 
     dict_out = {
         "title": title,
@@ -148,6 +154,7 @@ def parse_pubmed_web_tree(tree):
         "keywords": keywords,
         "doi": doi,
         "year": year,
+        "language": language
     }
     return dict_out
 
