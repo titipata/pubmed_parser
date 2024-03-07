@@ -1,9 +1,68 @@
 import os
 import pytest
+import requests
+import gzip
 
 import pubmed_parser as pp
 from pubmed_parser import split_mesh
 
+def fetch_pubmed_xml(pubmed_id):
+    """Fetch up-to-date pubmed XML"""
+    url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id={pubmed_id}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.content
+    else:
+        print(f"Failed to fetch XML data. Status code: {response.status_code}")
+        return None
+
+def save_xml_to_gz(xml_content, filename):
+    """Save XML to geziped file"""
+    with gzip.open(filename, 'wb') as f:
+        f.write(xml_content)
+    print(f"XML data saved as {filename}")
+
+pubmed_ids = ['36400559', '2930949', '11446611', '28786991']
+pubmed_ids_str = ','.join(pubmed_ids)
+medline_xml = fetch_pubmed_xml(pubmed_ids_str)
+save_xml_to_gz(medline_xml, f'./data/test_current_medline.xml.gz')
+
+
+def test_current_medline_xml():
+    """Test up-to-date MEDLINE XML"""
+    expected_fields = [
+        "title",
+        "issue",
+        "pages",
+        "abstract",
+        "journal",
+        "authors",
+        "pubdate",
+        "pmid",
+        "mesh_terms",
+        "publication_types",
+        "chemical_list",
+        "keywords",
+        "doi",
+        "references",
+        "delete",
+        "languages",
+        "vernacular_title",
+        "affiliations",
+        "pmc",
+        "other_id",
+        "medline_ta",
+        "nlm_unique_id",
+        "issn_linking",
+        "country",
+        "grant_ids",
+    ]
+    parsed_medline = pp.parse_medline_xml(
+        os.path.join("data", f"test_current_medline.xml.gz")
+    )
+    parsed_medline = list(parsed_medline)
+    medline_article = parsed_medline[0]
+    assert expected_fields == list(medline_article.keys())
 
 def test_parse_medline_xml():
     """
