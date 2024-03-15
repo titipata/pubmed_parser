@@ -2,67 +2,72 @@ import os
 import pytest
 import requests
 import gzip
+from io import BytesIO
 
 import pubmed_parser as pp
 from pubmed_parser import split_mesh
 
-def fetch_pubmed_xml(pubmed_id):
-    """Fetch up-to-date pubmed XML"""
+def fetch_compressed_pubmed_xml(pubmed_id):
+    """Fetch up-to-date pubmed XML and return as compressed XML"""
     url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id={pubmed_id}"
     response = requests.get(url)
     if response.status_code == 200:
-        return response.content
+        compressed_stream = gzip.compress(response.content)
+        compressed_stream = BytesIO(compressed_stream)
+        return compressed_stream
     else:
-        print(f"Failed to fetch XML data. Status code: {response.status_code}")
-        return None
+        raise requests.exceptions.HTTPError(response.status_code)
 
-def save_xml_to_gz(xml_content, filename):
-    """Save XML to geziped file"""
-    with gzip.open(filename, 'wb') as f:
-        f.write(xml_content)
-    print(f"XML data saved as {filename}")
-
-pubmed_ids = ['36400559', '2930949', '11446611', '28786991']
+# Get up-to-date medline XML
+pubmed_ids = ['36400559', '28786991']
 pubmed_ids_str = ','.join(pubmed_ids)
-medline_xml = fetch_pubmed_xml(pubmed_ids_str)
-save_xml_to_gz(medline_xml, f'./data/test_current_medline.xml.gz')
+medline_compressed_stream = fetch_compressed_pubmed_xml(pubmed_ids_str)
+# Parse
+parsed_medline = pp.parse_medline_xml(medline_compressed_stream)
+parsed_medline = list(parsed_medline)
+article_36400559 = parsed_medline[0]
+article_28786991 = parsed_medline[1]
 
 
-def test_current_medline_xml():
-    """Test up-to-date MEDLINE XML"""
-    expected_fields = [
-        "title",
-        "issue",
-        "pages",
-        "abstract",
-        "journal",
-        "authors",
-        "pubdate",
-        "pmid",
-        "mesh_terms",
-        "publication_types",
-        "chemical_list",
-        "keywords",
-        "doi",
-        "references",
-        "delete",
-        "languages",
-        "vernacular_title",
-        "affiliations",
-        "pmc",
-        "other_id",
-        "medline_ta",
-        "nlm_unique_id",
-        "issn_linking",
-        "country",
-        "grant_ids",
-    ]
-    parsed_medline = pp.parse_medline_xml(
-        os.path.join("data", f"test_current_medline.xml.gz")
-    )
-    parsed_medline = list(parsed_medline)
-    medline_article = parsed_medline[0]
-    assert expected_fields == list(medline_article.keys())
+def test_current_36400559():
+    """This test checks all the expected fields from 36400559"""
+    assert article_36400559['title'] == 'Back Pain: Differential Diagnosis and Management.'
+    assert article_36400559['issue'] == '41(1)'
+    assert article_36400559['pages'] == '61-76'
+    assert article_36400559['abstract'] == 'Back pain is a common condition affecting millions of individuals each year. A biopsychosocial approach to back pain provides the best clinical framework. A detailed history and physical examination with a thorough workup are required to exclude emergent or nonoperative etiologies of back pain. The treatment of back pain first uses conventional therapies including lifestyle modifications, nonsteroidal anti-inflammatory drugs, physical therapy, and cognitive behavioral therapy. If these options have been exhausted and pain persists for greater than 6 weeks, imaging and a specialist referral may be indicated.'
+    assert article_36400559['journal'] == 'Neurologic clinics'
+    assert article_36400559['authors'] == 'Gibbs|David|D|;McGahan|Ben G|BG|;Ropper|Alexander E|AE|;Xu|David S|DS|'
+    assert article_36400559['pubdate'] == '2023'
+    assert article_36400559['pmid'] == '36400559'
+    assert article_36400559['mesh_terms'] == 'D006801:Humans; D017116:Low Back Pain; D003937:Diagnosis, Differential; D001416:Back Pain; D000894:Anti-Inflammatory Agents, Non-Steroidal; D015928:Cognitive Behavioral Therapy'
+    assert article_36400559['publication_types'] == 'D016428:Journal Article; D016454:Review'
+    assert article_36400559['chemical_list'] == 'D000894:Anti-Inflammatory Agents, Non-Steroidal'
+    assert article_36400559['keywords'] == 'Back pain; Diagnosis; Management; Outpatient'
+    assert article_36400559['doi'] == ''
+    assert article_36400559['references'] == ''
+    assert article_36400559['delete'] == False
+    assert article_36400559['languages'] == 'eng'
+    assert article_36400559['vernacular_title'] == ''
+    assert article_36400559['affiliations'] == 'Department of Neurological Surgery, The Ohio State Wexner Medical Center, 410 West 10th Street, Columbus, OH 43210, USA; The Ohio State University College of Medicine, 370 West 9th street, Columbus, OH 43210, USA.;Department of Neurological Surgery, The Ohio State Wexner Medical Center, 410 West 10th Street, Columbus, OH 43210, USA.;Department of Neurological Surgery, Baylor College of Medicine, 1 Baylor Plaza, Houston, TX 77030, USA.;Department of Neurological Surgery, The Ohio State Wexner Medical Center, 410 West 10th Street, Columbus, OH 43210, USA; Department of Neurological Surgery, Baylor College of Medicine, 1 Baylor Plaza, Houston, TX 77030, USA. Electronic address: David.xu@osumc.edu.'
+    assert article_36400559['pmc'] == ''
+    assert article_36400559['other_id'] == ''
+    assert article_36400559['medline_ta'] == 'Neurol Clin'
+    assert article_36400559['nlm_unique_id'] == '8219232'
+    assert article_36400559['issn_linking'] == '0733-8619'
+    assert article_36400559['country'] == 'United States'
+    assert len(article_36400559['grant_ids']) == 0
+
+
+def test_current_28786991():
+    """This test checks all the expected fields from 28786991"""
+    assert article_28786991['pmid'] == '28786991'
+    assert article_28786991['doi'] == '10.1371/journal.pone.0180707'
+    assert article_28786991['references'] == '26536035;20142576;25734119;20972853;26180947;20697787;24669751;16333924;16357823;20014914;16826161;12484001;24922157;19622511;25810908;22825465;15623870;10667625;18763668;21653249;3088430;1528182;9114623;2786998;8808039;3789233;9358916;3706591;26423762;20853177;23907316;27780211;20577159;26371760;22157884;10881762'
+    assert article_28786991['vernacular_title'] == ''
+    assert article_28786991['pmc'] == ''
+    assert article_28786991['other_id'] == ''
+    assert len(article_28786991['grant_ids']) == 1
+
 
 def test_parse_medline_xml():
     """
