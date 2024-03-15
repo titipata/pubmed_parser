@@ -7,7 +7,7 @@ from io import BytesIO
 import pubmed_parser as pp
 from pubmed_parser import split_mesh
 
-def fetch_compressed_pubmed_xml(pubmed_id):
+def fetch_compressed_medline_xml(pubmed_id):
     """Fetch up-to-date pubmed XML and return as compressed XML"""
     url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id={pubmed_id}"
     response = requests.get(url)
@@ -21,7 +21,7 @@ def fetch_compressed_pubmed_xml(pubmed_id):
 # Get up-to-date medline XML
 pubmed_ids = ['36400559', '28786991']
 pubmed_ids_str = ','.join(pubmed_ids)
-medline_compressed_stream = fetch_compressed_pubmed_xml(pubmed_ids_str)
+medline_compressed_stream = fetch_compressed_medline_xml(pubmed_ids_str)
 # Parse
 parsed_medline = pp.parse_medline_xml(medline_compressed_stream)
 parsed_medline = list(parsed_medline)
