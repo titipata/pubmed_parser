@@ -2,14 +2,13 @@ from io import BytesIO
 import os
 
 import gzip
-import pytest
 import requests
 
 import pubmed_parser as pp
-from pubmed_parser import split_mesh
+
 
 def fetch_compressed_medline_xml(pubmed_id):
-    """Fetch up-to-date pubmed XML and return as compressed XML"""
+    """Fetch up-to-date pubmed XML and return as compressed XML."""
     url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id={pubmed_id}"
     response = requests.get(url)
     if response.status_code == 200:
@@ -25,25 +24,27 @@ parsed_medline = list(parsed_medline)
 article_36400559 = parsed_medline[0]
 article_28786991 = parsed_medline[1]
 
+
 def test_abstract():
     """This is a test for the abstract field."""
     assert article_36400559['abstract'] == 'Back pain is a common condition affecting millions of individuals each year. A biopsychosocial approach to back pain provides the best clinical framework. A detailed history and physical examination with a thorough workup are required to exclude emergent or nonoperative etiologies of back pain. The treatment of back pain first uses conventional therapies including lifestyle modifications, nonsteroidal anti-inflammatory drugs, physical therapy, and cognitive behavioral therapy. If these options have been exhausted and pain persists for greater than 6\xa0weeks, imaging and a specialist referral may be indicated.'
+
 
 def test_affiliations():
     """This is a test for the affiliations field."""
     affiliations_36400559 = 'Department of Neurological Surgery, The Ohio State Wexner Medical Center, 410 West 10th Street, Columbus, OH 43210, USA; The Ohio State University College of Medicine, 370 West 9th street, Columbus, OH 43210, USA.;Department of Neurological Surgery, The Ohio State Wexner Medical Center, 410 West 10th Street, Columbus, OH 43210, USA.;Department of Neurological Surgery, Baylor College of Medicine, 1 Baylor Plaza, Houston, TX 77030, USA.;Department of Neurological Surgery, The Ohio State Wexner Medical Center, 410 West 10th Street, Columbus, OH 43210, USA; Department of Neurological Surgery, Baylor College of Medicine, 1 Baylor Plaza, Houston, TX 77030, USA. Electronic address: David.xu@osumc.edu.'
     assert article_36400559['affiliations'] == affiliations_36400559
-    
     affiliations_28786991 = 'Phillip R. Lee Institute for Health Policy Studies, University of California, San Francisco, San Francisco, California, United States of America.;Phillip R. Lee Institute for Health Policy Studies, University of California, San Francisco, San Francisco, California, United States of America.;Phillip R. Lee Institute for Health Policy Studies, University of California, San Francisco, San Francisco, California, United States of America.;Phillip R. Lee Institute for Health Policy Studies, University of California, San Francisco, San Francisco, California, United States of America.;Centers for Disease Control and Prevention, Division of Tuberculosis Elimination, Atlanta, Georgia, United States of America.;Phillip R. Lee Institute for Health Policy Studies, University of California, San Francisco, San Francisco, California, United States of America.'
     assert article_28786991['affiliations'] == affiliations_28786991
+
 
 def test_authors():
     """This is a test for the authors field."""
     authors_36400559 = 'Gibbs|David|D|;McGahan|Ben G|BG|;Ropper|Alexander E|AE|;Xu|David S|DS|'
     assert article_36400559['authors'] == authors_36400559
-
     authors_28786991 = 'Malekinejad|Mohsen|M|0000-0002-5721-6764;Parriott|Andrea|A|;Viitanen|Amanda P|AP|;Horvath|Hacsi|H|;Marks|Suzanne M|SM|;Kahn|James G|JG|'
     assert article_28786991['authors'] == authors_28786991
+
 
 def test_chemical_list():
     """This is a test for the chemical_list field."""
@@ -59,8 +60,8 @@ def test_country():
 
 def test_delete():
     """This is a test for the delete field."""
-    assert article_36400559['delete'] == False
-    assert article_28786991['delete'] == False
+    assert not article_36400559['delete']
+    assert not article_28786991['delete']
 
 
 def test_doi():
@@ -72,7 +73,6 @@ def test_doi():
 def test_grant_ids():
     """This is a test for the grant_ids field."""
     assert article_36400559['grant_ids'] == []
-
     grant_ids_28786991 = [{'grant_id': 'U38 PS004649', 'grant_acronym': 'PS', 'country': 'United States', 'agency': 'NCHHSTP CDC HHS'}]
     assert article_28786991['grant_ids'] == grant_ids_28786991
 
@@ -117,9 +117,9 @@ def test_mesh_terms():
     """This is a test for the mesh_terms field."""
     mesh_terms_36400559 = 'D006801:Humans; D017116:Low Back Pain; D003937:Diagnosis, Differential; D001416:Back Pain; D000894:Anti-Inflammatory Agents, Non-Steroidal; D015928:Cognitive Behavioral Therapy'
     assert article_36400559['mesh_terms'] == mesh_terms_36400559
-    
     mesh_terms_28786991 = 'D054242:Emigrants and Immigrants; D006801:Humans; D014376:Tuberculosis; D014481:United States'
     assert article_28786991['mesh_terms'] == mesh_terms_28786991
+
 
 def test_nlm_unique_id():
     """This is a test for the nlm_unique_id field."""
@@ -161,7 +161,6 @@ def test_publication_types():
     """This is a test for the publication_types field."""
     publication_types_36400559 = 'D016428:Journal Article; D016454:Review'
     assert article_36400559['publication_types'] == publication_types_36400559
-    
     publication_types_28786991 = 'D016428:Journal Article; D017418:Meta-Analysis; D016454:Review; D000078182:Systematic Review'
     assert article_28786991['publication_types'] == publication_types_28786991
 
@@ -169,16 +168,16 @@ def test_publication_types():
 def test_references():
     """This is a test for the references field."""
     assert article_36400559['references'] == ''
-
     references_28786991 = '26536035;20142576;25734119;20972853;26180947;20697787;24669751;16333924;16357823;20014914;16826161;12484001;24922157;19622511;25810908;22825465;15623870;10667625;18763668;21653249;3088430;1528182;9114623;2786998;8808039;3789233;9358916;3706591;26423762;20853177;23907316;27780211;20577159;26371760;22157884;10881762'
     assert article_28786991['references'] == references_28786991
+
 
 def test_title():
     """This is a test for the title field."""
     assert article_36400559['title'] == 'Back Pain: Differential Diagnosis and Management.'
-    
     title_28786991 = 'Yield of community-based tuberculosis targeted testing and treatment in foreign-born populations in the United States: A systematic review.'
     assert article_28786991['title'] == title_28786991
+
 
 def test_vernacular_title():
     """This is a test for the vernacular_title field."""
@@ -192,7 +191,6 @@ def test_parse_medline_xml():
     """
     expected_title = "Monitoring of bacteriological contamination and as"
     expected_abstract = "Two hundred and sixty nine beef, 230 sheep and 165"
-
     parsed_medline = pp.parse_medline_xml(os.path.join("data", "pubmed20n0014.xml.gz"))
     assert isinstance(parsed_medline, list)
     assert len(parsed_medline) == 30000, "Expect to have 30000 records"
@@ -218,6 +216,7 @@ def test_parse_medline_grant_id():
     assert grants[0]["pmid"] == "399300"
     assert grants[0]["grant_id"] == "HL17731"
     assert len(grants) == 484, "Expect number of grants in a given file to be 484"
+
 
 def test_parse_medline_mesh_terms():
     """
@@ -284,7 +283,6 @@ D011795:Surveys and Questionnaires
 D013726:Terbutaline / Q000008:administration & dosage* / Q000009:adverse effects
 D055815:Young Adult""".replace("\n", "; ")
     assert subheadings == expected
-
     mesh_list = pp.split_mesh(expected)
     expected_split_mesh = [
         [('D000280', 'Administration, Inhalation')],
@@ -308,6 +306,7 @@ D055815:Young Adult""".replace("\n", "; ")
         [('D013726', 'Terbutaline'), ('Q000008', 'administration & dosage*'), ('Q000009', 'adverse effects')],
         [('D055815', 'Young Adult')]]
     assert mesh_list == expected_split_mesh
+
 
 def test_parse_medline_language():
     """
