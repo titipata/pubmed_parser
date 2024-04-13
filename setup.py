@@ -1,11 +1,16 @@
 #! /usr/bin/env python
 from setuptools import setup
 
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
+
 if __name__ == "__main__":
     setup(
         name="pubmed_parser",
         version="0.4.0",
         description="A python parser for Pubmed Open-Access Subset and MEDLINE XML repository",
+        long_description=long_description,
+        long_description_content_type='text/markdown',
         url="https://github.com/titipata/pubmed_parser",
         download_url="https://github.com/titipata/pubmed_parser.git",
         author="Titipat Achakulvisut",
