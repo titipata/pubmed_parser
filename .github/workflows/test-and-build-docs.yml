@@ -1,4 +1,4 @@
-name: Pubmed Parser
+name: Build test and documentation page
 
 on:
   push:
@@ -19,6 +19,8 @@ jobs:
       run: |
         python --version
         pip install -U pip
+        pip install -r requirements.txt  # Install project dependencies
+        pip install pytest pytest-cov   # Install pytest and coverage plugin
         python setup.py install
     - name: Run tests
       run: pytest --cov=pubmed_parser tests/ --verbose
@@ -36,6 +38,9 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r docs/doc_requirements.txt
+    - name: Install project dependencies
+      run: |
+        pip install -r requirements.txt  # Install project dependencies
     - name: Build documentation
       run: |
         cd docs
