@@ -50,9 +50,25 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#parse-medline-xml">Parse MEDLINE XML</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#parse-pubmed-oa-xml">Parse PubMed OA XML</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#parse-from-website">Parse from Website</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parse-medline-xml">Parse MEDLINE XML</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pubmed_parser.parse_medline_xml"><code class="docutils literal notranslate"><span class="pre">parse_medline_xml()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pubmed_parser.parse_grant_id"><code class="docutils literal notranslate"><span class="pre">parse_grant_id()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#parse-pubmed-oa-xml">Parse PubMed OA XML</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pubmed_parser.parse_pubmed_xml"><code class="docutils literal notranslate"><span class="pre">parse_pubmed_xml()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pubmed_parser.parse_pubmed_references"><code class="docutils literal notranslate"><span class="pre">parse_pubmed_references()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pubmed_parser.parse_pubmed_paragraph"><code class="docutils literal notranslate"><span class="pre">parse_pubmed_paragraph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pubmed_parser.parse_pubmed_caption"><code class="docutils literal notranslate"><span class="pre">parse_pubmed_caption()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pubmed_parser.parse_pubmed_table"><code class="docutils literal notranslate"><span class="pre">parse_pubmed_table()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#parse-from-website">Parse from Website</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pubmed_parser.parse_xml_web"><code class="docutils literal notranslate"><span class="pre">parse_xml_web()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pubmed_parser.parse_citation_web"><code class="docutils literal notranslate"><span class="pre">parse_citation_web()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pubmed_parser.parse_outgoing_citation_web"><code class="docutils literal notranslate"><span class="pre">parse_outgoing_citation_web()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="resources.html">Resources</a></li>
@@ -90,12 +106,359 @@ Input source can be either from MEDLINE XML, PubMed Open Access subset (PubMed O
 Below, we list the core APIs implemented in Pubmed Parser</p>
 <section id="parse-medline-xml">
 <h2>Parse MEDLINE XML<a class="headerlink" href="#parse-medline-xml" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pubmed_parser.parse_medline_xml">
+<span class="sig-prename descclassname"><span class="pre">pubmed_parser.</span></span><span class="sig-name descname"><span class="pre">parse_medline_xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_info_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nlm_category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">author_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_downto_mesh_subterms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/medline_parser.html#parse_medline_xml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubmed_parser.parse_medline_xml" title="Permalink to this definition"></a></dt>
+<dd><p>Parse XML file from Medline XML format available at
+<a class="reference external" href="https://ftp.ncbi.nlm.nih.gov/pubmed/">https://ftp.ncbi.nlm.nih.gov/pubmed/</a></p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h3>
+<dl>
+<dt>path: str</dt><dd><p>The path</p>
+</dd>
+<dt>year_info_only: bool</dt><dd><p>if True, this tool will only attempt to extract year information from PubDate.
+if False, an attempt will be made to harvest all available PubDate information.
+If only year and month information is available, this will yield a date of
+the form ‘YYYY-MM’. If year, month and day information is available,
+a date of the form ‘YYYY-MM-DD’ will be returned.
+NOTE: the resolution of PubDate information in the Medline(R) database varies
+between articles.
+default: True</p>
+</dd>
+<dt>nlm_category: bool</dt><dd><p>if True, this will parse structured abstract where each section if original Label
+if False, this will parse structured abstract where each section will be assigned to
+NLM category of each sections
+default: False</p>
+</dd>
+<dt>author_list: bool</dt><dd><p>if True, return parsed author output as a list of authors
+if False, return parsed author output as a string of authors concatenated with <code class="docutils literal notranslate"><span class="pre">;</span></code>
+default: False</p>
+</dd>
+<dt>reference_list: bool</dt><dd><p>if True, parse reference list as an output
+if False, return string of PMIDs concatenated with ;
+default: False</p>
+</dd>
+<dt>parse_downto_mesh_subterms: bool</dt><dd><dl class="simple">
+<dt>if True, return mesh terms concatenated with “; “ and mesh subterms concatenated “ / “</dt><dd><p>and appended with * if the subterm is major</p>
+</dd>
+</dl>
+<p>if False, return mesh_terms concatenated with “; ”
+default: False</p>
+</dd>
+</dl>
+</section>
+<section id="return">
+<h3>Return<a class="headerlink" href="#return" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>An iterator of dictionary containing information about articles in NLM format.</dt><dd><p>see <cite>parse_article_info</cite>). Articles that have been deleted will be
+added with no information other than the field <cite>delete</cite> being <cite>True</cite></p>
+</dd>
+</dl>
+</section>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">article_iterator</span> <span class="o">=</span> <span class="n">pubmed_parser</span><span class="o">.</span><span class="n">parse_medline_xml</span><span class="p">(</span><span class="s1">&#39;data/pubmed20n0014.xml.gz&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">article</span> <span class="ow">in</span> <span class="n">article_iterator</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pubmed_parser.parse_grant_id">
+<span class="sig-prename descclassname"><span class="pre">pubmed_parser.</span></span><span class="sig-name descname"><span class="pre">parse_grant_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pubmed_article</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/medline_parser.html#parse_grant_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubmed_parser.parse_grant_id" title="Permalink to this definition"></a></dt>
+<dd><p>Parse Grant ID and related information from a given MEDLINE tree</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>pubmed_article: Element</dt><dd><p>The lxml node pointing to a medline document</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>grant_list: list</dt><dd><p>List of grants acknowledged in the publications. Each
+entry in the dictionary contains the PubMed ID,
+grant ID, grant acronym, country, and agency.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
 </section>
 <section id="parse-pubmed-oa-xml">
 <h2>Parse PubMed OA XML<a class="headerlink" href="#parse-pubmed-oa-xml" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pubmed_parser.parse_pubmed_xml">
+<span class="sig-prename descclassname"><span class="pre">pubmed_parser.</span></span><span class="sig-name descname"><span class="pre">parse_pubmed_xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nxml</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_oa_parser.html#parse_pubmed_xml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubmed_parser.parse_pubmed_xml" title="Permalink to this definition"></a></dt>
+<dd><p>Given an input XML path to PubMed XML file, extract information and metadata
+from a given XML file and return parsed XML file in dictionary format.
+You can check <code class="docutils literal notranslate"><span class="pre">ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/</span></code> to list of available files to download</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>path: str</dt><dd><p>A path to a given PumMed XML file</p>
+</dd>
+<dt>include_path: bool</dt><dd><p>if True, include a key ‘path_to_file’ in an output dictionary
+default: False</p>
+</dd>
+<dt>nxml: bool</dt><dd><p>if True, this will strip a namespace of an XML after reading a file
+see <a class="reference external" href="https://stackoverflow.com/questions/18159221/remove-namespace-and-prefix-from-xml-in-python-using-lxml">https://stackoverflow.com/questions/18159221/remove-namespace-and-prefix-from-xml-in-python-using-lxml</a> to
+default: False</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h3>Return<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>dict_out: dict</dt><dd><p>A dictionary contains a following keys from a parsed XML path
+‘full_title’, ‘abstract’, ‘journal’, ‘pmid’, ‘pmc’, ‘doi’,
+‘publisher_id’, ‘author_list’, ‘affiliation_list’, ‘publication_year’,
+‘publication_date’, ‘subjects’</p>
+</dd>
+</dl>
+<p>}</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pubmed_parser.parse_pubmed_references">
+<span class="sig-prename descclassname"><span class="pre">pubmed_parser.</span></span><span class="sig-name descname"><span class="pre">parse_pubmed_references</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_oa_parser.html#parse_pubmed_references"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubmed_parser.parse_pubmed_references" title="Permalink to this definition"></a></dt>
+<dd><p>Given path to xml file, parse references articles
+to list of dictionary</p>
+<section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>path: str</dt><dd><p>A string to an XML path.</p>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h3>Return<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>dict_refs: list</dt><dd><p>A list contains dictionary for references made in a given file.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pubmed_parser.parse_pubmed_paragraph">
+<span class="sig-prename descclassname"><span class="pre">pubmed_parser.</span></span><span class="sig-name descname"><span class="pre">parse_pubmed_paragraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_paragraph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_oa_parser.html#parse_pubmed_paragraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubmed_parser.parse_pubmed_paragraph" title="Permalink to this definition"></a></dt>
+<dd><p>Give path to a given PubMed OA file, parse and return
+a dictionary of all paragraphs, section that it belongs to,
+and a list of reference made in each paragraph as a list of PMIDs</p>
+<section id="id6">
+<h3>Parameters<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>path: str</dt><dd><p>A string to an XML path.</p>
+</dd>
+<dt>all_paragraph: bool</dt><dd><p>By default, this function will only append a paragraph if there is at least
+one reference made in a paragraph (to aviod noisy parsed text).
+A boolean indicating if you want to include paragraph with no references made or not
+if True, include all paragraphs
+if False, include only paragraphs that have references
+default: False</p>
+</dd>
+</dl>
+</section>
+<section id="id7">
+<h3>Return<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>dict_pars: list</dt><dd><p>A list contains dictionary for paragraph text and its metadata.
+Metadata includes ‘pmc’ of an article, ‘pmid’ of an article,
+‘reference_ids’ which is a list of reference <code class="docutils literal notranslate"><span class="pre">rid</span></code> made in a paragraph,
+‘section’ name of an article, and section ‘text’</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pubmed_parser.parse_pubmed_caption">
+<span class="sig-prename descclassname"><span class="pre">pubmed_parser.</span></span><span class="sig-name descname"><span class="pre">parse_pubmed_caption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_oa_parser.html#parse_pubmed_caption"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubmed_parser.parse_pubmed_caption" title="Permalink to this definition"></a></dt>
+<dd><p>Given single xml path, extract figure caption and
+reference id back to that figure</p>
+<section id="id8">
+<h3>Parameters<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>path: str</dt><dd><p>A string to an PubMed OA XML path</p>
+</dd>
+</dl>
+</section>
+<section id="id9">
+<h3>Return<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>dict_captions: list</dt><dd><p>A list contains all dictionary of figure ID (‘fig_id’) with its metadata.
+Metadata includes ‘pmid’, ‘pmc’, ‘fig_caption’ (figure’s caption),
+‘graphic_ref’ (a file name corresponding to a figure file in OA bulk download)</p>
+</dd>
+</dl>
+</section>
+<section id="id10">
+<h3>Examples<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pubmed_parser</span><span class="o">.</span><span class="n">parse_pubmed_caption</span><span class="p">(</span><span class="s1">&#39;data/pone.0000217.nxml&#39;</span><span class="p">)</span>
+<span class="go">[{</span>
+<span class="go">    &#39;pmid&#39;: &#39;17299597&#39;,</span>
+<span class="go">    &#39;pmc&#39;: &#39;1790863&#39;,</span>
+<span class="go">    &#39;fig_caption&#39;: &quot;Fisher&#39;s geometric model in two-dimensional phenotypic space. ...&quot;,</span>
+<span class="go">    &#39;fig_id&#39;: &#39;pone-0000217-g001&#39;,</span>
+<span class="go">    &#39;fig_label&#39;: &#39;Figure 1&#39;,</span>
+<span class="go">    &#39;graphic_ref&#39;: &#39;pone.0000217.g001&#39;</span>
+<span class="go">}, ...]</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pubmed_parser.parse_pubmed_table">
+<span class="sig-prename descclassname"><span class="pre">pubmed_parser.</span></span><span class="sig-name descname"><span class="pre">parse_pubmed_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_xml</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_oa_parser.html#parse_pubmed_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubmed_parser.parse_pubmed_table" title="Permalink to this definition"></a></dt>
+<dd><p>Parse table from given Pubmed Open-Access XML file</p>
+<section id="id11">
+<h3>Parameters<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>path: str</dt><dd><p>A string to an PubMed OA XML path</p>
+</dd>
+<dt>return_xml: bool</dt><dd><p>if True, a dictionary (in an output list)
+will have a key ‘table_xml’ which is an XML string of a parsed table
+default: True</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h3>Return<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>table_dicts: list</dt><dd><p>A list contains all dictionary of table with its metadata.
+Metadata includes ‘pmid’, ‘pmc’, ‘label’ (in a full text), ‘caption’</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
 </section>
 <section id="parse-from-website">
 <h2>Parse from Website<a class="headerlink" href="#parse-from-website" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pubmed_parser.parse_xml_web">
+<span class="sig-prename descclassname"><span class="pre">pubmed_parser.</span></span><span class="sig-name descname"><span class="pre">parse_xml_web</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pmid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_xml</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_web_parser.html#parse_xml_web"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubmed_parser.parse_xml_web" title="Permalink to this definition"></a></dt>
+<dd><p>Give an input PMID, load and parse XML using PubMed eutils</p>
+<section id="id13">
+<h3>Parameters<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>pmid: str</dt><dd><p>A string of PMID which you want to parse from eutils</p>
+</dd>
+<dt>sleep: int</dt><dd><p>An integer of how long you want to wait after parsing one PMID from eutils
+default: None</p>
+</dd>
+<dt>save_xml: bool</dt><dd><p>if it is True, save an XML output as a string in the key <code class="docutils literal notranslate"><span class="pre">xml</span></code> in an output dictionary.
+It is good to check the information in 
+if it is False, we won’t save a full XML to an output
+default: False</p>
+</dd>
+</dl>
+</section>
+<section id="id14">
+<h3>Return<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>dict_out: dict</dt><dd><p>A dictionary contains information of parsed XML from a given PMID</p>
+</dd>
+</dl>
+</section>
+<section id="id15">
+<h3>Examples<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pubmed_parser</span><span class="o">.</span><span class="n">parse_xml_web</span><span class="p">(</span><span class="mi">11360989</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">save_xml</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">{</span>
+<span class="go">    &#39;title&#39;: &#39;Molecular biology and evolution. Can genes explain biological complexity?&#39;,</span>
+<span class="go">    &#39;abstract&#39;: &#39;&#39;,</span>
+<span class="go">    &#39;journal&#39;: &#39;Science (New York, N.Y.)&#39;,</span>
+<span class="go">    &#39;affiliation&#39;: &#39;Collegium Budapest (Institute for Advanced Study), 2 Szentháromság u., H-1014 Budapest, Hungary. szathmary@colbud.hu&#39;,</span>
+<span class="go">    &#39;authors&#39;: &#39;E Szathmáry; F Jordán; C Pál&#39;,</span>
+<span class="go">    &#39;keywords&#39;: &#39;D000818:Animals;D005075:Biological Evolution;...&#39;,</span>
+<span class="go">    &#39;doi&#39;: &#39;10.1126/science.1060852&#39;,</span>
+<span class="go">    &#39;year&#39;: &#39;2001&#39;,</span>
+<span class="go">    &#39;pmid&#39;: &#39;11360989&#39;</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pubmed_parser.parse_citation_web">
+<span class="sig-prename descclassname"><span class="pre">pubmed_parser.</span></span><span class="sig-name descname"><span class="pre">parse_citation_web</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'PMC'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_web_parser.html#parse_citation_web"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubmed_parser.parse_citation_web" title="Permalink to this definition"></a></dt>
+<dd><p>Parse citations from given document id</p>
+<section id="id16">
+<h3>Parameters<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>doc_id: (str, int)</dt><dd><p>document id</p>
+</dd>
+<dt>id_type: str</dt><dd><p>corresponding type of doc_id. This can be a choice from the following [‘PMC’, ‘PMID’, ‘DOI’, ‘OTHER’]</p>
+</dd>
+</dl>
+</section>
+<section id="id17">
+<h3>Return<a class="headerlink" href="#id17" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>dict_out: dict</dt><dd><p>output is a dictionary contains following keys
+‘pmc’ (Pubmed Central ID), ‘pmid’ (Pubmed ID), 
+‘doi’ (DOI of an article),  ‘n_citations’ (number of citations for given articles),
+‘pmc_cited’ (list of PMCs that cite the given PMC)</p>
+</dd>
+</dl>
+</section>
+<section id="id18">
+<h3>Examples<a class="headerlink" href="#id18" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pubmed_parser</span><span class="o">.</span><span class="n">parse_citation_web</span><span class="p">(</span><span class="mi">6933944</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s1">&#39;PMC&#39;</span><span class="p">)</span>
+<span class="go">{</span>
+<span class="go">    &#39;n_citations&#39;: 0,</span>
+<span class="go">    &#39;pmid&#39;: &#39;31624211&#39;,</span>
+<span class="go">    &#39;pmc&#39;: &#39;6933944&#39;,</span>
+<span class="go">    &#39;doi&#39;: &#39;10.1126/science.aax1562&#39;,</span>
+<span class="go">    &#39;pmc_cited&#39;: []</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pubmed_parser.parse_outgoing_citation_web">
+<span class="sig-prename descclassname"><span class="pre">pubmed_parser.</span></span><span class="sig-name descname"><span class="pre">parse_outgoing_citation_web</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'PMC'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/pubmed_web_parser.html#parse_outgoing_citation_web"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubmed_parser.parse_outgoing_citation_web" title="Permalink to this definition"></a></dt>
+<dd><p>A function to load citations from NCBI eutils API for a given document</p>
+<p>Example URL:
+<a class="reference external" href="https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=pmc&amp;linkname=pmc_refs_pubmed&amp;id=221212">https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=pmc&amp;linkname=pmc_refs_pubmed&amp;id=221212</a></p>
+<section id="id19">
+<h3>Parameters<a class="headerlink" href="#id19" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>doc_id: str</dt><dd><p>The document ID</p>
+</dd>
+<dt>id_type: str</dt><dd><p>A type of provided document ID, can be either ‘PMC’ or ‘PMID’</p>
+</dd>
+</dl>
+</section>
+<section id="id20">
+<h3>Return<a class="headerlink" href="#id20" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>dict_out: dict</dt><dd><p>a dictionary containing the following keys ‘n_citations’ (number of citations for that article),
+‘doc_id’ (the document ID number), ‘id_type’ (the type of document ID provided (PMCID or PMID)),
+‘pmid_cited’ (a list of papers cited by the document as PMIDs)</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pubmed_parser</span><span class="o">.</span><span class="n">parse_outgoing_citation_web</span><span class="p">(</span><span class="mi">6933944</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s1">&#39;PMC&#39;</span><span class="p">)</span>
+<span class="go">{</span>
+<span class="go">    &#39;n_citations&#39;: 11,</span>
+<span class="go">    &#39;doc_id&#39;: &#39;6933944&#39;,</span>
+<span class="go">    &#39;id_type&#39;: &#39;PMC&#39;,</span>
+<span class="go">    &#39;pmid_cited&#39;: [&#39;30705152&#39;, ..., ]</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
 </section>
 </section>
 
