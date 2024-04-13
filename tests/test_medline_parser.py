@@ -211,14 +211,12 @@ def test_parse_medline_mesh_terms():
     Test parsing MeSH headings from MEDLINE XML
     """
     headings = parsed_medline[0]["mesh_terms"]
-    expected = """
-    D006801:Humans
-    D017116:Low Back Pain
-    D003937:Diagnosis, Differential
-    D001416:Back Pain
-    D000894:Anti-Inflammatory Agents, Non-Steroidal
-    D015928:Cognitive Behavioral Therapy
-    """.strip().replace("\n", "; ")
+    expected = """D006801:Humans
+D017116:Low Back Pain
+D003937:Diagnosis, Differential
+D001416:Back Pain
+D000894:Anti-Inflammatory Agents, Non-Steroidal
+D015928:Cognitive Behavioral Therapy""".strip().replace("\n", "; ")
     print(headings)
     assert headings == expected
 
