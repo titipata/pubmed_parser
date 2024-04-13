@@ -192,6 +192,7 @@ def test_parse_medline_xml():
     expected_title = "Monitoring of bacteriological contamination and as"
     expected_abstract = "Two hundred and sixty nine beef, 230 sheep and 165"
     parsed_medline = pp.parse_medline_xml(os.path.join("data", "pubmed20n0014.xml.gz"))
+    parsed_medline = list(parsed_medline)
     assert isinstance(parsed_medline, list)
     assert len(parsed_medline) == 30000, "Expect to have 30000 records"
     assert (
