@@ -22,12 +22,12 @@ import sphinx_gallery
 
 # -- Project information -----------------------------------------------------
 
-project = 'Pubmed Parser'
-copyright = '2020, Titipat Achakulvisut'
-author = 'Titipat Achakulvisut'
+project = "Pubmed Parser"
+copyright = "2020, Titipat Achakulvisut"
+author = "Titipat Achakulvisut"
 
-version = pubmed_parser.__version__
-release = pubmed_parser.__version__
+version = "0.4.0"
+release = "0.4.0"
 
 # -- General configuration ---------------------------------------------------
 
