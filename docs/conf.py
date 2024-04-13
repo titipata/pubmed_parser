@@ -17,7 +17,7 @@ import sys
 import os
 import sphinx
 import sphinx_gallery
-
+import pubmed_parser
 
 # -- Project information -----------------------------------------------------
 
@@ -25,8 +25,8 @@ project = "Pubmed Parser"
 copyright = "2020, Titipat Achakulvisut"
 author = "Titipat Achakulvisut"
 
-version = "0.4.0"
-release = "0.4.0"
+version = pubmed_parser.__version__
+release = pubmed_parser.__version__
 
 # -- General configuration ---------------------------------------------------
 
