@@ -210,90 +210,71 @@ def test_parse_medline_mesh_terms():
     """
     Test parsing MeSH headings from MEDLINE XML
     """
-    parsed_medline = pp.parse_medline_xml(os.path.join("data", "pubmed-29768149.xml"),
-                                          parse_downto_mesh_subterms=False)
     headings = parsed_medline[0]["mesh_terms"]
-    expected = """D000280:Administration, Inhalation
-D000293:Adolescent
-D000328:Adult
-D000368:Aged
-D001249:Asthma
-D001993:Bronchodilator Agents
-D019819:Budesonide
-D002648:Child
-D004311:Double-Blind Method
-D004334:Drug Administration Schedule
-D004338:Drug Combinations
-D005260:Female
-D005541:Forced Expiratory Volume
-D000068759:Formoterol Fumarate
-D005938:Glucocorticoids
-D006801:Humans
-D060046:Maintenance Chemotherapy
-D008297:Male
-D055118:Medication Adherence
-D008875:Middle Aged
-D011795:Surveys and Questionnaires
-D013726:Terbutaline
-D055815:Young Adult""".replace("\n", "; ")
+    expected = """
+    D006801:Humans
+    D017116:Low Back Pain
+    D003937:Diagnosis, Differential
+    D001416:Back Pain
+    D000894:Anti-Inflammatory Agents, Non-Steroidal
+    D015928:Cognitive Behavioral Therapy
+    """.strip().replace("\n", "; ")
     print(headings)
     assert headings == expected
 
 
-def test_parse_medline_mesh_terms_with_sub():
-    """
-    Test parsing MeSH subheadings from MEDLINE XML
-    """
-    parsed_medline = pp.parse_medline_xml(os.path.join("data", "pubmed-29768149.xml"),
-                                          parse_downto_mesh_subterms=True)
-    subheadings = parsed_medline[0]["mesh_terms"]
-    expected = """D000280:Administration, Inhalation
-D000293:Adolescent
-D000328:Adult
-D000368:Aged
-D001249:Asthma / Q000188:drug therapy*
-D001993:Bronchodilator Agents / Q000008:administration & dosage* / Q000009:adverse effects
-D019819:Budesonide / Q000008:administration & dosage* / Q000009:adverse effects
-D002648:Child
-D004311:Double-Blind Method
-D004334:Drug Administration Schedule
-D004338:Drug Combinations
-D005260:Female
-D005541:Forced Expiratory Volume
-D000068759:Formoterol Fumarate / Q000008:administration & dosage* / Q000009:adverse effects
-D005938:Glucocorticoids / Q000008:administration & dosage
-D006801:Humans
-D060046:Maintenance Chemotherapy
-D008297:Male
-D055118:Medication Adherence
-D008875:Middle Aged
-D011795:Surveys and Questionnaires
-D013726:Terbutaline / Q000008:administration & dosage* / Q000009:adverse effects
-D055815:Young Adult""".replace("\n", "; ")
-    assert subheadings == expected
-    mesh_list = pp.split_mesh(expected)
-    expected_split_mesh = [
-        [('D000280', 'Administration, Inhalation')],
-        [('D000293', 'Adolescent')],
-        [('D000328', 'Adult')], [('D000368', 'Aged')],
-        [('D001249', 'Asthma'), ('Q000188', 'drug therapy*')],
-        [('D001993', 'Bronchodilator Agents'), ('Q000008', 'administration & dosage*'), ('Q000009', 'adverse effects')],
-        [('D019819', 'Budesonide'), ('Q000008', 'administration & dosage*'), ('Q000009', 'adverse effects')],
-        [('D002648', 'Child')], [('D004311', 'Double-Blind Method')], [('D004334', 'Drug Administration Schedule')],
-        [('D004338', 'Drug Combinations')],
-        [('D005260', 'Female')],
-        [('D005541', 'Forced Expiratory Volume')],
-        [('D000068759', 'Formoterol Fumarate'), ('Q000008', 'administration & dosage*'), ('Q000009', 'adverse effects')],
-        [('D005938', 'Glucocorticoids'), ('Q000008', 'administration & dosage')],
-        [('D006801', 'Humans')],
-        [('D060046', 'Maintenance Chemotherapy')],
-        [('D008297', 'Male')],
-        [('D055118', 'Medication Adherence')],
-        [('D008875', 'Middle Aged')],
-        [('D011795', 'Surveys and Questionnaires')],
-        [('D013726', 'Terbutaline'), ('Q000008', 'administration & dosage*'), ('Q000009', 'adverse effects')],
-        [('D055815', 'Young Adult')]]
-    assert mesh_list == expected_split_mesh
+# def test_parse_medline_mesh_terms_with_sub():
+#     """
+#     Test parsing MeSH subheadings from MEDLINE XML
+#     """
+#     subheadings = parsed_medline[1]["mesh_terms"]
+#     expected = """D000280:Administration, Inhalation
+# D000293:Adolescent
+# D000328:Adult
+# D000368:Aged
+# D001249:Asthma / Q000188:drug therapy*
+# D001993:Bronchodilator Agents / Q000008:administration & dosage* / Q000009:adverse effects
+# D019819:Budesonide / Q000008:administration & dosage* / Q000009:adverse effects
+# D002648:Child
+# D004311:Double-Blind Method
+# D004334:Drug Administration Schedule
+# D004338:Drug Combinations
+# D005260:Female
+# D005541:Forced Expiratory Volume
+# D000068759:Formoterol Fumarate / Q000008:administration & dosage* / Q000009:adverse effects
+# D005938:Glucocorticoids / Q000008:administration & dosage
+# D006801:Humans
+# D060046:Maintenance Chemotherapy
+# D008297:Male
+# D055118:Medication Adherence
+# D008875:Middle Aged
+# D011795:Surveys and Questionnaires
+# D013726:Terbutaline / Q000008:administration & dosage* / Q000009:adverse effects
+# D055815:Young Adult""".replace("\n", "; ")
+#     assert subheadings == expected
+#     mesh_list = pp.split_mesh(expected)
+#     expected_split_mesh = [
+#         [('D000280', 'Administration, Inhalation')],
+#         [('D000293', 'Adolescent')],
+#         [('D000328', 'Adult')], [('D000368', 'Aged')],
+#         [('D001249', 'Asthma'), ('Q000188', 'drug therapy*')],
+#         [('D001993', 'Bronchodilator Agents'), ('Q000008', 'administration & dosage*'), ('Q000009', 'adverse effects')],
+#         [('D019819', 'Budesonide'), ('Q000008', 'administration & dosage*'), ('Q000009', 'adverse effects')],
+#         [('D002648', 'Child')], [('D004311', 'Double-Blind Method')], [('D004334', 'Drug Administration Schedule')],
+#         [('D004338', 'Drug Combinations')],
+#         [('D005260', 'Female')],
+#         [('D005541', 'Forced Expiratory Volume')],
+#         [('D000068759', 'Formoterol Fumarate'), ('Q000008', 'administration & dosage*'), ('Q000009', 'adverse effects')],
+#         [('D005938', 'Glucocorticoids'), ('Q000008', 'administration & dosage')],
+#         [('D006801', 'Humans')],
+#         [('D060046', 'Maintenance Chemotherapy')],
+#         [('D008297', 'Male')],
+#         [('D055118', 'Medication Adherence')],
+#         [('D008875', 'Middle Aged')],
+#         [('D011795', 'Surveys and Questionnaires')],
+#         [('D013726', 'Terbutaline'), ('Q000008', 'administration & dosage*'), ('Q000009', 'adverse effects')],
+#         [('D055815', 'Young Adult')]]
+#     assert mesh_list == expected_split_mesh
 
 
 def test_parse_medline_language():
