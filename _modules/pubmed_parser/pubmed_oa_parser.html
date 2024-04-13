@@ -1,94 +1,49 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>pubmed_parser.pubmed_oa_parser &mdash; Pubmed Parser 0.2.2 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
+  <title>pubmed_parser.pubmed_oa_parser &mdash; Pubmed Parser 0.3.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
 
   
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
           
-            <a href="../../index.html" class="icon icon-home"> Pubmed Parser
           
-
-          
+          <a href="../../index.html" class="icon icon-home">
+            Pubmed Parser
           </a>
-
-          
-            
-            
               <div class="version">
-                0.2.2
+                0.3.1
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
@@ -96,69 +51,30 @@
 <li class="toctree-l1"><a class="reference internal" href="../../spark.html">Setting up Pubmed Parser with PySpark</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">Pubmed Parser</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-        
-      <li>pubmed_parser.pubmed_oa_parser</li>
-    
-    
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pubmed_parser.pubmed_oa_parser</li>
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for pubmed_parser.pubmed_oa_parser</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Parsers for PubMed XML</span>
@@ -179,7 +95,7 @@
 
 
 <span class="k">def</span> <span class="nf">list_xml_path</span><span class="p">(</span><span class="n">path_dir</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    List full xml path under given directory</span>
 
 <span class="sd">    Parameters</span>
@@ -204,7 +120,7 @@
 
 
 <span class="k">def</span> <span class="nf">zip_author</span><span class="p">(</span><span class="n">author</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Give a list of author and its affiliation keys</span>
 <span class="sd">    in this following format</span>
 <span class="sd">        [first_name, last_name, [key1, key2]]</span>
@@ -216,7 +132,7 @@
 
 
 <span class="k">def</span> <span class="nf">flatten_zip_author</span><span class="p">(</span><span class="n">author_list</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Apply zip_author to author_list and flatten it</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">author_zipped_list</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">zip_author</span><span class="p">,</span> <span class="n">author_list</span><span class="p">)</span>
@@ -224,14 +140,20 @@
 
 
 <span class="k">def</span> <span class="nf">parse_article_meta</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse PMID, PMC and DOI from given article tree</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">article_meta</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.//article-meta&quot;</span><span class="p">)</span>
-    <span class="n">pmid_node</span> <span class="o">=</span> <span class="n">article_meta</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;article-id[@pub-id-type=&quot;pmid&quot;]&#39;</span><span class="p">)</span>
-    <span class="n">pmc_node</span> <span class="o">=</span> <span class="n">article_meta</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;article-id[@pub-id-type=&quot;pmc&quot;]&#39;</span><span class="p">)</span>
-    <span class="n">pub_id_node</span> <span class="o">=</span> <span class="n">article_meta</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;article-id[@pub-id-type=&quot;publisher-id&quot;]&#39;</span><span class="p">)</span>
-    <span class="n">doi_node</span> <span class="o">=</span> <span class="n">article_meta</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;article-id[@pub-id-type=&quot;doi&quot;]&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">article_meta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pmid_node</span> <span class="o">=</span> <span class="n">article_meta</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;article-id[@pub-id-type=&quot;pmid&quot;]&#39;</span><span class="p">)</span>
+        <span class="n">pmc_node</span> <span class="o">=</span> <span class="n">article_meta</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;article-id[@pub-id-type=&quot;pmc&quot;]&#39;</span><span class="p">)</span>
+        <span class="n">pub_id_node</span> <span class="o">=</span> <span class="n">article_meta</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;article-id[@pub-id-type=&quot;publisher-id&quot;]&#39;</span><span class="p">)</span>
+        <span class="n">doi_node</span> <span class="o">=</span> <span class="n">article_meta</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;article-id[@pub-id-type=&quot;doi&quot;]&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pmid_node</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">pmc_node</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">pub_id_node</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">doi_node</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="n">pmid</span> <span class="o">=</span> <span class="n">pmid_node</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">pmid_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
     <span class="n">pmc</span> <span class="o">=</span> <span class="n">pmc_node</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">pmc_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
@@ -244,7 +166,7 @@
 
 
 <span class="k">def</span> <span class="nf">parse_coi_statements</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse conflict of interest statements from given article tree</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">coi_paths</span> <span class="o">=</span> <span class="p">(</span>
@@ -261,7 +183,7 @@
 
 
 <div class="viewcode-block" id="parse_pubmed_xml"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_xml">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_xml</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">include_path</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nxml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given an input XML path to PubMed XML file, extract information and metadata</span>
 <span class="sd">    from a given XML file and return parsed XML file in dictionary format.</span>
 <span class="sd">    You can check ``ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/`` to list of available files to download</span>
@@ -392,7 +314,7 @@
 
 
 <div class="viewcode-block" id="parse_pubmed_references"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_references">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_references</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given path to xml file, parse references articles</span>
 <span class="sd">    to list of dictionary</span>
 
@@ -486,7 +408,7 @@
 
 
 <div class="viewcode-block" id="parse_pubmed_paragraph"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_paragraph">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_paragraph</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">all_paragraph</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Give path to a given PubMed OA file, parse and return</span>
 <span class="sd">    a dictionary of all paragraphs, section that it belongs to,</span>
 <span class="sd">    and a list of reference made in each paragraph as a list of PMIDs</span>
@@ -546,7 +468,7 @@
 
 
 <div class="viewcode-block" id="parse_pubmed_caption"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_caption">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_caption</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given single xml path, extract figure caption and</span>
 <span class="sd">    reference id back to that figure</span>
 
@@ -588,6 +510,7 @@
             <span class="n">fig_captions</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;caption&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">getchildren</span><span class="p">()</span>
             <span class="n">caption</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">stringify_children</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">fig_captions</span><span class="p">])</span>
             <span class="n">graphic</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;graphic&quot;</span><span class="p">)</span>
+            <span class="n">graphic_ref</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">graphic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">graphic_ref</span> <span class="o">=</span> <span class="n">graphic</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">values</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">dict_caption</span> <span class="o">=</span> <span class="p">{</span>
@@ -605,7 +528,7 @@
 
 
 <span class="k">def</span> <span class="nf">table_to_df</span><span class="p">(</span><span class="n">table_text</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This is a function to transform an input table XML text to list of row values and columns.</span>
 <span class="sd">    This will return a list of column names, and list of list of values in the table</span>
 
@@ -644,7 +567,7 @@
 
 
 <div class="viewcode-block" id="parse_pubmed_table"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_table">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_table</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">return_xml</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse table from given Pubmed Open-Access XML file</span>
 
 <span class="sd">    Parameters</span>
@@ -718,46 +641,30 @@
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2020, Titipat Achakulvisut.
-
-    </p>
+    <p>&#169; Copyright 2020, Titipat Achakulvisut.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

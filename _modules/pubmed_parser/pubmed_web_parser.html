@@ -1,94 +1,49 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>pubmed_parser.pubmed_web_parser &mdash; Pubmed Parser 0.2.2 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
+  <title>pubmed_parser.pubmed_web_parser &mdash; Pubmed Parser 0.3.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
 
   
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
           
-            <a href="../../index.html" class="icon icon-home"> Pubmed Parser
           
-
-          
+          <a href="../../index.html" class="icon icon-home">
+            Pubmed Parser
           </a>
-
-          
-            
-            
               <div class="version">
-                0.2.2
+                0.3.1
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
@@ -96,69 +51,30 @@
 <li class="toctree-l1"><a class="reference internal" href="../../spark.html">Setting up Pubmed Parser with PySpark</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">Pubmed Parser</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-        
-      <li>pubmed_parser.pubmed_web_parser</li>
-    
-    
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pubmed_parser.pubmed_web_parser</li>
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for pubmed_parser.pubmed_web_parser</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">re</span>
@@ -178,7 +94,7 @@
 
 
 <span class="k">def</span> <span class="nf">load_xml</span><span class="p">(</span><span class="n">pmid</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load XML file from given pmid from eutils site</span>
 <span class="sd">    return a dictionary for given pmid and xml string from the site</span>
 
@@ -207,7 +123,7 @@
 
 
 <span class="k">def</span> <span class="nf">parse_pubmed_web_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Giving a tree Element from eutils, return parsed dictionary from the tree</span>
 
 <span class="sd">    Parameters</span>
@@ -300,6 +216,12 @@
         <span class="k">for</span> <span class="n">article_id</span> <span class="ow">in</span> <span class="n">article_ids</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">article_id</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;idtype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;doi&quot;</span><span class="p">:</span>
                 <span class="n">doi</span> <span class="o">=</span> <span class="n">article_id</span><span class="o">.</span><span class="n">text</span>
+    
+    <span class="n">language</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//language&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">language</span> <span class="o">=</span> <span class="n">language</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="n">language</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="n">dict_out</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
@@ -310,12 +232,13 @@
         <span class="s2">&quot;keywords&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="p">,</span>
         <span class="s2">&quot;doi&quot;</span><span class="p">:</span> <span class="n">doi</span><span class="p">,</span>
         <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="n">year</span><span class="p">,</span>
+        <span class="s2">&quot;language&quot;</span><span class="p">:</span> <span class="n">language</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">dict_out</span>
 
 
 <div class="viewcode-block" id="parse_xml_web"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_xml_web">[docs]</a><span class="k">def</span> <span class="nf">parse_xml_web</span><span class="p">(</span><span class="n">pmid</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_xml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Give an input PMID, load and parse XML using PubMed eutils</span>
 
 <span class="sd">    Parameters</span>
@@ -360,7 +283,7 @@
 
 
 <span class="k">def</span> <span class="nf">extract_citations</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract number of citations from a given eutils XML tree.</span>
 
 <span class="sd">    Parameters</span>
@@ -383,7 +306,7 @@
 
 
 <span class="k">def</span> <span class="nf">extract_pmc</span><span class="p">(</span><span class="n">citation</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract PMC from a given eutils XML tree.</span>
 
 <span class="sd">    Parameters</span>
@@ -402,7 +325,7 @@
 
 
 <span class="k">def</span> <span class="nf">convert_document_id</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert a given document id to dictionary of other id.</span>
 <span class="sd">    Please see http://www.ncbi.nlm.nih.gov/pmc/tools/id-converter-api/ for more info</span>
 
@@ -456,7 +379,7 @@
 
 
 <div class="viewcode-block" id="parse_citation_web"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_citation_web">[docs]</a><span class="k">def</span> <span class="nf">parse_citation_web</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse citations from given document id</span>
 
 <span class="sd">    Parameters</span>
@@ -523,7 +446,7 @@
 
 
 <div class="viewcode-block" id="parse_outgoing_citation_web"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_outgoing_citation_web">[docs]</a><span class="k">def</span> <span class="nf">parse_outgoing_citation_web</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A function to load citations from NCBI eutils API for a given document</span>
 
 <span class="sd">    Example URL:</span>
@@ -581,46 +504,30 @@
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2020, Titipat Achakulvisut.
-
-    </p>
+    <p>&#169; Copyright 2020, Titipat Achakulvisut.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
