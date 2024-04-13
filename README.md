@@ -166,7 +166,7 @@ To extract month and day information from PubDate, set `year_info_only=True`. We
 
 ### Parse MEDLINE Grant ID
 
-Use `parse_medline_grant_id` in order to parse MEDLINE grant IDs from XML file. This will return a list of dictionaries, each containing
+Use `parse_grant_id` in order to parse MEDLINE grant IDs from XML file. This will return a list of dictionaries, each containing
 
 * `pmid` : PubMed ID
 * `grant_id` : Grant ID

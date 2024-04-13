@@ -16,7 +16,6 @@
 import sys
 import os
 import sphinx
-import pubmed_parser
 import sphinx_gallery
 
 

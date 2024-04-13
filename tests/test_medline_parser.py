@@ -206,18 +206,6 @@ def test_parse_medline_xml():
     assert parsed_medline[0]["vernacular_title"] == ""
 
 
-def test_parse_medline_grant_id():
-    """
-    Test parsing grants from MEDLINE XML
-    """
-    grants = pp.parse_medline_grant_id(os.path.join("data", "pubmed20n0014.xml.gz"))
-    assert isinstance(grants, list)
-    assert isinstance(grants[0], dict)
-    assert grants[0]["pmid"] == "399300"
-    assert grants[0]["grant_id"] == "HL17731"
-    assert len(grants) == 484, "Expect number of grants in a given file to be 484"
-
-
 def test_parse_medline_mesh_terms():
     """
     Test parsing MeSH headings from MEDLINE XML

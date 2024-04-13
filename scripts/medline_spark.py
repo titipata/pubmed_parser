@@ -70,7 +70,7 @@ def process_file(date_update):
                       mode='overwrite')
 
     # parse grant database
-    parse_grant_rdd = path_rdd.flatMap(lambda x: pp.parse_medline_grant_id(x))\
+    parse_grant_rdd = path_rdd.flatMap(lambda x: pp.parse_grant_id(x))\
         .filter(lambda x: x is not None)\
         .map(lambda x: Row(**x))
     grant_df = parse_grant_rdd.toDF()
