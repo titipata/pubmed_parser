@@ -1,0 +1,49 @@
+name: Pubmed Parser
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Install dependencies
+      run: |
+        python --version
+        pip install -U pip
+        python setup.py install
+    - name: Run tests
+      run: pytest --cov=pubmed_parser tests/ --verbose
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Install dependencies
+      run: |
+        pip install -r docs/doc_requirements.txt
+    - name: Build documentation
+      run: |
+        cd docs
+        make html
+        touch _build/html/.nojekyll
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs/_build/html/
+        keep_files: true
