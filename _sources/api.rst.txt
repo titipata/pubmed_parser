@@ -11,7 +11,7 @@ Parse MEDLINE XML
 -----------------
 
 .. autofunction:: parse_medline_xml
-.. autofunction:: parse_medline_grant_id
+.. autofunction:: parse_grant_id
 
 Parse PubMed OA XML
 -------------------
