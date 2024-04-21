@@ -65,3 +65,8 @@ def test_pubmed_web_parser_save_xml():
     pubmed_dict = pp.parse_xml_web(random_id, save_xml=True)
     
     assert "xml" in pubmed_dict
+
+def test_doi():
+    """Test the correct parsing of the doi."""
+    pubmed_dict = pp.parse_xml_web("32145645", save_xml=False)
+    assert pubmed_dict['doi'] == "10.1016/j.ejmech.2020.112186"

@@ -133,10 +133,10 @@ def parse_pubmed_web_tree(tree):
         keywords = ""
 
     doi = ""
-    article_ids = tree.xpath("//articleidlist//articleid")
+    article_ids = tree.xpath("//elocationid")
     if len(article_ids) >= 1:
         for article_id in article_ids:
-            if article_id.attrib.get("idtype") == "doi":
+            if article_id.attrib.get("eidtype") == "doi":
                 doi = article_id.text
     
     language = tree.xpath("//language")
