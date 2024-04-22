@@ -15,6 +15,7 @@ def test_pubmed_web_parser_all_fields_content():
             "authors": "Rieka von der Warth; Isabelle Hempler",
             "keywords": "",
             "doi": "10.1016/j.zefq.2023.11.002",
+            "pii": "S1865-9217(23)00212-X",
             "year": "2024",
             "language": "ger",
             "pmid": "38218666",
@@ -27,6 +28,7 @@ def test_pubmed_web_parser_all_fields_content():
             "authors": "Andreas Leimbach; Jörg Hacker; Ulrich Dobrindt",
             "keywords": "D000818:Animals;D004926:Escherichia coli;D004927:Escherichia coli Infections;D023281:Genomics;D006801:Humans;D007413:Intestinal Mucosa;D007422:Intestines;D010802:Phylogeny;D013559:Symbiosis",
             "doi": "10.1007/82_2012_303",
+            "pii": None,
             "year": "2013",
             "language": "eng",
             "pmid": "23340801",
@@ -49,6 +51,7 @@ def test_pubmed_web_parser_all_fields_existence():
         "authors",
         "keywords",
         "doi",
+        "pii",
         "year",
         "language",
         "pmid",
@@ -65,3 +68,9 @@ def test_pubmed_web_parser_save_xml():
     pubmed_dict = pp.parse_xml_web(random_id, save_xml=True)
     
     assert "xml" in pubmed_dict
+
+
+def test_pii():
+    """Test the correct parsing of the pii."""
+    pubmed_dict = pp.parse_xml_web("32145645", save_xml=False)
+    assert pubmed_dict['pii'] == "S0223-5234(20)30153-7"
