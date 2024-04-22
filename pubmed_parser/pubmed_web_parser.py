@@ -137,7 +137,13 @@ def parse_pubmed_web_tree(tree):
         doi = doi[0].text
     except IndexError:
         doi = None
-    
+
+    pii = tree.xpath('//elocationid[@eidtype="pii"]')
+    try:
+        pii = pii[0].text
+    except IndexError:
+        pii = None
+
     language = tree.xpath("//language")
     try:
         language = language[0].text
@@ -152,6 +158,7 @@ def parse_pubmed_web_tree(tree):
         "authors": authors_text,
         "keywords": keywords,
         "doi": doi,
+        "pii": pii,
         "year": year,
         "language": language
     }
