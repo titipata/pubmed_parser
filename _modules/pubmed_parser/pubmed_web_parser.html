@@ -215,7 +215,13 @@
         <span class="n">doi</span> <span class="o">=</span> <span class="n">doi</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
     <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
         <span class="n">doi</span> <span class="o">=</span> <span class="kc">None</span>
-    
+
+    <span class="n">pii</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//elocationid[@eidtype=&quot;pii&quot;]&#39;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">pii</span> <span class="o">=</span> <span class="n">pii</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="n">pii</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="n">language</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//language&quot;</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">language</span> <span class="o">=</span> <span class="n">language</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
@@ -230,6 +236,7 @@
         <span class="s2">&quot;authors&quot;</span><span class="p">:</span> <span class="n">authors_text</span><span class="p">,</span>
         <span class="s2">&quot;keywords&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="p">,</span>
         <span class="s2">&quot;doi&quot;</span><span class="p">:</span> <span class="n">doi</span><span class="p">,</span>
+        <span class="s2">&quot;pii&quot;</span><span class="p">:</span> <span class="n">pii</span><span class="p">,</span>
         <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="n">year</span><span class="p">,</span>
         <span class="s2">&quot;language&quot;</span><span class="p">:</span> <span class="n">language</span>
     <span class="p">}</span>
