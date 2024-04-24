@@ -428,19 +428,31 @@ def parse_pubmed_caption(path):
     if figs is not None:
         for fig in figs:
             fig_id = fig.attrib["id"]
-            fig_label = stringify_children(fig.find("label"))
+            try:
+                fig_label = stringify_children(fig.find("label"))
+            except AttributeError:
+                continue
             fig_captions = fig.find("caption").getchildren()
             caption = " ".join([stringify_children(c) for c in fig_captions])
             graphic = fig.find("graphic")
             graphic_ref = None
             if graphic is not None:
                 graphic_ref = graphic.attrib.values()[0]
+            list_items = fig.findall(".//list-item")
+
+            fig_subpoints = []
+            for list_item in list_items:
+                sub_label = stringify_children(list_item.find("label"))
+                sub_text = stringify_children(list_item.find("p"))
+                fig_subpoints.append((sub_label, sub_text))
+
             dict_caption = {
                 "pmid": pmid,
                 "pmc": pmc,
                 "fig_caption": caption,
                 "fig_id": fig_id,
                 "fig_label": fig_label,
+                "fig_subpoints": fig_subpoints,
                 "graphic_ref": graphic_ref,
             }
             dict_captions.append(dict_caption)

@@ -17,8 +17,15 @@ def fetch_pubmed_xml(db_dir):
                 return content
 
 # Get up-to-date pubmed online article
-pubmed_dir = {"3460867": "00/00/PMC3460867", "28298962": "8e/71/PMC5334499"}
+pubmed_dir = {"3460867": "00/00/PMC3460867",
+              "28298962": "8e/71/PMC5334499",
+              "9539395": "51/b3/PMC9539395"
+              }
 pubmed_xml_3460867 = fetch_pubmed_xml(pubmed_dir['3460867'])
+
+pubmed_xml_9539395 = fetch_pubmed_xml(pubmed_dir['9539395'])
+captions_9539395 = pp.parse_pubmed_caption(pubmed_xml_9539395)
+captions_9539395_fig_1 = captions_9539395[0]
 
 
 def test_parse_pubmed_xml():
@@ -68,3 +75,40 @@ def test_parse_pubmed_caption():
     assert (
         len(captions) == 4
     ), "Expected number of figures/captions to have a length of 4"
+
+
+def test_caption_fig_caption():
+    """This is a test for the fig_caption field."""
+    fig_caption = 'Aerosol delivery of sACE22.v2.4‐IgG1 alleviates lung injury and improves survival of SARS‐CoV‐2 gamma variant infected K18‐hACE2 transgenic mice \n\n'
+    assert captions_9539395_fig_1['fig_caption'] == fig_caption
+
+
+def test_caption_fig_id():
+    """This is a test for the fig_id field."""
+    assert captions_9539395_fig_1['fig_id'] == 'emmm202216109-fig-0001'
+
+
+def test_caption_fig_label():
+    """This is a test for the fig_label field."""
+    assert captions_9539395_fig_1['fig_label'] == 'Figure 1'
+
+
+def test_caption_fig_subpoints():
+    """This is a test for the fig_subpoints field."""
+    fig_subpoints = [('A', 'K18‐hACE2 transgenic mice were inoculated with SARS‐CoV‐2 isolate /Japan/TY7‐503/2021 (gamma variant) at 1\u2009×\u2009104 PFU. sACE22.v2.4‐IgG1 (7.5\u2009ml at 8.3\u2009mg/ml in PBS) was delivered to the mice by a nebulizer in 25\u2009min at 12\u2009h, 48\u2009h, and 84\u2009h postinoculation. PBS was aerosol delivered as control.'), ('B, C', 'Survival (B) and weight loss (C). N\u2009=\u200910 mice for each group. The P‐value of the survival curve by the Gehan–Breslow–Wilcoxon test is shown. Error bars for mouse weight are centered on the mean and show SEM.'), ('D', "Viral load in the lung was measured by RT–qPCR on Day 7. The mRNA expression levels of SARS‐CoV‐2 Spike, Nsp, and Rdrp are normalized to the housekeeping gene peptidylprolyl isomerase A (Ppia). Data are presented as mean\u2009±\u2009SEM, N\u2009=\u20094 mice per group. *P\u2009<\u20090.05 by the unpaired Student's t‐test with two‐sided."), ('E', "Cytokine expression levels of Tnfa, Ifng, Il1a, and Il1b were measured by RT–qPCR normalized by Ppia. Data are presented as mean\u2009±\u2009SEM, N\u2009=\u20094 mice per group. *P\u2009<\u20090.05 by the unpaired Student's t‐test with two‐sided."), ('F, G', 'Representative H&E staining of lung sections on Day 7 postinoculation for control PBS group (F) and inhalation of the sACE22.v2.4‐IgG1 group (G). Images at left are low magnifications. Boxed regions (black) are shown at higher magnification on the right. Lungs from 4 independent mice were sectioned, stained, and imaged.')]
+    assert captions_9539395_fig_1['fig_subpoints'] == fig_subpoints
+
+
+def test_caption_graphic_ref():
+    """This is a test for the graphic_ref field."""
+    assert captions_9539395_fig_1['graphic_ref'] == 'EMMM-14-e16109-g008'
+
+
+def test_caption_pmc():
+    """This is a test for the pmc field."""
+    assert captions_9539395_fig_1['pmc'] == '9539395'
+
+
+def test_caption_pmid():
+    """This is a test for the pmid field."""
+    assert captions_9539395_fig_1['pmid'] == '36094679'
