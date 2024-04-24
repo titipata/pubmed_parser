@@ -438,8 +438,8 @@ def parse_pubmed_caption(path):
             graphic_ref = None
             if graphic is not None:
                 graphic_ref = graphic.attrib.values()[0]
-            list_items = fig.findall(".//list-item")
 
+            list_items = fig.findall(".//list-item")
             fig_subpoints = []
             for list_item in list_items:
                 sub_label = stringify_children(list_item.find("label"))
