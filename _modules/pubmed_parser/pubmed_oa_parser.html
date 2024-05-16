@@ -506,19 +506,35 @@
     <span class="k">if</span> <span class="n">figs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">fig</span> <span class="ow">in</span> <span class="n">figs</span><span class="p">:</span>
             <span class="n">fig_id</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-            <span class="n">fig_label</span> <span class="o">=</span> <span class="n">stringify_children</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">))</span>
-            <span class="n">fig_captions</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;caption&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">getchildren</span><span class="p">()</span>
-            <span class="n">caption</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">stringify_children</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">fig_captions</span><span class="p">])</span>
+
+            <span class="n">fig_label</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fig_label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">fig_label</span> <span class="o">=</span> <span class="n">stringify_children</span><span class="p">(</span><span class="n">fig_label</span><span class="p">)</span>
+
+            <span class="n">fig_captions</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;caption&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fig_captions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">fig_captions</span> <span class="o">=</span> <span class="n">fig_captions</span><span class="o">.</span><span class="n">getchildren</span><span class="p">()</span>
+                <span class="n">caption</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">stringify_children</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">fig_captions</span><span class="p">])</span>
+
             <span class="n">graphic</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;graphic&quot;</span><span class="p">)</span>
             <span class="n">graphic_ref</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">graphic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">graphic_ref</span> <span class="o">=</span> <span class="n">graphic</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">values</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">list_items</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//list-item&quot;</span><span class="p">)</span>
+            <span class="n">fig_list_items</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">list_item</span> <span class="ow">in</span> <span class="n">list_items</span><span class="p">:</span>
+                <span class="n">item_label</span> <span class="o">=</span> <span class="n">stringify_children</span><span class="p">(</span><span class="n">list_item</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">))</span>
+                <span class="n">item_text</span> <span class="o">=</span> <span class="n">stringify_children</span><span class="p">(</span><span class="n">list_item</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">))</span>
+                <span class="n">fig_list_items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">item_label</span><span class="p">,</span> <span class="n">item_text</span><span class="p">))</span>
+
             <span class="n">dict_caption</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">pmid</span><span class="p">,</span>
                 <span class="s2">&quot;pmc&quot;</span><span class="p">:</span> <span class="n">pmc</span><span class="p">,</span>
                 <span class="s2">&quot;fig_caption&quot;</span><span class="p">:</span> <span class="n">caption</span><span class="p">,</span>
                 <span class="s2">&quot;fig_id&quot;</span><span class="p">:</span> <span class="n">fig_id</span><span class="p">,</span>
                 <span class="s2">&quot;fig_label&quot;</span><span class="p">:</span> <span class="n">fig_label</span><span class="p">,</span>
+                <span class="s2">&quot;fig_list-items&quot;</span><span class="p">:</span> <span class="n">fig_list_items</span><span class="p">,</span>
                 <span class="s2">&quot;graphic_ref&quot;</span><span class="p">:</span> <span class="n">graphic_ref</span><span class="p">,</span>
             <span class="p">}</span>
             <span class="n">dict_captions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dict_caption</span><span class="p">)</span>
