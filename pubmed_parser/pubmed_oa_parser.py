@@ -428,23 +428,27 @@ def parse_pubmed_caption(path):
     if figs is not None:
         for fig in figs:
             fig_id = fig.attrib["id"]
-            try:
-                fig_label = stringify_children(fig.find("label"))
-            except AttributeError:
-                continue
-            fig_captions = fig.find("caption").getchildren()
-            caption = " ".join([stringify_children(c) for c in fig_captions])
+
+            fig_label = fig.find("label")
+            if fig_label is not None:
+                fig_label = stringify_children(fig_label)
+
+            fig_captions = fig.find("caption")
+            if fig_captions is not None:
+                fig_captions = fig_captions.getchildren()
+                caption = " ".join([stringify_children(c) for c in fig_captions])
+
             graphic = fig.find("graphic")
             graphic_ref = None
             if graphic is not None:
                 graphic_ref = graphic.attrib.values()[0]
 
             list_items = fig.findall(".//list-item")
-            fig_subpoints = []
+            fig_list_items = []
             for list_item in list_items:
-                sub_label = stringify_children(list_item.find("label"))
-                sub_text = stringify_children(list_item.find("p"))
-                fig_subpoints.append((sub_label, sub_text))
+                item_label = stringify_children(list_item.find("label"))
+                item_text = stringify_children(list_item.find("p"))
+                fig_list_items.append((item_label, item_text))
 
             dict_caption = {
                 "pmid": pmid,
@@ -452,7 +456,7 @@ def parse_pubmed_caption(path):
                 "fig_caption": caption,
                 "fig_id": fig_id,
                 "fig_label": fig_label,
-                "fig_subpoints": fig_subpoints,
+                "fig_list-items": fig_list_items,
                 "graphic_ref": graphic_ref,
             }
             dict_captions.append(dict_caption)
