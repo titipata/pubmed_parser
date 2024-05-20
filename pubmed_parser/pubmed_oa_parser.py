@@ -161,11 +161,11 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
         journal = ""
 
     dict_article_meta = parse_article_meta(tree)
-    pub_year_node = tree.find(".//pub-date/year")
+    pub_year_node = tree.find(".//pub-date[@pub-type='epub']/year")
     pub_year = pub_year_node.text if pub_year_node is not None else ""
-    pub_month_node = tree.find(".//pub-date/month")
+    pub_month_node = tree.find(".//pub-date[@pub-type='epub']/month")
     pub_month = pub_month_node.text if pub_month_node is not None else "01"
-    pub_day_node = tree.find(".//pub-date/day")
+    pub_day_node = tree.find(".//pub-date[@pub-type='epub']/day")
     pub_day = pub_day_node.text if pub_day_node is not None else "01"
 
     subjects_node = tree.findall(".//article-categories//subj-group/subject")
@@ -264,11 +264,14 @@ def parse_pubmed_references(path):
             ref = reference.find("mixed-citation")
         elif reference.find("element-citation") is not None:
             ref = reference.find("element-citation")
+        elif reference.find("citation") is not None:
+            ref = reference.find("citation")
         else:
             ref = None
 
         if ref is not None:
-            if "publication-type" in ref.attrib.keys() and ref is not None:
+            ref_types = ["citation-type", "publication-type"]
+            if any(ref_type in ref_types for ref_type in ref.attrib.keys()):
                 if ref.attrib.values() is not None:
                     journal_type = ref.attrib.values()[0]
                 else:
@@ -529,7 +532,7 @@ def parse_pubmed_table(path, return_xml=True):
     pmc = dict_article_meta["pmc"]
 
     # parse table
-    tables = tree.xpath(".//body.//sec.//table-wrap")
+    tables = tree.xpath(".//body//table-wrap")
     table_dicts = list()
     for table in tables:
         if table.find("label") is not None:
