@@ -161,12 +161,19 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
         journal = ""
 
     dict_article_meta = parse_article_meta(tree)
-    pub_year_node = tree.find(".//pub-date[@pub-type='epub']/year")
+    pub_year_node = tree.find(".//pub-date[@pub-type='ppub']/year")
     pub_year = pub_year_node.text if pub_year_node is not None else ""
-    pub_month_node = tree.find(".//pub-date[@pub-type='epub']/month")
+    pub_month_node = tree.find(".//pub-date[@pub-type='ppub']/month")
     pub_month = pub_month_node.text if pub_month_node is not None else "01"
-    pub_day_node = tree.find(".//pub-date[@pub-type='epub']/day")
+    pub_day_node = tree.find(".//pub-date[@pub-type='ppub']/day")
     pub_day = pub_day_node.text if pub_day_node is not None else "01"
+
+    pub_year_node = tree.find(".//pub-date[@pub-type='epub']/year")
+    epub_year = pub_year_node.text if pub_year_node is not None else ""
+    pub_month_node = tree.find(".//pub-date[@pub-type='epub']/month")
+    epub_month = pub_month_node.text if pub_month_node is not None else "01"
+    pub_day_node = tree.find(".//pub-date[@pub-type='epub']/day")
+    epub_day = pub_day_node.text if pub_day_node is not None else "01"
 
     subjects_node = tree.findall(".//article-categories//subj-group/subject")
     subjects = list()
@@ -227,6 +234,7 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
         "affiliation_list": affiliation_list,
         "publication_year": pub_year,
         "publication_date": "{}-{}-{}".format(pub_day, pub_month, pub_year),
+        "epublication_date": "{}-{}-{}".format(epub_day, epub_month, epub_year),
         "subjects": subjects,
         "coi_statement": coi_statement,
     }
