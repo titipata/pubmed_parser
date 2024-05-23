@@ -87,6 +87,18 @@ def parse_article_meta(tree):
     return dict_article_meta
 
 
+def parse_date(tree, date_type):
+    """Parse ppub and epub dates."""
+    pub_year_node = tree.find(f".//pub-date[@pub-type='{date_type}']/year")
+    pub_year = pub_year_node.text if pub_year_node is not None else ""
+    pub_month_node = tree.find(f".//pub-date[@pub-type='{date_type}']/month")
+    pub_month = pub_month_node.text if pub_month_node is not None else "01"
+    pub_day_node = tree.find(f".//pub-date[@pub-type='{date_type}']/day")
+    pub_day = pub_day_node.text if pub_day_node is not None else "01"
+
+    return {'year': pub_year, 'month': pub_month, 'day': pub_day}
+
+
 def parse_coi_statements(tree):
     """
     Parse conflict of interest statements from given article tree
@@ -161,19 +173,10 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
         journal = ""
 
     dict_article_meta = parse_article_meta(tree)
-    pub_year_node = tree.find(".//pub-date[@pub-type='ppub']/year")
-    pub_year = pub_year_node.text if pub_year_node is not None else ""
-    pub_month_node = tree.find(".//pub-date[@pub-type='ppub']/month")
-    pub_month = pub_month_node.text if pub_month_node is not None else "01"
-    pub_day_node = tree.find(".//pub-date[@pub-type='ppub']/day")
-    pub_day = pub_day_node.text if pub_day_node is not None else "01"
-
-    pub_year_node = tree.find(".//pub-date[@pub-type='epub']/year")
-    epub_year = pub_year_node.text if pub_year_node is not None else ""
-    pub_month_node = tree.find(".//pub-date[@pub-type='epub']/month")
-    epub_month = pub_month_node.text if pub_month_node is not None else "01"
-    pub_day_node = tree.find(".//pub-date[@pub-type='epub']/day")
-    epub_day = pub_day_node.text if pub_day_node is not None else "01"
+    
+    # Parse epub and ppub
+    ppub = parse_date(tree, 'ppub')
+    epub = parse_date(tree, 'epub')
 
     subjects_node = tree.findall(".//article-categories//subj-group/subject")
     subjects = list()
@@ -232,9 +235,9 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
         "publisher_id": dict_article_meta["publisher_id"],
         "author_list": author_list,
         "affiliation_list": affiliation_list,
-        "publication_year": pub_year,
-        "publication_date": "{}-{}-{}".format(pub_day, pub_month, pub_year),
-        "epublication_date": "{}-{}-{}".format(epub_day, epub_month, epub_year),
+        "publication_year": ppub['year'],
+        "publication_date": f"{ppub['day']}-{ppub['month']}-{ppub['year']}",
+        "epublication_date": f"{epub['day']}-{epub['month']}-{epub['year']}",
         "subjects": subjects,
         "coi_statement": coi_statement,
     }
