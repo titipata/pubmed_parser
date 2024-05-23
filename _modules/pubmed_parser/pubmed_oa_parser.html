@@ -313,6 +313,15 @@
     <span class="k">return</span> <span class="n">dict_out</span></div>
 
 
+<span class="k">def</span> <span class="nf">get_reference</span><span class="p">(</span><span class="n">reference</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get reference from one of the three possible positions.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mixed-citation&quot;</span><span class="p">,</span> <span class="s2">&quot;element-citation&quot;</span><span class="p">,</span> <span class="s2">&quot;citation&quot;</span><span class="p">]:</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ref</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ref</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
 <div class="viewcode-block" id="parse_pubmed_references"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_references">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_references</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given path to xml file, parse references articles</span>
@@ -338,15 +347,10 @@
     <span class="k">for</span> <span class="n">reference</span> <span class="ow">in</span> <span class="n">references</span><span class="p">:</span>
         <span class="n">ref_id</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">reference</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;mixed-citation&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ref</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;mixed-citation&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">reference</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;element-citation&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ref</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;element-citation&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">ref</span> <span class="o">=</span> <span class="kc">None</span>
-
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">get_reference</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ref</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;publication-type&quot;</span> <span class="ow">in</span> <span class="n">ref</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="n">ref</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ref_types</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;citation-type&quot;</span><span class="p">,</span> <span class="s2">&quot;publication-type&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">ref_type</span> <span class="ow">in</span> <span class="n">ref_types</span> <span class="k">for</span> <span class="n">ref_type</span> <span class="ow">in</span> <span class="n">ref</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
                 <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">journal_type</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">values</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -607,7 +611,7 @@
     <span class="n">pmc</span> <span class="o">=</span> <span class="n">dict_article_meta</span><span class="p">[</span><span class="s2">&quot;pmc&quot;</span><span class="p">]</span>
 
     <span class="c1"># parse table</span>
-    <span class="n">tables</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;.//body.//sec.//table-wrap&quot;</span><span class="p">)</span>
+    <span class="n">tables</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;.//body//table-wrap&quot;</span><span class="p">)</span>
     <span class="n">table_dicts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">table</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
