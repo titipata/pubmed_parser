@@ -235,6 +235,15 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
     return dict_out
 
 
+def get_reference(reference):
+    """Get reference from one of the three possible positions."""
+    for tag in ["mixed-citation", "element-citation", "citation"]:
+        ref = reference.find(tag)
+        if ref is not None:
+            return ref
+    return None
+
+
 def parse_pubmed_references(path):
     """
     Given path to xml file, parse references articles
@@ -260,15 +269,10 @@ def parse_pubmed_references(path):
     for reference in references:
         ref_id = reference.attrib["id"]
 
-        if reference.find("mixed-citation") is not None:
-            ref = reference.find("mixed-citation")
-        elif reference.find("element-citation") is not None:
-            ref = reference.find("element-citation")
-        else:
-            ref = None
-
+        ref = get_reference(reference)
         if ref is not None:
-            if "publication-type" in ref.attrib.keys() and ref is not None:
+            ref_types = ["citation-type", "publication-type"]
+            if any(ref_type in ref_types for ref_type in ref.attrib.keys()):
                 if ref.attrib.values() is not None:
                     journal_type = ref.attrib.values()[0]
                 else:
@@ -529,7 +533,7 @@ def parse_pubmed_table(path, return_xml=True):
     pmc = dict_article_meta["pmc"]
 
     # parse table
-    tables = tree.xpath(".//body.//sec.//table-wrap")
+    tables = tree.xpath(".//body//table-wrap")
     table_dicts = list()
     for table in tables:
         if table.find("label") is not None:

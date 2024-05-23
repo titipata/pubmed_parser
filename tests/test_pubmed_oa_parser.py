@@ -63,6 +63,18 @@ def test_parse_pubmed_references():
     assert isinstance(references[0], dict)
     assert len(references) == 58, "Expected references to have length of 29"
 
+    references_9539395 = pp.parse_pubmed_references(pubmed_xml_9539395)
+    assert references_9539395[0].get('pmid') == '36094679'
+
+
+def test_parse_pubmed_table():
+    """
+    Test parsing table from PubMed XML file
+    """
+    table_9539395 = pp.parse_pubmed_table(pubmed_xml_9539395)
+    expected_cols = ['Gene', 'Uninfected and untreated', 'Day 7 postinoculation', 'PBS', 'sACE22.v2.4-IgG1']
+    assert table_9539395[0].get('table_columns') == expected_cols
+
 
 def test_parse_pubmed_caption():
     """
