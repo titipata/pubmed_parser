@@ -88,14 +88,15 @@ def parse_article_meta(tree):
 
 
 def parse_date(tree, date_type):
-    """Parse ppub and epub dates."""
-    pub_year_node = tree.find(f".//pub-date[@pub-type='{date_type}']/year")
-    pub_year = pub_year_node.text if pub_year_node is not None else ""
-    pub_month_node = tree.find(f".//pub-date[@pub-type='{date_type}']/month")
-    pub_month = pub_month_node.text if pub_month_node is not None else "01"
-    pub_day_node = tree.find(f".//pub-date[@pub-type='{date_type}']/day")
-    pub_day = pub_day_node.text if pub_day_node is not None else "01"
-
+    """Parse publication dates based on the provided date type."""
+    def get_text_or_default(xpath, default):
+        node = tree.find(xpath)
+        return node.text if node is not None else default
+    
+    pub_date_path = f".//pub-date[@pub-type='{date_type}']"
+    pub_year = get_text_or_default(f"{pub_date_path}/year", "")
+    pub_month = get_text_or_default(f"{pub_date_path}/month", "01")
+    pub_day = get_text_or_default(f"{pub_date_path}/day", "01")
     return {'year': pub_year, 'month': pub_month, 'day': pub_day}
 
 
