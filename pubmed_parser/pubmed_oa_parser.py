@@ -108,12 +108,6 @@ def format_date(date_dict):
         return f"{day}-{month}"
 
 
-def get_year_as_int(date_dict):
-    """Get the year as an integer from the date dictionary."""
-    year = date_dict.get("year")
-    return int(year) if year is not None else None
-
-
 def parse_coi_statements(tree):
     """
     Parse conflict of interest statements from given article tree
@@ -189,11 +183,17 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
 
     dict_article_meta = parse_article_meta(tree)
 
-    # Parse epub and ppub
-    ppub_date_dict = parse_date(tree, "ppub")
-    ppub = format_date(ppub_date_dict)
-    ppub_year = get_year_as_int(ppub_date_dict)
-    epub = format_date(parse_date(tree, "epub"))
+    pub_date_dict = parse_date(tree, "ppub")
+    if not pub_date_dict.get('year'):
+        pub_date_dict = parse_date(tree, "collection")
+    pub_date = format_date(pub_date_dict)
+
+    try:
+        pub_year = int(pub_date_dict["year"])
+    except TypeError:
+        pub_year = None
+
+    epub_date = format_date(parse_date(tree, "epub"))
 
     subjects_node = tree.findall(".//article-categories//subj-group/subject")
     subjects = list()
@@ -252,9 +252,9 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
         "publisher_id": dict_article_meta["publisher_id"],
         "author_list": author_list,
         "affiliation_list": affiliation_list,
-        "publication_year": ppub_year,
-        "publication_date": ppub,
-        "epublication_date": epub,
+        "publication_year": pub_year,
+        "publication_date": pub_date,
+        "epublication_date": epub_date,
         "subjects": subjects,
         "coi_statement": coi_statement,
     }
