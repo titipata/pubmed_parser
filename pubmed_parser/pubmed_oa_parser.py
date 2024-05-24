@@ -89,15 +89,29 @@ def parse_article_meta(tree):
 
 def parse_date(tree, date_type):
     """Parse publication dates based on the provided date type."""
-    def get_text_or_default(xpath, default):
-        node = tree.find(xpath)
-        return node.text if node is not None else default
-    
-    pub_date_path = f".//pub-date[@pub-type='{date_type}']"
-    pub_year = get_text_or_default(f"{pub_date_path}/year", "")
-    pub_month = get_text_or_default(f"{pub_date_path}/month", "01")
-    pub_day = get_text_or_default(f"{pub_date_path}/day", "01")
-    return {'year': pub_year, 'month': pub_month, 'day': pub_day}
+    def get_text(node):
+        return node.text if node is not None else None
+
+    pub_date_path = f".//pub-date[@pub-type=\"{date_type}\"]"
+    return {part: get_text(tree.find(f"{pub_date_path}/{part}")) for part in ["year", "month", "day"]}
+
+
+def format_date(date_dict):
+    """Format date dictionary to a string in the format day-month-year."""
+    day = date_dict.get("day") or "01"
+    month = date_dict.get("month") or "01"
+    year = date_dict.get("year") or ""
+
+    if year:
+        return f"{day}-{month}-{year}"
+    else:
+        return f"{day}-{month}"
+
+
+def get_year_as_int(date_dict):
+    """Get the year as an integer from the date dictionary."""
+    year = date_dict.get("year")
+    return int(year) if year is not None else None
 
 
 def parse_coi_statements(tree):
@@ -174,10 +188,12 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
         journal = ""
 
     dict_article_meta = parse_article_meta(tree)
-    
+
     # Parse epub and ppub
-    ppub = parse_date(tree, 'ppub')
-    epub = parse_date(tree, 'epub')
+    ppub_date_dict = parse_date(tree, "ppub")
+    ppub = format_date(ppub_date_dict)
+    ppub_year = get_year_as_int(ppub_date_dict)
+    epub = format_date(parse_date(tree, "epub"))
 
     subjects_node = tree.findall(".//article-categories//subj-group/subject")
     subjects = list()
@@ -236,9 +252,9 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
         "publisher_id": dict_article_meta["publisher_id"],
         "author_list": author_list,
         "affiliation_list": affiliation_list,
-        "publication_year": ppub['year'],
-        "publication_date": f"{ppub['day']}-{ppub['month']}-{ppub['year']}",
-        "epublication_date": f"{epub['day']}-{epub['month']}-{epub['year']}",
+        "publication_year": ppub_year,
+        "publication_date": ppub,
+        "epublication_date": epub,
         "subjects": subjects,
         "coi_statement": coi_statement,
     }
