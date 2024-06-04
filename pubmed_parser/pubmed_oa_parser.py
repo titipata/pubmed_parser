@@ -156,7 +156,7 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
 
     journal_node = tree.findall(".//journal-title")
     if journal_node is not None:
-        journal = " ".join([j.text for j in journal_node])
+        journal = " ".join(["".join(node.itertext()) for node in journal_node])
     else:
         journal = ""
 
