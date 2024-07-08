@@ -39,6 +39,7 @@ def test_parse_pubmed_xml():
     assert parsed_xml.get("doi") == "10.1371/journal.pone.0046493"
     assert parsed_xml.get("subjects") == "Research Article; Biology; Biochemistry; Enzymes; Enzyme Metabolism; Lipids; Fatty Acids; Glycerides; Lipid Metabolism; Neutral Lipids; Metabolism; Lipid Metabolism; Proteins; Globular Proteins; Protein Classes; Recombinant Proteins; Biotechnology; Microbiology; Bacterial Pathogens; Bacteriology; Emerging Infectious Diseases; Host-Pathogen Interaction; Microbial Growth and Development; Microbial Metabolism; Microbial Pathogens; Microbial Physiology; Proteomics; Sequence Analysis; Spectrometric Identification of Proteins"  # noqa
     assert "Competing Interests: " in parsed_xml.get("coi_statement")
+    assert parsed_xml.get("journal") == "PLoS ONE"
     assert parsed_xml.get('publication_year') == 2012
     assert parsed_xml.get('publication_date') == '01-01-2012'
     assert parsed_xml.get('epublication_date') == '28-9-2012'
@@ -65,6 +66,18 @@ def test_parse_pubmed_references():
     assert isinstance(references, list)
     assert isinstance(references[0], dict)
     assert len(references) == 58, "Expected references to have length of 29"
+
+    references_9539395 = pp.parse_pubmed_references(pubmed_xml_9539395)
+    assert references_9539395[0].get('pmid') == '36094679'
+
+
+def test_parse_pubmed_table():
+    """
+    Test parsing table from PubMed XML file
+    """
+    table_9539395 = pp.parse_pubmed_table(pubmed_xml_9539395)
+    expected_cols = ['Gene', 'Uninfected and untreated', 'Day 7 postinoculation', 'PBS', 'sACE22.v2.4-IgG1']
+    assert table_9539395[0].get('table_columns') == expected_cols
 
 
 def test_parse_pubmed_caption():
