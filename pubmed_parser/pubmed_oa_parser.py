@@ -93,14 +93,20 @@ def parse_date(tree, date_type):
         return node.text if node is not None else None
 
     pub_date_path = f".//pub-date[@pub-type=\"{date_type}\"]"
-    return {part: get_text(tree.find(f"{pub_date_path}/{part}")) for part in ["year", "month", "day"]}
+    date_dict = {}
+    for part in ["year", "month", "day"]:
+        text = get_text(tree.find(f"{pub_date_path}/{part}"))
+        if text is not None:
+            date_dict[part] = text
+
+    return date_dict
 
 
 def format_date(date_dict):
     """Format date dictionary to a string in the format day-month-year."""
-    day = date_dict.get("day") or "01"
-    month = date_dict.get("month") or "01"
-    year = date_dict.get("year") or ""
+    day = date_dict.get("day", "01")
+    month = date_dict.get("month", "01")
+    year = date_dict.get("year", "")
 
     if year:
         return f"{day}-{month}-{year}"
@@ -184,7 +190,7 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
     dict_article_meta = parse_article_meta(tree)
 
     pub_date_dict = parse_date(tree, "ppub")
-    if not pub_date_dict.get('year'):
+    if "year" not in pub_date_dict:
         pub_date_dict = parse_date(tree, "collection")
     pub_date = format_date(pub_date_dict)
 
