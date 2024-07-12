@@ -165,6 +165,33 @@
     <span class="k">return</span> <span class="n">dict_article_meta</span>
 
 
+<span class="k">def</span> <span class="nf">parse_date</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">date_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse publication dates based on the provided date type.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="n">pub_date_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;.//pub-date[@pub-type=</span><span class="se">\&quot;</span><span class="si">{</span><span class="n">date_type</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">]&quot;</span>
+    <span class="n">date_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">,</span> <span class="s2">&quot;day&quot;</span><span class="p">]:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">get_text</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pub_date_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">part</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">date_dict</span><span class="p">[</span><span class="n">part</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span>
+
+    <span class="k">return</span> <span class="n">date_dict</span>
+
+
+<span class="k">def</span> <span class="nf">format_date</span><span class="p">(</span><span class="n">date_dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format date dictionary to a string in the format day-month-year.&quot;&quot;&quot;</span>
+    <span class="n">day</span> <span class="o">=</span> <span class="n">date_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="s2">&quot;01&quot;</span><span class="p">)</span>
+    <span class="n">month</span> <span class="o">=</span> <span class="n">date_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;month&quot;</span><span class="p">,</span> <span class="s2">&quot;01&quot;</span><span class="p">)</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="n">date_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">year</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">day</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">month</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">day</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">month</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
 <span class="k">def</span> <span class="nf">parse_coi_statements</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse conflict of interest statements from given article tree</span>
@@ -206,7 +233,7 @@
 <span class="sd">        A dictionary contains a following keys from a parsed XML path</span>
 <span class="sd">        &#39;full_title&#39;, &#39;abstract&#39;, &#39;journal&#39;, &#39;pmid&#39;, &#39;pmc&#39;, &#39;doi&#39;,</span>
 <span class="sd">        &#39;publisher_id&#39;, &#39;author_list&#39;, &#39;affiliation_list&#39;, &#39;publication_year&#39;,</span>
-<span class="sd">        &#39;publication_date&#39;, &#39;subjects&#39;</span>
+<span class="sd">        &#39;publication_date&#39;, &#39;epublication_date&#39; ,&#39;subjects&#39;</span>
 <span class="sd">    }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tree</span> <span class="o">=</span> <span class="n">read_xml</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">nxml</span><span class="p">)</span>
@@ -239,12 +266,18 @@
         <span class="n">journal</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
     <span class="n">dict_article_meta</span> <span class="o">=</span> <span class="n">parse_article_meta</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
-    <span class="n">pub_year_node</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.//pub-date/year&quot;</span><span class="p">)</span>
-    <span class="n">pub_year</span> <span class="o">=</span> <span class="n">pub_year_node</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">pub_year_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">pub_month_node</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.//pub-date/month&quot;</span><span class="p">)</span>
-    <span class="n">pub_month</span> <span class="o">=</span> <span class="n">pub_month_node</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">pub_month_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;01&quot;</span>
-    <span class="n">pub_day_node</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.//pub-date/day&quot;</span><span class="p">)</span>
-    <span class="n">pub_day</span> <span class="o">=</span> <span class="n">pub_day_node</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">pub_day_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;01&quot;</span>
+
+    <span class="n">pub_date_dict</span> <span class="o">=</span> <span class="n">parse_date</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="s2">&quot;ppub&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;year&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pub_date_dict</span><span class="p">:</span>
+        <span class="n">pub_date_dict</span> <span class="o">=</span> <span class="n">parse_date</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="s2">&quot;collection&quot;</span><span class="p">)</span>
+    <span class="n">pub_date</span> <span class="o">=</span> <span class="n">format_date</span><span class="p">(</span><span class="n">pub_date_dict</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">pub_year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pub_date_dict</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">pub_year</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">epub_date</span> <span class="o">=</span> <span class="n">format_date</span><span class="p">(</span><span class="n">parse_date</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="s2">&quot;epub&quot;</span><span class="p">))</span>
 
     <span class="n">subjects_node</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//article-categories//subj-group/subject&quot;</span><span class="p">)</span>
     <span class="n">subjects</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
@@ -304,7 +337,8 @@
         <span class="s2">&quot;author_list&quot;</span><span class="p">:</span> <span class="n">author_list</span><span class="p">,</span>
         <span class="s2">&quot;affiliation_list&quot;</span><span class="p">:</span> <span class="n">affiliation_list</span><span class="p">,</span>
         <span class="s2">&quot;publication_year&quot;</span><span class="p">:</span> <span class="n">pub_year</span><span class="p">,</span>
-        <span class="s2">&quot;publication_date&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">-</span><span class="si">{}</span><span class="s2">-</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pub_day</span><span class="p">,</span> <span class="n">pub_month</span><span class="p">,</span> <span class="n">pub_year</span><span class="p">),</span>
+        <span class="s2">&quot;publication_date&quot;</span><span class="p">:</span> <span class="n">pub_date</span><span class="p">,</span>
+        <span class="s2">&quot;epublication_date&quot;</span><span class="p">:</span> <span class="n">epub_date</span><span class="p">,</span>
         <span class="s2">&quot;subjects&quot;</span><span class="p">:</span> <span class="n">subjects</span><span class="p">,</span>
         <span class="s2">&quot;coi_statement&quot;</span><span class="p">:</span> <span class="n">coi_statement</span><span class="p">,</span>
     <span class="p">}</span>
