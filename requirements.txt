@@ -1,7 +1,0 @@
-lxml
-unidecode
-requests
-six
-numpy
-pytest
-pytest-cov
