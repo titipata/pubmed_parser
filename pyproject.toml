@@ -50,6 +50,17 @@ dependencies = [
 ]
 dynamic = ["version"]
 
+[project.optional-dependencies]
+tests = [
+    "pytest",
+    "pytest-cov"
+]
+docs = [
+    "sphinx",
+    "sphinx_rtd_theme",
+    "sphinx-gallery"
+]
+
 [project.urls]
 homepage = "https://github.com/titipata/pubmed_parser"
 download = "https://github.com/titipata/pubmed_parser.git"

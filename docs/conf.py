@@ -15,9 +15,11 @@
 # sys.path.insert(0, os.path.abspath('.'))
 import sys
 import os
+sys.path.insert(0, os.path.abspath('..'))
+
+import pubmed_parser
 import sphinx
 import sphinx_gallery
-import pubmed_parser
 
 # -- Project information -----------------------------------------------------
 

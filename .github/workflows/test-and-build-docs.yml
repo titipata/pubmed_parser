@@ -7,6 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
+
   test:
     runs-on: ubuntu-latest
     steps:
@@ -18,14 +19,14 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: 3.8
-    - name: Install dependencies
+        python-version: 3.11
+    - name: Install package and dependencies
       run: |
-        python --version
         pip install -U pip
-        pip install -r requirements.txt  # Install project dependencies
-        pip install pytest pytest-cov   # Install pytest and coverage plugin
-        python setup.py install
+        pip install .[tests]
+    - name: Verify pubmed_parser installation
+      run: |
+        python -c "import pubmed_parser; print(f'pubmed_parser version: {pubmed_parser.__version__}')"
     - name: Run tests
       run: pytest --cov=pubmed_parser tests/ --verbose
     - name: Upload coverage to Codecov
@@ -42,14 +43,14 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: 3.8
-    - name: Install dependencies
+        python-version: 3.11
+    - name: Install package and dependencies
       run: |
-        pip install -r docs/doc_requirements.txt
-    - name: Install project dependencies
+        pip install -U pip
+        pip install -e .[docs]
+    - name: Verify pubmed_parser installation
       run: |
-        pip install -r requirements.txt  # Install project dependencies
-        python setup.py install
+        python -c "import pubmed_parser; print(f'pubmed_parser version: {pubmed_parser.__version__}')"
     - name: Build documentation
       run: |
         cd docs
