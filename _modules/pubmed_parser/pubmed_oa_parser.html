@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,9 +14,9 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=4e78f113"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/documentation_options.js?v=6c02275b"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -209,7 +209,9 @@
             <span class="k">yield</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">itertext</span><span class="p">())</span>
 
 
-<div class="viewcode-block" id="parse_pubmed_xml"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_xml">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_xml</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">include_path</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nxml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="parse_pubmed_xml">
+<a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_xml">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_pubmed_xml</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">include_path</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nxml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given an input XML path to PubMed XML file, extract information and metadata</span>
 <span class="sd">    from a given XML file and return parsed XML file in dictionary format.</span>
@@ -347,6 +349,7 @@
     <span class="k">return</span> <span class="n">dict_out</span></div>
 
 
+
 <span class="k">def</span> <span class="nf">get_reference</span><span class="p">(</span><span class="n">reference</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get reference from one of the three possible positions.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mixed-citation&quot;</span><span class="p">,</span> <span class="s2">&quot;element-citation&quot;</span><span class="p">,</span> <span class="s2">&quot;citation&quot;</span><span class="p">]:</span>
@@ -356,7 +359,9 @@
     <span class="k">return</span> <span class="kc">None</span>
 
 
-<div class="viewcode-block" id="parse_pubmed_references"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_references">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_references</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="parse_pubmed_references">
+<a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_references">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_pubmed_references</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given path to xml file, parse references articles</span>
 <span class="sd">    to list of dictionary</span>
@@ -445,7 +450,10 @@
     <span class="k">return</span> <span class="n">dict_refs</span></div>
 
 
-<div class="viewcode-block" id="parse_pubmed_paragraph"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_paragraph">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_paragraph</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">all_paragraph</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="parse_pubmed_paragraph">
+<a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_paragraph">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_pubmed_paragraph</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">all_paragraph</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Give path to a given PubMed OA file, parse and return</span>
 <span class="sd">    a dictionary of all paragraphs, section that it belongs to,</span>
@@ -505,7 +513,10 @@
     <span class="k">return</span> <span class="n">dict_pars</span></div>
 
 
-<div class="viewcode-block" id="parse_pubmed_caption"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_caption">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_caption</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+
+<div class="viewcode-block" id="parse_pubmed_caption">
+<a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_caption">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_pubmed_caption</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given single xml path, extract figure caption and</span>
 <span class="sd">    reference id back to that figure</span>
@@ -581,6 +592,7 @@
     <span class="k">return</span> <span class="n">dict_captions</span></div>
 
 
+
 <span class="k">def</span> <span class="nf">table_to_df</span><span class="p">(</span><span class="n">table_text</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This is a function to transform an input table XML text to list of row values and columns.</span>
@@ -620,7 +632,9 @@
         <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
 
-<div class="viewcode-block" id="parse_pubmed_table"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_table">[docs]</a><span class="k">def</span> <span class="nf">parse_pubmed_table</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">return_xml</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="parse_pubmed_table">
+<a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_table">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_pubmed_table</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">return_xml</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse table from given Pubmed Open-Access XML file</span>
 
@@ -692,6 +706,7 @@
         <span class="k">return</span> <span class="n">table_dicts</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span></div>
+
 </pre></div>
 
            </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,9 +14,9 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=4e78f113"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="../../_static/documentation_options.js?v=6c02275b"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -243,7 +243,9 @@
     <span class="k">return</span> <span class="n">dict_out</span>
 
 
-<div class="viewcode-block" id="parse_xml_web"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_xml_web">[docs]</a><span class="k">def</span> <span class="nf">parse_xml_web</span><span class="p">(</span><span class="n">pmid</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_xml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="parse_xml_web">
+<a class="viewcode-back" href="../../api.html#pubmed_parser.parse_xml_web">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_xml_web</span><span class="p">(</span><span class="n">pmid</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_xml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Give an input PMID, load and parse XML using PubMed eutils</span>
 
@@ -286,6 +288,7 @@
     <span class="k">if</span> <span class="n">save_xml</span><span class="p">:</span>
         <span class="n">dict_out</span><span class="p">[</span><span class="s2">&quot;xml&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">dict_out</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">extract_citations</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
@@ -384,7 +387,9 @@
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;pmc&quot;</span><span class="p">:</span> <span class="n">pmc</span><span class="p">,</span> <span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">pmid</span><span class="p">,</span> <span class="s2">&quot;doi&quot;</span><span class="p">:</span> <span class="n">doi</span><span class="p">}</span>
 
 
-<div class="viewcode-block" id="parse_citation_web"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_citation_web">[docs]</a><span class="k">def</span> <span class="nf">parse_citation_web</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="parse_citation_web">
+<a class="viewcode-back" href="../../api.html#pubmed_parser.parse_citation_web">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_citation_web</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse citations from given document id</span>
 
@@ -451,7 +456,10 @@
     <span class="k">return</span> <span class="n">dict_out</span></div>
 
 
-<div class="viewcode-block" id="parse_outgoing_citation_web"><a class="viewcode-back" href="../../api.html#pubmed_parser.parse_outgoing_citation_web">[docs]</a><span class="k">def</span> <span class="nf">parse_outgoing_citation_web</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="parse_outgoing_citation_web">
+<a class="viewcode-back" href="../../api.html#pubmed_parser.parse_outgoing_citation_web">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_outgoing_citation_web</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A function to load citations from NCBI eutils API for a given document</span>
 
@@ -507,6 +515,7 @@
         <span class="s2">&quot;pmid_cited&quot;</span><span class="p">:</span> <span class="n">pmid_cited_all</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">dict_out</span></div>
+
 </pre></div>
 
            </div>
