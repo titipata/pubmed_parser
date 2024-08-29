@@ -3,7 +3,15 @@ Pubmed Parser: A Python Parser for PubMed Open-Access XML Subset and MEDLINE XML
 
 Author: Titipat Achakulvisut, Daniel E. Acuna
 """
-__version__ = "0.4.0"
+import sys
+
+if sys.version_info >= (3, 8):
+    from importlib.metadata import version
+else:
+    from importlib_metadata import version
+
+__version__ = version("pubmed_parser")
+
 from .pubmed_oa_parser import (
     list_xml_path,
     parse_pubmed_xml,
