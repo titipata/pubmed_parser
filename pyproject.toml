@@ -71,6 +71,6 @@ bug_tracker = "https://github.com/titipata/pubmed_parser/issues"
 "pubmed_parser.data" = ["*.xml.gz", "*.nxml", "*.txt"]
 
 [tool.setuptools.packages.find]
-where = ["pubmed_parser"]
+where = ["."]
 
 [tool.setuptools_scm]
