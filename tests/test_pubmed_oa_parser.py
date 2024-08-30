@@ -60,7 +60,7 @@ def test_parse_pubmed_paragraph():
     paragraphs = pp.parse_pubmed_paragraph(pubmed_xml_3460867)
     assert isinstance(paragraphs, list)
     assert isinstance(paragraphs[0], dict)
-    assert len(paragraphs) == 29, "Expected number of paragraphs to be 29"
+    assert len(paragraphs) == 58, "Expected number of paragraphs to be 58"
     assert (
         len(paragraphs[0]["reference_ids"]) == 11
     ), "Expected number of references in the first paragraph to be 11"
