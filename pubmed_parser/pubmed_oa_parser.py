@@ -367,7 +367,7 @@ def parse_pubmed_references(path):
     return dict_refs
 
 
-def parse_pubmed_paragraph(path, all_paragraph=False):
+def parse_pubmed_paragraph(path):
     """
     Give path to a given PubMed OA file, parse and return
     a dictionary of all paragraphs, section that it belongs to,
@@ -377,13 +377,6 @@ def parse_pubmed_paragraph(path, all_paragraph=False):
     ----------
     path: str
         A string to an XML path.
-    all_paragraph: bool
-        By default, this function will only append a paragraph if there is at least
-        one reference made in a paragraph (to aviod noisy parsed text).
-        A boolean indicating if you want to include paragraph with no references made or not
-        if True, include all paragraphs
-        if False, include only paragraphs that have references
-        default: False
 
     Return
     ------
@@ -421,8 +414,8 @@ def parse_pubmed_paragraph(path, all_paragraph=False):
             "section": section,
             "text": paragraph_text,
         }
-        if len(ref_ids) >= 1 or all_paragraph:
-            dict_pars.append(dict_par)
+
+        dict_pars.append(dict_par)
 
     return dict_pars
 
