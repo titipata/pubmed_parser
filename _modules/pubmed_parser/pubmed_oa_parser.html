@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pubmed_parser.pubmed_oa_parser &mdash; Pubmed Parser 0.6.dev3+ga6e846d documentation</title>
+  <title>pubmed_parser.pubmed_oa_parser &mdash; Pubmed Parser 0.5.2.dev1+ga7e88c8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=cd3e8eb9"></script>
+        <script src="../../_static/documentation_options.js?v=25fc7194"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             Pubmed Parser
           </a>
               <div class="version">
-                0.6.dev3+ga6e846d
+                0.5.2.dev1+ga7e88c8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -453,7 +453,7 @@
 
 <div class="viewcode-block" id="parse_pubmed_paragraph">
 <a class="viewcode-back" href="../../api.html#pubmed_parser.parse_pubmed_paragraph">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_pubmed_paragraph</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">all_paragraph</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">parse_pubmed_paragraph</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Give path to a given PubMed OA file, parse and return</span>
 <span class="sd">    a dictionary of all paragraphs, section that it belongs to,</span>
@@ -463,13 +463,6 @@
 <span class="sd">    ----------</span>
 <span class="sd">    path: str</span>
 <span class="sd">        A string to an XML path.</span>
-<span class="sd">    all_paragraph: bool</span>
-<span class="sd">        By default, this function will only append a paragraph if there is at least</span>
-<span class="sd">        one reference made in a paragraph (to aviod noisy parsed text).</span>
-<span class="sd">        A boolean indicating if you want to include paragraph with no references made or not</span>
-<span class="sd">        if True, include all paragraphs</span>
-<span class="sd">        if False, include only paragraphs that have references</span>
-<span class="sd">        default: False</span>
 
 <span class="sd">    Return</span>
 <span class="sd">    ------</span>
@@ -507,8 +500,8 @@
             <span class="s2">&quot;section&quot;</span><span class="p">:</span> <span class="n">section</span><span class="p">,</span>
             <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">paragraph_text</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_ids</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">all_paragraph</span><span class="p">:</span>
-            <span class="n">dict_pars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dict_par</span><span class="p">)</span>
+
+        <span class="n">dict_pars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dict_par</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">dict_pars</span></div>
 
