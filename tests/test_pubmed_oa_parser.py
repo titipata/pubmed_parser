@@ -20,10 +20,12 @@ def fetch_pubmed_xml(db_dir):
 pubmed_dir = {"3460867": "00/00/PMC3460867",
               "28298962": "8e/71/PMC5334499",
               "9539395": "51/b3/PMC9539395",
-              "1280406": "5f/92/PMC1280406"
+              "1280406": "5f/92/PMC1280406",
+              "30443433": "6f/c7/PMC6218202"
               }
 pubmed_xml_3460867 = fetch_pubmed_xml(pubmed_dir['3460867'])
 pubmed_xml_1280406 = fetch_pubmed_xml(pubmed_dir['1280406'])
+pubmed_xml_30443433 = fetch_pubmed_xml(pubmed_dir['30443433'])
 
 
 pubmed_xml_9539395 = fetch_pubmed_xml(pubmed_dir['9539395'])
@@ -51,6 +53,10 @@ def test_parse_pubmed_xml():
     assert parsed_1280406.get('publication_year') == 2005
     assert parsed_1280406.get('publication_date') == "01-9-2005"
     assert parsed_1280406.get('epublication_date') == "31-5-2005"
+
+    parsed_30443433 = pp.parse_pubmed_xml(pubmed_xml_30443433)
+    assert parsed_30443433.get('publication_year') is None
+    assert parsed_30443433.get('publication_date') == "01-01"
 
 
 def test_parse_pubmed_paragraph():
