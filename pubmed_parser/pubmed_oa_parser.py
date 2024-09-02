@@ -195,7 +195,7 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
     pub_date = format_date(pub_date_dict)
 
     try:
-        pub_year = int(pub_date_dict["year"])
+        pub_year = int(pub_date_dict.get("year"))
     except TypeError:
         pub_year = None
 
