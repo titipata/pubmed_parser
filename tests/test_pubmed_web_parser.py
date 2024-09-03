@@ -19,6 +19,8 @@ def test_pubmed_web_parser_all_fields_content():
             "year": "2024",
             "language": "ger",
             "pmid": "38218666",
+            "version_id": None,
+            "version_date": None,
         },
         23340801: {
             "title": "E. coli as an all-rounder: the thin line between commensalism and pathogenicity.",
@@ -32,6 +34,8 @@ def test_pubmed_web_parser_all_fields_content():
             "year": "2013",
             "language": "eng",
             "pmid": "23340801",
+            "version_id": None,
+            "version_date": None,
         },
     }
     
@@ -54,6 +58,8 @@ def test_pubmed_web_parser_all_fields_existence():
         "pii",
         "year",
         "language",
+        "version_id",
+        "version_date",
         "pmid",
     ]
     pubmed_dict = pp.parse_xml_web(random_id, save_xml=False)
@@ -80,3 +86,14 @@ def test_pii():
     """Test the correct parsing of the pii."""
     pubmed_dict = pp.parse_xml_web("32145645", save_xml=False)
     assert pubmed_dict['pii'] == "S0223-5234(20)30153-7"
+
+
+def test_version():
+    """Test the correct parsing of the version."""
+    xml_20029612 = pp.parse_xml_web('20029612')
+    assert xml_20029612['version_id'] == '4'
+    assert xml_20029612['version_date'] == '2011/01/03'
+
+    xml_21113338 = pp.parse_xml_web('21113338')
+    assert xml_21113338['version_id'] == '3'
+    assert xml_21113338['version_date'] is None

@@ -149,6 +149,13 @@ def parse_pubmed_web_tree(tree):
         language = language[0].text
     except IndexError:
         language = None
+    
+    medline_citation = tree.xpath('//medlinecitation')
+    try:
+        version_id = medline_citation[0].attrib.get('versionid')
+        version_date = medline_citation[0].attrib.get('versiondate')
+    except IndexError:
+        version_id, version_date = None, None
 
     dict_out = {
         "title": title,
@@ -160,7 +167,9 @@ def parse_pubmed_web_tree(tree):
         "doi": doi,
         "pii": pii,
         "year": year,
-        "language": language
+        "language": language,
+        "version_id": version_id,
+        "version_date": version_date,
     }
     return dict_out
 
