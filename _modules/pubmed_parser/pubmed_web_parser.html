@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pubmed_parser.pubmed_web_parser &mdash; Pubmed Parser 0.5.2.dev2+g245dd09 documentation</title>
+  <title>pubmed_parser.pubmed_web_parser &mdash; Pubmed Parser 0.5.2.dev3+g3ae0bb6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=a09b40f1"></script>
+        <script src="../../_static/documentation_options.js?v=b64dc323"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             Pubmed Parser
           </a>
               <div class="version">
-                0.5.2.dev2+g245dd09
+                0.5.2.dev3+g3ae0bb6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -138,7 +138,7 @@
 <span class="sd">        &#39;title&#39;, &#39;abstract&#39;, &#39;journal&#39;, &#39;affliation&#39; (string of affiliation with &#39;;&#39; separated),</span>
 <span class="sd">        &#39;authors&#39; (string with &#39;;&#39; separated),</span>
 <span class="sd">        &#39;keywords&#39; (keywords and MeSH terms from an XML -- if MeSH term it will be &#39;MeSH descriptor&#39;:&#39;MeSH name&#39;)</span>
-<span class="sd">        &#39;doi&#39;, &#39;year&#39; </span>
+<span class="sd">        &#39;doi&#39;, &#39;pii&#39;, &#39;year&#39;, &#39;language&#39;, &#39;version_id&#39;, &#39;version_date&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//articletitle&quot;</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">title</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">title</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s2">&quot;//articletitle&quot;</span><span class="p">)])</span>
@@ -227,6 +227,13 @@
         <span class="n">language</span> <span class="o">=</span> <span class="n">language</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
     <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
         <span class="n">language</span> <span class="o">=</span> <span class="kc">None</span>
+    
+    <span class="n">medline_citation</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//medlinecitation&#39;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">version_id</span> <span class="o">=</span> <span class="n">medline_citation</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;versionid&#39;</span><span class="p">)</span>
+        <span class="n">version_date</span> <span class="o">=</span> <span class="n">medline_citation</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;versiondate&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="n">version_id</span><span class="p">,</span> <span class="n">version_date</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
     <span class="n">dict_out</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
@@ -238,7 +245,9 @@
         <span class="s2">&quot;doi&quot;</span><span class="p">:</span> <span class="n">doi</span><span class="p">,</span>
         <span class="s2">&quot;pii&quot;</span><span class="p">:</span> <span class="n">pii</span><span class="p">,</span>
         <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="n">year</span><span class="p">,</span>
-        <span class="s2">&quot;language&quot;</span><span class="p">:</span> <span class="n">language</span>
+        <span class="s2">&quot;language&quot;</span><span class="p">:</span> <span class="n">language</span><span class="p">,</span>
+        <span class="s2">&quot;version_id&quot;</span><span class="p">:</span> <span class="n">version_id</span><span class="p">,</span>
+        <span class="s2">&quot;version_date&quot;</span><span class="p">:</span> <span class="n">version_date</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">dict_out</span>
 
@@ -279,6 +288,8 @@
 <span class="sd">        &#39;keywords&#39;: &#39;D000818:Animals;D005075:Biological Evolution;...&#39;,</span>
 <span class="sd">        &#39;doi&#39;: &#39;10.1126/science.1060852&#39;,</span>
 <span class="sd">        &#39;year&#39;: &#39;2001&#39;,</span>
+<span class="sd">        &#39;version_id&#39;: None,</span>
+<span class="sd">        &#39;version_date&#39;: None,</span>
 <span class="sd">        &#39;pmid&#39;: &#39;11360989&#39;</span>
 <span class="sd">    }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
