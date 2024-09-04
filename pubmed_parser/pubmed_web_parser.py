@@ -60,7 +60,7 @@ def parse_pubmed_web_tree(tree):
         'title', 'abstract', 'journal', 'affliation' (string of affiliation with ';' separated),
         'authors' (string with ';' separated),
         'keywords' (keywords and MeSH terms from an XML -- if MeSH term it will be 'MeSH descriptor':'MeSH name')
-        'doi', 'year' 
+        'doi', 'pii', 'year', 'language', 'version_id', 'version_date'
     """
     if len(tree.xpath("//articletitle")) != 0:
         title = " ".join([title.text for title in tree.xpath("//articletitle")])
@@ -208,6 +208,8 @@ def parse_xml_web(pmid, sleep=None, save_xml=False):
         'keywords': 'D000818:Animals;D005075:Biological Evolution;...',
         'doi': '10.1126/science.1060852',
         'year': '2001',
+        'version_id': None,
+        'version_date': None,
         'pmid': '11360989'
     }
     """
