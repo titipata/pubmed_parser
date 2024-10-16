@@ -92,10 +92,15 @@ def parse_date(tree, date_type):
     def get_text(node):
         return node.text if node is not None else None
 
-    pub_date_path = f".//pub-date[@pub-type=\"{date_type}\"]"
+    pub_date_path = f".//pub-date[@pub-type='{date_type}' or @date-type='{date_type}']"
+    date_node = tree.xpath(pub_date_path)
+    
+    if not date_node:
+        return {}
+
     date_dict = {}
     for part in ["year", "month", "day"]:
-        text = get_text(tree.find(f"{pub_date_path}/{part}"))
+        text = get_text(date_node[0].find(part))
         if text is not None:
             date_dict[part] = text
 
