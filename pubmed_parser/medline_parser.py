@@ -7,7 +7,7 @@ import gzip
 from itertools import chain
 from lxml import etree
 from collections import defaultdict
-from pubmed_parser.utils import read_xml, stringify_children, stringify_descendants, month_or_day_formater
+from pubmed_parser.utils import read_xml, stringify_descendants, month_or_day_formater
 
 __all__ = ["parse_medline_xml",  "parse_grant_id", "split_mesh"]
 
@@ -622,15 +622,15 @@ def parse_article_info(
                 if section != "UNASSIGNED":
                     abstract_list.append("\n")
                     abstract_list.append(abstract.attrib.get(category, ""))
-                section_text = stringify_children(abstract).strip()
+                section_text = stringify_descendants(abstract).strip()
                 abstract_list.append(section_text)
             abstract = "\n".join(abstract_list).strip()
         else:
             abstract = (
-                stringify_children(article.find("Abstract/AbstractText")).strip() or ""
+                stringify_descendants(article.find("Abstract/AbstractText")).strip() or ""
             )
     elif article.find("Abstract") is not None:
-        abstract = stringify_children(article.find("Abstract")).strip() or ""
+        abstract = stringify_descendants(article.find("Abstract")).strip() or ""
     else:
         abstract = ""
 
