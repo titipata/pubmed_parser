@@ -23,11 +23,13 @@ parsed_medline = pp.parse_medline_xml(fetch_compressed_medline_xml(['36400559', 
 parsed_medline = list(parsed_medline)
 article_36400559 = parsed_medline[0]
 article_28786991 = parsed_medline[1]
+article_39029957 = list(pp.parse_medline_xml(fetch_compressed_medline_xml('39029957')))[0]
 
 
 def test_abstract():
     """This is a test for the abstract field."""
     assert article_36400559['abstract'] == 'Back pain is a common condition affecting millions of individuals each year. A biopsychosocial approach to back pain provides the best clinical framework. A detailed history and physical examination with a thorough workup are required to exclude emergent or nonoperative etiologies of back pain. The treatment of back pain first uses conventional therapies including lifestyle modifications, nonsteroidal anti-inflammatory drugs, physical therapy, and cognitive behavioral therapy. If these options have been exhausted and pain persists for greater than 6\xa0weeks, imaging and a specialist referral may be indicated.'
+    assert article_39029957['abstract'] == 'Advanced-stage endometrial cancer patients typically receive a combination of platinum and paclitaxel chemotherapy. However, limited treatment options are available for those with recurrent disease, and there is a need to identify alternative treatment options for the advanced setting. Our goal was to evaluate the pre-clinical efficacy and mechanism of action of Oklahoma Nitrone 007 (OKN-007) alone and in combination with carboplatin and paclitaxel in endometrial cancer. The effect of OKN-007 on the metabolic viability of endometrial cancer cells in both two- and three-dimensional (2D and 3D) cultures, as well as on clonogenic growth, in vitro was assessed. We also evaluated OKN-007 in vivo using an intraperitoneal xenograft model and targeted gene expression profiling to determine the molecular mechanism and gene expression programs altered by OKN-007. Our results showed that endometrial cancer cells were generally sensitive to OKN-007 in both 2D and 3D cultures. OKN-007 displayed a reduction in 3D spheroid and clonogenic growth. Subsequent targeted gene expression profiling revealed that OKN-007 significantly downregulated the immunosuppressive and immunometabolic enzyme indolamine 2,3-dioxygenase 1 (IDO1) (-11.27-fold change) and modulated upstream inflammatory pathways that regulate IDO1 expression (interferon- (IFN-), Jak-STAT, TGF-β, and NF-kB), downstream IDO1 effector pathways (mTOR and aryl hydrocarbon receptor (AhR)) and altered T-cell co-signaling pathways. OKN-007 treatment reduced IDO1, SULF2, and TGF-β protein expression in vivo, and inhibited TGF-β, NF-kB, and AhR- receptor-mediated nuclear signaling in vitro. These findings indicate that OKN-007 surmounts pro-inflammatory, immunosuppressive, and pro-tumorigenic pathways and is a promising approach for the effective treat endometrial cancer. Significance Statement Women with advanced and recurrent endometrial cancer have limited therapeutic options. OKN-007, which has minimal toxicity and is currently being evaluated in early-phase clinical trials for the treatment of cancer, is a potential new strategy for the treatment of endometrial cancer.'
 
 
 def test_affiliations():
@@ -36,6 +38,8 @@ def test_affiliations():
     assert article_36400559['affiliations'] == affiliations_36400559
     affiliations_28786991 = 'Phillip R. Lee Institute for Health Policy Studies, University of California, San Francisco, San Francisco, California, United States of America.;Phillip R. Lee Institute for Health Policy Studies, University of California, San Francisco, San Francisco, California, United States of America.;Phillip R. Lee Institute for Health Policy Studies, University of California, San Francisco, San Francisco, California, United States of America.;Phillip R. Lee Institute for Health Policy Studies, University of California, San Francisco, San Francisco, California, United States of America.;Centers for Disease Control and Prevention, Division of Tuberculosis Elimination, Atlanta, Georgia, United States of America.;Phillip R. Lee Institute for Health Policy Studies, University of California, San Francisco, San Francisco, California, United States of America.'
     assert article_28786991['affiliations'] == affiliations_28786991
+    affiliations_39029957 = 'University of Oklahoma Health Sciences Center, United States.;University of Oklahoma Health Sciences Center, United States.;University of Oklahoma Health Sciences Center, United States.;Advanced Magnetic Resonance Center, Oklahoma Medical Research Foundation, United States.;Advanced Magnetic Resonance Center, Oklahoma Medical Research Foundation, United States.;University of Oklahoma Health Sciences Center, United States.;Chemistry, University of Prince Edward Island, Canada.;Oklahoma Cancer Specialists and Research Institute, United States.;University of Oklahoma Health Sciences Center, United States Bethany-Hannafon@ouhsc.edu.'
+    assert article_39029957['affiliations'] == affiliations_39029957
 
 
 def test_authors():
@@ -44,30 +48,36 @@ def test_authors():
     assert article_36400559['authors'] == authors_36400559
     authors_28786991 = 'Malekinejad|Mohsen|M|0000-0002-5721-6764;Parriott|Andrea|A|;Viitanen|Amanda P|AP|;Horvath|Hacsi|H|;Marks|Suzanne M|SM|;Kahn|James G|JG|'
     assert article_28786991['authors'] == authors_28786991
+    authors_39029957 = 'Elayapillai|Sugantha Priya|SP|;Gandhi|Anjalika|A|;Dogra|Samrita|S|;Saunders|Debra|D|;Smith|Nataliya|N|;Hladik|Cole|C|;Towner|Rheal A|RA|;Moxley|Katherine M|KM|;Hannafon|Bethany N|BN|0000-0003-0596-9171'
+    assert article_39029957['authors'] == authors_39029957
 
 
 def test_chemical_list():
     """This is a test for the chemical_list field."""
     assert article_36400559['chemical_list'] == 'D000894:Anti-Inflammatory Agents, Non-Steroidal'
     assert article_28786991['chemical_list'] == ''
+    assert article_39029957['chemical_list'] == ''
 
 
 def test_country():
     """This is a test for the country field."""
     assert article_36400559['country'] == 'United States'
     assert article_28786991['country'] == 'United States'
+    assert article_39029957['country'] == 'United States'
 
 
 def test_delete():
     """This is a test for the delete field."""
     assert not article_36400559['delete']
     assert not article_28786991['delete']
+    assert not article_39029957['delete']
 
 
 def test_doi():
     """This is a test for the doi field."""
     assert article_36400559['doi'] == ''
     assert article_28786991['doi'] == '10.1371/journal.pone.0180707'
+    assert article_39029957['doi'] == '10.1124/jpet.124.002223'
 
 
 def test_grant_ids():
@@ -75,42 +85,49 @@ def test_grant_ids():
     assert article_36400559['grant_ids'] == []
     grant_ids_28786991 = [{'grant_id': 'U38 PS004649', 'grant_acronym': 'PS', 'country': 'United States', 'agency': 'NCHHSTP CDC HHS'}]
     assert article_28786991['grant_ids'] == grant_ids_28786991
+    assert article_39029957['grant_ids'] == []
 
 
 def test_issn_linking():
     """This is a test for the issn_linking field."""
     assert article_36400559['issn_linking'] == '0733-8619'
     assert article_28786991['issn_linking'] == '1932-6203'
+    assert article_39029957['issn_linking'] == '0022-3565'
 
 
 def test_issue():
     """This is a test for the issue field."""
     assert article_36400559['issue'] == '41(1)'
     assert article_28786991['issue'] == '12(8)'
+    assert article_39029957['issue'] == ''
 
 
 def test_journal():
     """This is a test for the journal field."""
     assert article_36400559['journal'] == 'Neurologic clinics'
     assert article_28786991['journal'] == 'PloS one'
+    assert article_39029957['journal'] == 'The Journal of pharmacology and experimental therapeutics'
 
 
 def test_keywords():
     """This is a test for the keywords field."""
     assert article_36400559['keywords'] == 'Back pain; Diagnosis; Management; Outpatient'
     assert article_28786991['keywords'] == ''
+    assert article_39029957['keywords'] == 'Drug development; cancer'
 
 
 def test_languages():
     """This is a test for the languages field."""
     assert article_36400559['languages'] == 'eng'
     assert article_28786991['languages'] == 'eng'
+    assert article_39029957['languages'] == 'eng'
 
 
 def test_medline_ta():
     """This is a test for the medline_ta field."""
     assert article_36400559['medline_ta'] == 'Neurol Clin'
     assert article_28786991['medline_ta'] == 'PLoS One'
+    assert article_39029957['medline_ta'] == 'J Pharmacol Exp Ther'
 
 
 def test_mesh_terms():
@@ -119,42 +136,49 @@ def test_mesh_terms():
     assert article_36400559['mesh_terms'] == mesh_terms_36400559
     mesh_terms_28786991 = 'D054242:Emigrants and Immigrants; D006801:Humans; D014376:Tuberculosis; D014481:United States'
     assert article_28786991['mesh_terms'] == mesh_terms_28786991
+    assert article_39029957['mesh_terms'] == ''
 
 
 def test_nlm_unique_id():
     """This is a test for the nlm_unique_id field."""
     assert article_36400559['nlm_unique_id'] == '8219232'
     assert article_28786991['nlm_unique_id'] == '101285081'
+    assert article_39029957['nlm_unique_id'] == '0376362'
 
 
 def test_other_id():
     """This is a test for the other_id field."""
     assert article_36400559['other_id'] == ''
     assert article_28786991['other_id'] == ''
+    assert article_39029957['other_id'] == ''
 
 
 def test_pages():
     """This is a test for the pages field."""
     assert article_36400559['pages'] == '61-76'
     assert article_28786991['pages'] == 'e0180707'
+    assert article_39029957['pages'] == ''
 
 
 def test_pmc():
     """This is a test for the pmc field."""
     assert article_36400559['pmc'] == ''
     assert article_28786991['pmc'] == ''
+    assert article_39029957['pmc'] == ''
 
 
 def test_pmid():
     """This is a test for the pmid field."""
     assert article_36400559['pmid'] == '36400559'
     assert article_28786991['pmid'] == '28786991'
+    assert article_39029957['pmid'] == '39029957'
 
 
 def test_pubdate():
     """This is a test for the pubdate field."""
     assert article_36400559['pubdate'] == '2023'
     assert article_28786991['pubdate'] == '2017'
+    assert article_39029957['pubdate'] == '2024'
 
 
 def test_publication_types():
@@ -163,6 +187,7 @@ def test_publication_types():
     assert article_36400559['publication_types'] == publication_types_36400559
     publication_types_28786991 = 'D016428:Journal Article; D017418:Meta-Analysis; D016454:Review; D000078182:Systematic Review'
     assert article_28786991['publication_types'] == publication_types_28786991
+    assert article_39029957['publication_types'] == 'D016428:Journal Article'
 
 
 def test_references():
@@ -170,6 +195,7 @@ def test_references():
     assert article_36400559['references'] == ''
     references_28786991 = '26536035;20142576;25734119;20972853;26180947;20697787;24669751;16333924;16357823;20014914;16826161;12484001;24922157;19622511;25810908;22825465;15623870;10667625;18763668;21653249;3088430;1528182;9114623;2786998;8808039;3789233;9358916;3706591;26423762;20853177;23907316;27780211;20577159;26371760;22157884;10881762'
     assert article_28786991['references'] == references_28786991
+    assert article_39029957['references'] == ''
 
 
 def test_title():
@@ -177,12 +203,14 @@ def test_title():
     assert article_36400559['title'] == 'Back Pain: Differential Diagnosis and Management.'
     title_28786991 = 'Yield of community-based tuberculosis targeted testing and treatment in foreign-born populations in the United States: A systematic review.'
     assert article_28786991['title'] == title_28786991
+    assert article_39029957['title'] == 'OKN-007 is an Effective Anticancer Therapeutic Agent Targeting Inflammatory and Immune Metabolism Pathways in Endometrial Cancer.'
 
 
 def test_vernacular_title():
     """This is a test for the vernacular_title field."""
     assert article_36400559['vernacular_title'] == ''
     assert article_28786991['vernacular_title'] == ''
+    assert article_39029957['vernacular_title'] == ''
 
 
 def test_parse_medline_xml():
