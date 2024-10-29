@@ -424,11 +424,14 @@ def parse_author_affiliation(medline):
                 else:
                     identifier = ""
                 if author.find("AffiliationInfo/Affiliation") is not None:
-                    affiliation = author.find("AffiliationInfo/Affiliation").text or ""
-                    affiliation = affiliation.replace(
-                        "For a full list of the authors' affiliations please see the Acknowledgements section.",
-                        "",
-                    )
+                    affiliation = list(chain(*([c.text] for c in author.findall("AffiliationInfo/Affiliation")))) or []
+                    affiliation = [
+                        c.replace(
+                            "For a full list of the authors' affiliations please see the Acknowledgements section.",
+                            "",
+                        ) for c in affiliation
+                    ]
+                    affiliation = "|".join(affiliation)
                 else:
                     affiliation = ""
                 authors.append(
