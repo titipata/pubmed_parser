@@ -44,7 +44,8 @@ def read_xml(path, nxml=False):
 
 def stringify_children(node):
     """
-    Filters and removes possible Nones in texts and tails
+    Filters and removes possible Nones in texts and tails.
+    If children are present, it will return the text and tail of the children.
     ref: http://stackoverflow.com/questions/4624062/get-all-text-inside-a-tag-in-lxml
     """
     parts = (
@@ -53,6 +54,15 @@ def stringify_children(node):
         + [node.tail]
     )
     return "".join(filter(None, parts))
+
+
+def stringify_descendants(node):
+    """
+    Filters and removes possible Nones in texts and tails.
+    If descendants are present, it will return their text.
+    ref: http://stackoverflow.com/questions/4624062/get-all-text-inside-a-tag-in-lxml
+    """
+    return "".join(node.itertext())
 
 
 def stringify_affiliation(node):

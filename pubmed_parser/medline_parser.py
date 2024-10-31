@@ -7,7 +7,7 @@ import gzip
 from itertools import chain
 from lxml import etree
 from collections import defaultdict
-from pubmed_parser.utils import read_xml, stringify_children, month_or_day_formater
+from pubmed_parser.utils import read_xml, stringify_descendants, month_or_day_formater
 
 __all__ = ["parse_medline_xml",  "parse_grant_id", "split_mesh"]
 
@@ -581,7 +581,7 @@ def parse_article_info(
     article = medline.find("Article")
 
     if article.find("ArticleTitle") is not None:
-        title = stringify_children(article.find("ArticleTitle")).strip() or ""
+        title = stringify_descendants(article.find("ArticleTitle")).strip() or ""
     else:
         title = ""
 
@@ -596,7 +596,7 @@ def parse_article_info(
         languages = ""
 
     if article.find("VernacularTitle") is not None:
-        vernacular_title = stringify_children(article.find("VernacularTitle")).strip() or ""
+        vernacular_title = stringify_descendants(article.find("VernacularTitle")).strip() or ""
     else:
         vernacular_title = ""
 
@@ -625,15 +625,15 @@ def parse_article_info(
                 if section != "UNASSIGNED":
                     abstract_list.append("\n")
                     abstract_list.append(abstract.attrib.get(category, ""))
-                section_text = stringify_children(abstract).strip()
+                section_text = stringify_descendants(abstract).strip()
                 abstract_list.append(section_text)
             abstract = "\n".join(abstract_list).strip()
         else:
             abstract = (
-                stringify_children(article.find("Abstract/AbstractText")).strip() or ""
+                stringify_descendants(article.find("Abstract/AbstractText")).strip() or ""
             )
     elif article.find("Abstract") is not None:
-        abstract = stringify_children(article.find("Abstract")).strip() or ""
+        abstract = stringify_descendants(article.find("Abstract")).strip() or ""
     else:
         abstract = ""
 
