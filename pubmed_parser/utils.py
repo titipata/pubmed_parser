@@ -1,13 +1,11 @@
 import calendar
-import collections
-try:
-    from collections.abc import Iterable
-except:
-    from collections import Iterable
-from time import strptime
-from six import string_types
-from lxml import etree
 from itertools import chain
+from time import strptime
+
+from collections.abc import Iterable
+
+from lxml import etree
+from six import string_types
 
 
 def remove_namespace(tree):

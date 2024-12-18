@@ -2,11 +2,11 @@
 Parsers for MEDLINE XML
 """
 import re
-import numpy as np
 import gzip
 from itertools import chain
+
 from lxml import etree
-from collections import defaultdict
+
 from pubmed_parser.utils import read_xml, stringify_children, month_or_day_formater
 
 

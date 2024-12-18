@@ -1,8 +1,10 @@
-import os
-import tarfile
 from io import BytesIO
+
+import tarfile
 import requests
+
 import pubmed_parser as pp
+
 
 def fetch_pubmed_xml(db_dir):
     """Fetch Pubmed OA XML package"""

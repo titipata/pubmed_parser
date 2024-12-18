@@ -2,10 +2,12 @@
 Parsers for PubMed XML
 """
 import os
-from lxml import etree
 from itertools import chain
-from .utils import read_xml, stringify_affiliation_rec, stringify_children
+
+from lxml import etree
 from unidecode import unidecode
+
+from .utils import read_xml, stringify_affiliation_rec, stringify_children
 
 
 def list_xml_path(path_dir):

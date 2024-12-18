@@ -1,5 +1,6 @@
-import pubmed_parser as pp
 import random
+
+import pubmed_parser as pp
 
 
 def test_pubmed_web_parser_all_fields_content():

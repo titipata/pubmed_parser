@@ -45,8 +45,7 @@ dependencies = [
     "lxml",
     "unidecode",
     "requests",
-    "six",
-    "numpy"
+    "six"
 ]
 dynamic = ["version"]
 
