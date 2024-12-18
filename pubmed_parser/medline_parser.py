@@ -9,8 +9,6 @@ from lxml import etree
 from collections import defaultdict
 from pubmed_parser.utils import read_xml, stringify_children, month_or_day_formater
 
-__all__ = ["parse_medline_xml",  "parse_grant_id", "split_mesh"]
-
 
 def parse_pmid(pubmed_article):
     """

@@ -7,14 +7,6 @@ from itertools import chain
 from .utils import read_xml, stringify_affiliation_rec, stringify_children
 from unidecode import unidecode
 
-__all__ = [
-    "list_xml_path",
-    "parse_pubmed_xml",
-    "parse_pubmed_paragraph",
-    "parse_pubmed_references",
-    "parse_pubmed_caption",
-]
-
 
 def list_xml_path(path_dir):
     """
