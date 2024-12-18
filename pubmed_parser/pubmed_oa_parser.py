@@ -160,8 +160,7 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
         A dictionary contains a following keys from a parsed XML path
         'full_title', 'abstract', 'journal', 'pmid', 'pmc', 'doi',
         'publisher_id', 'author_list', 'affiliation_list', 'publication_year',
-        'publication_date', 'epublication_date' ,'subjects'
-    }
+        'publication_date', 'epublication_date', 'subjects'
     """
     tree = read_xml(path, nxml)
 

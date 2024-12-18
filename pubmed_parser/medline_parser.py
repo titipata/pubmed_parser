@@ -568,6 +568,7 @@ def parse_article_info(
         if True, parse reference list as an output
     parse_subs: bool
         if True, parse mesh terms with subterms
+
     Returns
     -------
     article: dict
@@ -703,8 +704,7 @@ def parse_medline_xml(
     parse_downto_mesh_subterms=False
 ):
     """Parse XML file from Medline XML format available at
-    https://ftp.ncbi.nlm.nih.gov/pubmed/
-    
+    https://ftp.ncbi.nlm.nih.gov/pubmed/.
     
     Parameters
     ----------
@@ -734,7 +734,7 @@ def parse_medline_xml(
         default: False
     parse_downto_mesh_subterms: bool
         if True, return mesh terms concatenated with "; " and mesh subterms concatenated " / "
-                and appended with * if the subterm is major
+        and appended with * if the subterm is major
         if False, return mesh_terms concatenated with "; "
         default: False
 
