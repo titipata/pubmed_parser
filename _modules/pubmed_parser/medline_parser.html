@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pubmed_parser.medline_parser &mdash; Pubmed Parser 0.5.2.dev5+gb2d0402 documentation</title>
+  <title>pubmed_parser.medline_parser &mdash; Pubmed Parser 0.5.2.dev6+g6aa8a17 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=28fdac16"></script>
+      <script src="../../_static/documentation_options.js?v=c33b2ab7"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -644,6 +644,7 @@
 <span class="sd">        if True, parse reference list as an output</span>
 <span class="sd">    parse_subs: bool</span>
 <span class="sd">        if True, parse mesh terms with subterms</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    article: dict</span>
@@ -781,8 +782,7 @@
     <span class="n">parse_downto_mesh_subterms</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse XML file from Medline XML format available at</span>
-<span class="sd">    https://ftp.ncbi.nlm.nih.gov/pubmed/</span>
-<span class="sd">    </span>
+<span class="sd">    https://ftp.ncbi.nlm.nih.gov/pubmed/.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -812,7 +812,7 @@
 <span class="sd">        default: False</span>
 <span class="sd">    parse_downto_mesh_subterms: bool</span>
 <span class="sd">        if True, return mesh terms concatenated with &quot;; &quot; and mesh subterms concatenated &quot; / &quot;</span>
-<span class="sd">                and appended with * if the subterm is major</span>
+<span class="sd">        and appended with * if the subterm is major</span>
 <span class="sd">        if False, return mesh_terms concatenated with &quot;; &quot;</span>
 <span class="sd">        default: False</span>
 

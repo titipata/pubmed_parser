@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API Documentation &mdash; Pubmed Parser 0.5.2.dev5+gb2d0402 documentation</title>
+  <title>API Documentation &mdash; Pubmed Parser 0.5.2.dev6+g6aa8a17 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=28fdac16"></script>
+      <script src="_static/documentation_options.js?v=c33b2ab7"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -105,10 +105,10 @@ Below, we list the core APIs implemented in Pubmed Parser</p>
 <dt class="sig sig-object py" id="pubmed_parser.parse_medline_xml">
 <span class="sig-prename descclassname"><span class="pre">pubmed_parser.</span></span><span class="sig-name descname"><span class="pre">parse_medline_xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_info_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nlm_category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">author_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_downto_mesh_subterms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubmed_parser/medline_parser.html#parse_medline_xml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubmed_parser.parse_medline_xml" title="Link to this definition"></a></dt>
 <dd><p>Parse XML file from Medline XML format available at
-<a class="reference external" href="https://ftp.ncbi.nlm.nih.gov/pubmed/">https://ftp.ncbi.nlm.nih.gov/pubmed/</a></p>
+<a class="reference external" href="https://ftp.ncbi.nlm.nih.gov/pubmed/">https://ftp.ncbi.nlm.nih.gov/pubmed/</a>.</p>
 <section id="parameters">
 <h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
-<dl>
+<dl class="simple">
 <dt>path: str</dt><dd><p>The path</p>
 </dd>
 <dt>year_info_only: bool</dt><dd><p>if True, this tool will only attempt to extract year information from PubDate.
@@ -133,11 +133,9 @@ default: False</p>
 if False, return string of PMIDs concatenated with ;
 default: False</p>
 </dd>
-<dt>parse_downto_mesh_subterms: bool</dt><dd><dl class="simple">
-<dt>if True, return mesh terms concatenated with “; “ and mesh subterms concatenated “ / “</dt><dd><p>and appended with * if the subterm is major</p>
-</dd>
-</dl>
-<p>if False, return mesh_terms concatenated with “; ”
+<dt>parse_downto_mesh_subterms: bool</dt><dd><p>if True, return mesh terms concatenated with “; “ and mesh subterms concatenated “ / ”
+and appended with * if the subterm is major
+if False, return mesh_terms concatenated with “; ”
 default: False</p>
 </dd>
 </dl>
@@ -211,10 +209,9 @@ default: False</p>
 <dt>dict_out: dict</dt><dd><p>A dictionary contains a following keys from a parsed XML path
 ‘full_title’, ‘abstract’, ‘journal’, ‘pmid’, ‘pmc’, ‘doi’,
 ‘publisher_id’, ‘author_list’, ‘affiliation_list’, ‘publication_year’,
-‘publication_date’, ‘epublication_date’ ,’subjects’</p>
+‘publication_date’, ‘epublication_date’, ‘subjects’</p>
 </dd>
 </dl>
-<p>}</p>
 </section>
 </dd></dl>
 
