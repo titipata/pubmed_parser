@@ -464,7 +464,7 @@ def parse_pubmed_caption(path):
 
             fig_captions = fig.find("caption")
             if fig_captions is not None:
-                fig_captions = fig_captions.getchildren()
+                fig_captions = fig_captions.getchildren()[:1]
                 caption = " ".join([stringify_children(c) for c in fig_captions])
 
             graphic = fig.find("graphic")

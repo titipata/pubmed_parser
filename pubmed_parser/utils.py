@@ -41,16 +41,8 @@ def read_xml(path, nxml=False):
 
 
 def stringify_children(node):
-    """
-    Filters and removes possible Nones in texts and tails
-    ref: http://stackoverflow.com/questions/4624062/get-all-text-inside-a-tag-in-lxml
-    """
-    parts = (
-        [node.text]
-        + list(chain(*([c.text, c.tail] for c in node.getchildren())))
-        + [node.tail]
-    )
-    return "".join(filter(None, parts))
+    """Joins all string parts excluding empty parts."""
+    return "".join(text.strip() for text in node.itertext() if text)
 
 
 def stringify_affiliation(node):

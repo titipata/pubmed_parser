@@ -579,10 +579,10 @@ def parse_article_info(
     medline = pubmed_article.find("MedlineCitation")
     article = medline.find("Article")
 
-    if article.find("ArticleTitle") is not None:
-        title = stringify_children(article.find("ArticleTitle")).strip() or ""
-    else:
-        title = ""
+    try:
+        title = stringify_children(article.find("ArticleTitle")) or None
+    except AttributeError:
+        title = None
 
     if article.find("Journal/JournalIssue/Volume") is not None:
         volume = article.find("Journal/JournalIssue/Volume").text or ""
