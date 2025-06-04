@@ -754,15 +754,7 @@ def parse_medline_xml(
     """
     with gzip.open(path, "rb") as f:
         for event, element in etree.iterparse(f, events=("end",)):
-            # Handle <DeleteCitation> elements, indicating articles removed from PubMed.
-            if element.tag == "DeleteCitation":
-                # These elements are expected to contain one or more PMID tags.
-                for child in element.iterchildren():
-                    assert child.tag == "PMID", f"PMID tag expected. Got: {child.tag}"
-                    yield {"pmid": child.text, "delete": True}
-                element.clear()
-
-            elif element.tag == "PubmedArticle":
+            if element.tag == "PubmedArticle":
                 res = parse_article_info(
                     element,
                     year_info_only,
@@ -774,3 +766,8 @@ def parse_medline_xml(
                 res['grant_ids'] = parse_grant_id(element)
                 element.clear()
                 yield res
+            
+            elif element.tag == "DeleteCitation":
+                for pmid_elem in element.iterchildren(tag="PMID"):
+                    yield {"pmid": pmid_elem.text, "delete": True}
+                element.clear()
