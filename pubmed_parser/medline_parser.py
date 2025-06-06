@@ -740,17 +740,29 @@ def parse_medline_xml(
     ------
     An iterator of dictionary containing information about articles in NLM format.
         see `parse_article_info`). Articles that have been deleted will be
-        added with no information other than the field `delete` being `True`
+        added with no information other than the fields `delete` being `True`,
+        and `pmid`.
 
     Examples
     --------
     >>> article_iterator = pubmed_parser.parse_medline_xml('data/pubmed20n0014.xml.gz')
     >>> for article in article_iterator:
-    ...     print(article['title'])
+    ...     if article.get('delete'):
+    ...         print(f"Deleted PMID: {article['pmid']}")
+    ...     else:
+    ...         print(article['title'])
     """
     with gzip.open(path, "rb") as f:
         for event, element in etree.iterparse(f, events=("end",)):
-            if element.tag == "PubmedArticle":
+            # Handle <DeleteCitation> elements, indicating articles removed from PubMed.
+            if element.tag == "DeleteCitation":
+                # These elements are expected to contain one or more PMID tags.
+                for child in element.iterchildren():
+                    assert child.tag == "PMID", f"PMID tag expected. Got: {child.tag}"
+                    yield {"pmid": child.text, "delete": True}
+                element.clear()
+
+            elif element.tag == "PubmedArticle":
                 res = parse_article_info(
                     element,
                     year_info_only,
