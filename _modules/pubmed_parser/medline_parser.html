@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pubmed_parser.medline_parser &mdash; Pubmed Parser 0.5.2.dev11+geaa3280 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+  <title>pubmed_parser.medline_parser &mdash; Pubmed Parser 0.5.2.dev12+g1559018 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fbd7f65f"></script>
+      <script src="../../_static/documentation_options.js?v=90cf829f"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -74,16 +74,16 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Parsers for MEDLINE XML</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">gzip</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">chain</span>
 
-<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lxml</span><span class="w"> </span><span class="kn">import</span> <span class="n">etree</span>
 
-<span class="kn">from</span> <span class="nn">pubmed_parser.utils</span> <span class="kn">import</span> <span class="n">read_xml</span><span class="p">,</span> <span class="n">stringify_children</span><span class="p">,</span> <span class="n">month_or_day_formater</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pubmed_parser.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_xml</span><span class="p">,</span> <span class="n">stringify_children</span><span class="p">,</span> <span class="n">month_or_day_formater</span>
 
 
-<span class="k">def</span> <span class="nf">parse_pmid</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_pmid</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A function to parse PMID from a given Pubmed Article tree</span>
 
@@ -117,7 +117,7 @@
     <span class="k">return</span> <span class="n">pmid</span>
 
 
-<span class="k">def</span> <span class="nf">parse_doi</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_doi</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A function to parse DOI from a given Pubmed Article tree</span>
 
@@ -152,7 +152,7 @@
     <span class="k">return</span> <span class="n">doi</span>
 
 
-<span class="k">def</span> <span class="nf">parse_mesh_terms</span><span class="p">(</span><span class="n">medline</span><span class="p">,</span> <span class="n">parse_subs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_mesh_terms</span><span class="p">(</span><span class="n">medline</span><span class="p">,</span> <span class="n">parse_subs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A function to parse MESH terms from article</span>
 
@@ -184,7 +184,7 @@
     <span class="k">return</span> <span class="n">mesh_terms</span>
 
 
-<span class="k">def</span> <span class="nf">parse_mesh_terms_with_subs</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_mesh_terms_with_subs</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A function to parse MESH terms and subterms from article</span>
 
@@ -220,7 +220,7 @@
     <span class="k">return</span> <span class="n">mesh_terms</span>
 
 
-<span class="k">def</span> <span class="nf">split_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">split_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;String split a string from parse_mesh_terms_with_subs()</span>
 
 <span class="sd">    Parameters</span>
@@ -250,7 +250,7 @@
     <span class="k">return</span> <span class="n">mesh_list</span>
 
 
-<span class="k">def</span> <span class="nf">parse_publication_types</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_publication_types</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse Publication types from article</span>
 
 <span class="sd">    Parameters</span>
@@ -277,7 +277,7 @@
     <span class="k">return</span> <span class="n">publication_types</span>
 
 
-<span class="k">def</span> <span class="nf">parse_keywords</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_keywords</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse keywords from article, separated by ;</span>
 
 <span class="sd">    Parameters</span>
@@ -302,7 +302,7 @@
     <span class="k">return</span> <span class="n">keywords</span>
 
 
-<span class="k">def</span> <span class="nf">parse_chemical_list</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_chemical_list</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse chemical list from article</span>
 
 <span class="sd">    Parameters</span>
@@ -329,7 +329,7 @@
     <span class="k">return</span> <span class="n">chemical_list</span>
 
 
-<span class="k">def</span> <span class="nf">parse_other_id</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_other_id</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse OtherID from article, each separated by ;</span>
 
 <span class="sd">    Parameters</span>
@@ -357,7 +357,7 @@
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;pmc&quot;</span><span class="p">:</span> <span class="n">pmc</span><span class="p">,</span> <span class="s2">&quot;other_id&quot;</span><span class="p">:</span> <span class="n">other_id</span><span class="p">}</span>
 
 
-<span class="k">def</span> <span class="nf">parse_journal_info</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_journal_info</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse MEDLINE journal information</span>
 
 <span class="sd">    Parameters</span>
@@ -407,7 +407,7 @@
 
 <div class="viewcode-block" id="parse_grant_id">
 <a class="viewcode-back" href="../../api.html#pubmed_parser.parse_grant_id">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_grant_id</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_grant_id</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse Grant ID and related information from a given MEDLINE tree</span>
 
 <span class="sd">    Parameters</span>
@@ -461,7 +461,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">parse_author_affiliation</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_author_affiliation</span><span class="p">(</span><span class="n">medline</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse MEDLINE authors and their corresponding affiliations</span>
 
 <span class="sd">    Parameters</span>
@@ -520,7 +520,7 @@
     <span class="k">return</span> <span class="n">authors</span>
 
 
-<span class="k">def</span> <span class="nf">date_extractor</span><span class="p">(</span><span class="n">journal</span><span class="p">,</span> <span class="n">year_info_only</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">date_extractor</span><span class="p">(</span><span class="n">journal</span><span class="p">,</span> <span class="n">year_info_only</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract PubDate information from an Article in the Medline dataset.</span>
 
 <span class="sd">    Parameters</span>
@@ -569,7 +569,7 @@
         <span class="k">return</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">]))</span>
 
 
-<span class="k">def</span> <span class="nf">parse_references</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">,</span> <span class="n">reference_list</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_references</span><span class="p">(</span><span class="n">pubmed_article</span><span class="p">,</span> <span class="n">reference_list</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse references from Pubmed Article</span>
 
 <span class="sd">    Parameter</span>
@@ -623,7 +623,7 @@
         <span class="k">return</span> <span class="n">references</span>
 
 
-<span class="k">def</span> <span class="nf">parse_article_info</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_article_info</span><span class="p">(</span>
     <span class="n">pubmed_article</span><span class="p">,</span> <span class="n">year_info_only</span><span class="p">,</span> <span class="n">nlm_category</span><span class="p">,</span> <span class="n">author_list</span><span class="p">,</span> <span class="n">reference_list</span><span class="p">,</span> <span class="n">parse_subs</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse article nodes from Medline dataset</span>
@@ -771,7 +771,7 @@
 
 <div class="viewcode-block" id="parse_medline_xml">
 <a class="viewcode-back" href="../../api.html#pubmed_parser.parse_medline_xml">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_medline_xml</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_medline_xml</span><span class="p">(</span>
     <span class="n">path</span><span class="p">,</span>
     <span class="n">year_info_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">nlm_category</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -818,17 +818,29 @@
 <span class="sd">    ------</span>
 <span class="sd">    An iterator of dictionary containing information about articles in NLM format.</span>
 <span class="sd">        see `parse_article_info`). Articles that have been deleted will be</span>
-<span class="sd">        added with no information other than the field `delete` being `True`</span>
+<span class="sd">        added with no information other than the fields `delete` being `True`,</span>
+<span class="sd">        and `pmid`.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; article_iterator = pubmed_parser.parse_medline_xml(&#39;data/pubmed20n0014.xml.gz&#39;)</span>
 <span class="sd">    &gt;&gt;&gt; for article in article_iterator:</span>
-<span class="sd">    ...     print(article[&#39;title&#39;])</span>
+<span class="sd">    ...     if article.get(&#39;delete&#39;):</span>
+<span class="sd">    ...         print(f&quot;Deleted PMID: {article[&#39;pmid&#39;]}&quot;)</span>
+<span class="sd">    ...     else:</span>
+<span class="sd">    ...         print(article[&#39;title&#39;])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">event</span><span class="p">,</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">etree</span><span class="o">.</span><span class="n">iterparse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">events</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">,)):</span>
-            <span class="k">if</span> <span class="n">element</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;PubmedArticle&quot;</span><span class="p">:</span>
+            <span class="c1"># Handle &lt;DeleteCitation&gt; elements, indicating articles removed from PubMed.</span>
+            <span class="k">if</span> <span class="n">element</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;DeleteCitation&quot;</span><span class="p">:</span>
+                <span class="c1"># These elements are expected to contain one or more PMID tags.</span>
+                <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">iterchildren</span><span class="p">():</span>
+                    <span class="k">assert</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;PMID&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;PMID tag expected. Got: </span><span class="si">{</span><span class="n">child</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">yield</span> <span class="p">{</span><span class="s2">&quot;pmid&quot;</span><span class="p">:</span> <span class="n">child</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+                <span class="n">element</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+            <span class="k">elif</span> <span class="n">element</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;PubmedArticle&quot;</span><span class="p">:</span>
                 <span class="n">res</span> <span class="o">=</span> <span class="n">parse_article_info</span><span class="p">(</span>
                     <span class="n">element</span><span class="p">,</span>
                     <span class="n">year_info_only</span><span class="p">,</span>

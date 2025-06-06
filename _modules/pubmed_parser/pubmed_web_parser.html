@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pubmed_parser.pubmed_web_parser &mdash; Pubmed Parser 0.5.2.dev11+geaa3280 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+  <title>pubmed_parser.pubmed_web_parser &mdash; Pubmed Parser 0.5.2.dev12+g1559018 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fbd7f65f"></script>
+      <script src="../../_static/documentation_options.js?v=90cf829f"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -71,17 +71,17 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pubmed_parser.pubmed_web_parser</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.request</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlopen</span>
 
-<span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lxml</span><span class="w"> </span><span class="kn">import</span> <span class="n">etree</span><span class="p">,</span> <span class="n">html</span>
 
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">stringify_children</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">stringify_children</span>
 
 
-<span class="k">def</span> <span class="nf">load_xml</span><span class="p">(</span><span class="n">pmid</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_xml</span><span class="p">(</span><span class="n">pmid</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load XML file from given pmid from eutils site</span>
 <span class="sd">    return a dictionary for given pmid and xml string from the site</span>
@@ -110,7 +110,7 @@
     <span class="k">return</span> <span class="n">tree</span>
 
 
-<span class="k">def</span> <span class="nf">parse_pubmed_web_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_pubmed_web_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Giving a tree Element from eutils, return parsed dictionary from the tree</span>
 
@@ -242,7 +242,7 @@
 
 <div class="viewcode-block" id="parse_xml_web">
 <a class="viewcode-back" href="../../api.html#pubmed_parser.parse_xml_web">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_xml_web</span><span class="p">(</span><span class="n">pmid</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_xml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_xml_web</span><span class="p">(</span><span class="n">pmid</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_xml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Give an input PMID, load and parse XML using PubMed eutils</span>
 
@@ -290,7 +290,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">extract_citations</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_citations</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract number of citations from a given eutils XML tree.</span>
 
@@ -313,7 +313,7 @@
     <span class="k">return</span> <span class="n">n_citations</span>
 
 
-<span class="k">def</span> <span class="nf">extract_pmc</span><span class="p">(</span><span class="n">citation</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_pmc</span><span class="p">(</span><span class="n">citation</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract PMC from a given eutils XML tree.</span>
 
@@ -332,7 +332,7 @@
     <span class="k">return</span> <span class="n">pmc</span>
 
 
-<span class="k">def</span> <span class="nf">convert_document_id</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_document_id</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert a given document id to dictionary of other id.</span>
 <span class="sd">    Please see http://www.ncbi.nlm.nih.gov/pmc/tools/id-converter-api/ for more info</span>
@@ -388,7 +388,7 @@
 
 <div class="viewcode-block" id="parse_citation_web">
 <a class="viewcode-back" href="../../api.html#pubmed_parser.parse_citation_web">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_citation_web</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_citation_web</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse citations from given document id</span>
 
@@ -458,7 +458,7 @@
 
 <div class="viewcode-block" id="parse_outgoing_citation_web">
 <a class="viewcode-back" href="../../api.html#pubmed_parser.parse_outgoing_citation_web">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_outgoing_citation_web</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_outgoing_citation_web</span><span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;PMC&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A function to load citations from NCBI eutils API for a given document</span>
 

@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Setting up Pubmed Parser with PySpark &mdash; Pubmed Parser 0.5.2.dev11+geaa3280 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+  <title>Setting up Pubmed Parser with PySpark &mdash; Pubmed Parser 0.5.2.dev12+g1559018 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=fbd7f65f"></script>
+      <script src="_static/documentation_options.js?v=90cf829f"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -78,14 +78,14 @@
 We can use PySpark as a workflow to process MEDLINE XML data to Spark dataframe.
 Using PySpark can reduce parsing time of more than 25 million documents to less than 10 minutes when you have multiple core processors.</p>
 <p><strong>Note</strong> that the <code class="docutils literal notranslate"><span class="pre">spark_home</span></code> path to downloaded Spark might be different.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">findspark</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">findspark</span>
 <span class="n">findspark</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">spark_home</span><span class="o">=</span><span class="s2">&quot;/opt/spark-2.1.0-bin-cdh5.9.0/&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In Spark 2.1, <code class="docutils literal notranslate"><span class="pre">spark</span></code> in this case can use as <code class="docutils literal notranslate"><span class="pre">sparkContext</span></code> which has access to <code class="docutils literal notranslate"><span class="pre">parallelize</span></code> or <code class="docutils literal notranslate"><span class="pre">createDataFrame</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
-<span class="kn">from</span> <span class="nn">pyspark.conf</span> <span class="kn">import</span> <span class="n">SparkConf</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparkSession</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparkConf</span>
 
 <span class="n">conf</span> <span class="o">=</span> <span class="n">SparkConf</span><span class="p">()</span><span class="o">.</span>\
     <span class="n">setAppName</span><span class="p">(</span><span class="s1">&#39;map&#39;</span><span class="p">)</span><span class="o">.</span>\
