@@ -194,7 +194,7 @@ def parse_pubmed_xml(path, include_path=False, nxml=False):
 
     try:
         pub_year = int(pub_date_dict.get("year"))
-    except TypeError:
+    except (TypeError, KeyError):
         pub_year = None
 
     epub_date = format_date(parse_date(tree, "epub"))
