@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pubmed_parser.pubmed_oa_parser &mdash; Pubmed Parser 0.5.2.dev12+g1559018 documentation</title>
+  <title>pubmed_parser.pubmed_oa_parser &mdash; Pubmed Parser 0.5.2.dev13+gb493fb9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=90cf829f"></script>
+      <script src="../../_static/documentation_options.js?v=ec45b750"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -269,7 +269,7 @@
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">pub_year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pub_date_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">))</span>
-    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
         <span class="n">pub_year</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="n">epub_date</span> <span class="o">=</span> <span class="n">format_date</span><span class="p">(</span><span class="n">parse_date</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="s2">&quot;epub&quot;</span><span class="p">))</span>
