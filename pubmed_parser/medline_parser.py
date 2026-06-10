@@ -62,20 +62,23 @@ def parse_doi(pubmed_article):
     article = medline.find("Article")
     elocation_ids = article.findall("ELocationID")
 
-    if len(elocation_ids) > 0:
-        for e in elocation_ids:
-            doi = e.text.strip() or "" if e.attrib.get("EIdType", "") == "doi" else ""
-    else:
+    doi = ""
+    # Prefer the DOI from ELocationID. Stop at the first one whose
+    # EIdType is "doi"; otherwise a later ELocationID of a different
+    # type (e.g. "pii") would overwrite an already-found DOI with "".
+    for e in elocation_ids:
+        if e.attrib.get("EIdType", "") == "doi" and e.text is not None:
+            doi = e.text.strip()
+            if doi:
+                break
+    # Fall back to PubmedData/ArticleIdList when no DOI is present in
+    # the ELocationID list (this also covers records with no ELocationID).
+    if not doi:
         article_ids = pubmed_article.find("PubmedData/ArticleIdList")
         if article_ids is not None:
-            doi = article_ids.find('ArticleId[@IdType="doi"]')
-            doi = (
-                (doi.text.strip() if doi.text is not None else "")
-                if doi is not None
-                else ""
-            )
-        else:
-            doi = ""
+            doi_node = article_ids.find('ArticleId[@IdType="doi"]')
+            if doi_node is not None and doi_node.text is not None:
+                doi = doi_node.text.strip()
     return doi
 
 
