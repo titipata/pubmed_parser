@@ -24,6 +24,13 @@ parsed_medline = list(parsed_medline)
 article_36400559 = parsed_medline[0]
 article_28786991 = parsed_medline[1]
 
+# Record whose <Article> lists a "doi" ELocationID *before* a "pii" one.
+# Used to guard against a trailing non-doi ELocationID overwriting the DOI.
+parsed_medline_doi_then_pii = list(
+    pp.parse_medline_xml(fetch_compressed_medline_xml(['24746000']))
+)
+article_24746000 = parsed_medline_doi_then_pii[0]
+
 
 def test_abstract():
     """This is a test for the abstract field."""
@@ -68,6 +75,19 @@ def test_doi():
     """This is a test for the doi field."""
     assert article_36400559['doi'] == ''
     assert article_28786991['doi'] == '10.1371/journal.pone.0180707'
+
+
+def test_doi_with_trailing_pii_elocation_id():
+    """DOI must survive a later non-doi ELocationID (e.g. pii).
+
+    PMID 24746000 lists::
+
+        <ELocationID EIdType="doi" ...>10.1016/S2213-2600(14)70019-0</ELocationID>
+        <ELocationID EIdType="pii" ...>S2213-2600(14)70019-0</ELocationID>
+
+    The trailing "pii" entry must not overwrite the parsed DOI with "".
+    """
+    assert article_24746000['doi'] == '10.1016/S2213-2600(14)70019-0'
 
 
 def test_grant_ids():
